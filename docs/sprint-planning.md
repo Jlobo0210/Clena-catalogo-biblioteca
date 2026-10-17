@@ -7,8 +7,8 @@ Una sección por sprint, con fecha real, enlace a la grabación de Teams e issue
 ## Sprint 1 — Planning
 
 - **Fecha y hora:** 17/10/2026 · [16:00-17:30]
-- **Modalidad:** Discord · 
-- **Asistentes:** Kesly Rodríguez - PO; Santiago VEngoechea - Fullstack; Luis Robles - Fullstack
+- **Modalidad:** Discord 
+- **Asistentes:** Kesly Rodríguez - PO; Santiago Vengoechea - Fullstack; Luis Robles - Fullstack
 - **Facilitadora:** Joshua (Scrum Master)
 - **Duración del sprint:** 2026-10-19 → 2026-10-30 (2 semanas) · **Milestone:** [Sprint 1](https://github.com/Jlobo0210/Clena-catalogo-biblioteca/milestone/2)
 
@@ -57,8 +57,8 @@ Tener la base del sistema funcionando de punta a punta: `docker-compose up` leva
 
 ### Decisiones y acuerdos
 
-- [completar: ORM elegido (Prisma), librería de validación, logger, librería de componentes de React]
-- [completar: estrategia de merge (merge commit)]
+- ORM elegido (Prisma), librería de validación, logger, librería de componentes de React
+- Estrategia de merge (merge commit)
 - Dailies lunes, miércoles y viernes a las [9pm] en Teams, grabadas.
 - Cada PR lo revisa una persona distinta de quien lo abrió; rotación de revisores.
 - Límite de trabajo en curso: máximo 2 issues en In Progress por persona.
