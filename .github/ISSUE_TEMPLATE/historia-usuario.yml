@@ -1,0 +1,50 @@
+name: Historia de usuario
+description: Nueva historia para el Product Backlog
+title: "HU-XX "
+labels: ["historia"]
+body:
+  - type: input
+    id: rol
+    attributes:
+      label: Como
+      placeholder: visitante de la biblioteca
+    validations:
+      required: true
+  - type: input
+    id: quiero
+    attributes:
+      label: Quiero
+      placeholder: buscar un libro por título, autor o tema
+    validations:
+      required: true
+  - type: input
+    id: para
+    attributes:
+      label: Para
+      placeholder: encontrarlo sin pedir ayuda
+    validations:
+      required: true
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+  - type: dropdown
+    id: puntos
+    attributes:
+      label: Estimación (puntos)
+      options: ["1", "2", "3", "5", "8", "13"]
+  - type: dropdown
+    id: prioridad
+    attributes:
+      label: Prioridad
+      options: ["Must", "Should", "Could"]
+  - type: input
+    id: origen
+    attributes:
+      label: Origen
+      placeholder: Alcance mínimo P2 / Sprint Review 1 / equipo de Introducción
