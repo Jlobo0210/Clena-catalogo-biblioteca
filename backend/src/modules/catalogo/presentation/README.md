@@ -1,0 +1,6 @@
+# Capa de presentación del catálogo
+
+Aquí van los controladores REST, DTOs de entrada con `class-validator`, guards y pipes.
+Un controlador **solo** invoca casos de uso de `application/`; nunca usa Prisma ni repositorios.
+
+Pendiente en este módulo: `TemasController` (HU-15), con `/api/v1` y Swagger de HU-09.
