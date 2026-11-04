@@ -1,0 +1,20 @@
+// Esquema de Prisma (capa de infraestructura).
+// Los modelos de este archivo NUNCA salen de src/**/infrastructure: se mapean a entidades de dominio.
+// Las migraciones versionadas y el resto del modelo llegan con HU-10 (prisma migrate dev).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tema {
+  id        String   @id @default(uuid()) @db.Uuid
+  nombre    String   @unique @db.VarChar(120)
+  creadoEn  DateTime @default(now()) @map("creado_en")
+
+  @@map("temas")
+}
