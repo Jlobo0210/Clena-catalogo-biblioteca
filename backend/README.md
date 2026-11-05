@@ -58,8 +58,36 @@ El módulo `catalogo` trae un corte vertical mínimo para copiar el patrón:
 
 Para una entidad nueva (Autor, Libro, Ejemplar…) se repiten los mismos cinco pasos. Los casos de uso se prueban con un repositorio en memoria, sin base de datos (ver `crear-tema.use-case.spec.ts`).
 
+## Base de la API (HU-09)
+
+| Qué | Dónde |
+|---|---|
+| Rutas de negocio | `/api/v1/...` (prefijo global en `src/app.setup.ts`) |
+| Swagger | `/docs` (JSON en `/docs-json`) |
+| Salud | `GET /health` → `200` si PostgreSQL responde, `503` si no |
+| Logs | JSON con Pino (`nestjs-pino`); nivel con `LOG_LEVEL`; cada petición lleva `x-request-id` |
+| Errores | `AllExceptionsFilter` devuelve siempre el mismo formato |
+| Validación | `ValidationPipe` global con `whitelist`, `forbidNonWhitelisted` y `transform` |
+
+Formato de error (esquema `ErrorResponse` en Swagger):
+
+```json
+{
+  "statusCode": 400,
+  "error": "VALIDATION_ERROR",
+  "message": "Los datos enviados no son válidos",
+  "details": ["nombre should not be empty"],
+  "path": "/api/v1/temas",
+  "timestamp": "2026-11-03T23:30:00.000Z",
+  "requestId": "6cf3feb0-..."
+}
+```
+
+Desde el dominio basta con lanzar `ValidationError`, `NotFoundError` o `ConflictError` (`src/shared/domain/domain-error.ts`); el filtro los convierte en 400, 404 y 409. Los errores inesperados salen como `500 INTERNAL_ERROR` sin detalles internos, y el detalle queda en el log con el mismo `requestId`.
+
+Para los DTOs de entrada de cada controlador se usa `class-validator`; el plugin de Swagger (`nest-cli.json`) los documenta solo.
+
 ## Pendiente en otras historias
 
-- `/api/v1`, Swagger en `/docs`, `/health`, logs estructurados y filtro global de errores: HU-09.
 - Migraciones versionadas (`prisma migrate`) y semillas: HU-10.
 - Dockerfile y `docker-compose`: HU-07. CI: HU-08.
