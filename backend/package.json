@@ -89,7 +89,13 @@
         "statements": 70
       }
     },
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "coverageReporters": [
+      "text",
+      "text-summary",
+      "json-summary",
+      "lcov"
+    ]
   },
   "engines": {
     "node": ">=20"
