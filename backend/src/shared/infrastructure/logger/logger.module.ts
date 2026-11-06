@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { Module } from '@nestjs/common';
+import { Module, RequestMethod } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
 
@@ -12,6 +12,8 @@ import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
     PinoLoggerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
+        // Sintaxis de rutas de Nest 11 (evita el aviso LegacyRouteConverter).
+        forRoutes: [{ path: '{*path}', method: RequestMethod.ALL }],
         pinoHttp: {
           level:
             config.get<string>('LOG_LEVEL') ||
