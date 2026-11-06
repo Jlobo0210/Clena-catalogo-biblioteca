@@ -14,7 +14,7 @@ cp .env.example .env          # en PowerShell: Copy-Item .env.example .env
 docker compose up -d --build
 ```
 
-Las credenciales de la base no tienen valor por defecto para que nunca queden en el repositorio; si faltan, `docker compose` se detiene y dice cuál. El resto de variables son opcionales. Al arrancar, el backend espera a que PostgreSQL esté listo, aplica las migraciones pendientes (`prisma migrate deploy`) y luego levanta la API.
+Las credenciales de la base no tienen valor por defecto para que nunca queden en el repositorio; si faltan, `docker compose` se detiene y dice cuál. El resto de variables son opcionales. Al arrancar, el backend espera a que PostgreSQL esté listo, aplica las migraciones pendientes (`prisma migrate deploy`) y luego levanta la API; el frontend se sirve con nginx cuando la API está sana.
 
 | Servicio | URL |
 |---|---|
@@ -22,7 +22,7 @@ Las credenciales de la base no tienen valor por defecto para que nunca queden en
 | Documentación Swagger | http://localhost:3000/docs |
 | Estado de la API y la base de datos | http://localhost:3000/health |
 | PostgreSQL 16 | `localhost:5432` (usuario, clave y base los de tu `.env`) |
-| Frontend | http://localhost:5173 (cuando se integre HU-06) |
+| Frontend | http://localhost:5173 |
 
 Comandos útiles:
 
@@ -42,4 +42,5 @@ Si el puerto 5432 o 3000 ya está ocupado en tu equipo, cambia `DB_PORT` o `BACK
 
 ## Desarrollo sin Docker
 
-Ver [backend/README.md](backend/README.md) para correr la API con `npm run start:dev`, las pruebas y la estructura de capas.
+- Backend: ver [backend/README.md](backend/README.md) (`npm run start:dev`, pruebas y estructura de capas).
+- Frontend: `cd frontend && npm install && npm run dev` (abre http://localhost:5173; la URL de la API se cambia con `VITE_API_BASE_URL` en `frontend/.env`).
