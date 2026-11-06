@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { apiClient } from './api/apiClient';
+import { apiClient, HEALTH_URL } from './api/apiClient';
 import { MainLayout } from './components/MainLayout';
 
 function HealthPage() {
@@ -11,7 +11,7 @@ function HealthPage() {
     let isMounted = true;
 
     apiClient
-      .get<unknown>('/health')
+      .get<unknown>(HEALTH_URL)
       .then((response) => {
         if (isMounted) {
           setHealth(JSON.stringify(response.data));
