@@ -1,0 +1,168 @@
+From a55d539370cd49de96b0fa5f2760331eaa9c27e8 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 15:32:56 +0000
+Subject: [PATCH] feat(docker): frontend con nginx en docker-compose (#7)
+
+---
+ .env.example           |  6 ++++--
+ README.md              |  7 ++++---
+ docker-compose.yml     | 23 +++++++++++------------
+ frontend/.dockerignore |  8 ++++++++
+ frontend/Dockerfile    | 21 +++++++++++++++++++++
+ frontend/nginx.conf    | 20 ++++++++++++++++++++
+ 6 files changed, 68 insertions(+), 17 deletions(-)
+ create mode 100644 frontend/.dockerignore
+ create mode 100644 frontend/Dockerfile
+ create mode 100644 frontend/nginx.conf
+
+diff --git a/.env.example b/.env.example
+index e6df728..8b861e3 100644
+--- a/.env.example
++++ b/.env.example
+@@ -1,4 +1,6 @@
+-
++# Variables de docker-compose (raíz del repo).
++# Copiar a .env y completar:  cp .env.example .env
++# .env NUNCA se sube al repositorio (está en .gitignore).
+ 
+ # --- Base de datos PostgreSQL (obligatorias) ---
+ POSTGRES_USER=
+@@ -17,4 +19,4 @@ CORS_ORIGIN=
+ LOG_LEVEL=
+ 
+ # --- Frontend (opcional; por defecto http://localhost:3000/api/v1) ---
+-VITE_API_URL=
++VITE_API_BASE_URL=
+diff --git a/README.md b/README.md
+index e14f45b..b143568 100644
+--- a/README.md
++++ b/README.md
+@@ -14,7 +14,7 @@ cp .env.example .env          # en PowerShell: Copy-Item .env.example .env
+ docker compose up -d --build
+ ```
+ 
+-Las credenciales de la base no tienen valor por defecto para que nunca queden en el repositorio; si faltan, `docker compose` se detiene y dice cuál. El resto de variables son opcionales. Al arrancar, el backend espera a que PostgreSQL esté listo, aplica las migraciones pendientes (`prisma migrate deploy`) y luego levanta la API.
++Las credenciales de la base no tienen valor por defecto para que nunca queden en el repositorio; si faltan, `docker compose` se detiene y dice cuál. El resto de variables son opcionales. Al arrancar, el backend espera a que PostgreSQL esté listo, aplica las migraciones pendientes (`prisma migrate deploy`) y luego levanta la API; el frontend se sirve con nginx cuando la API está sana.
+ 
+ | Servicio | URL |
+ |---|---|
+@@ -22,7 +22,7 @@ Las credenciales de la base no tienen valor por defecto para que nunca queden en
+ | Documentación Swagger | http://localhost:3000/docs |
+ | Estado de la API y la base de datos | http://localhost:3000/health |
+ | PostgreSQL 16 | `localhost:5432` (usuario, clave y base los de tu `.env`) |
+-| Frontend | http://localhost:5173 (cuando se integre HU-06) |
++| Frontend | http://localhost:5173 |
+ 
+ Comandos útiles:
+ 
+@@ -42,4 +42,5 @@ Si el puerto 5432 o 3000 ya está ocupado en tu equipo, cambia `DB_PORT` o `BACK
+ 
+ ## Desarrollo sin Docker
+ 
+-Ver [backend/README.md](backend/README.md) para correr la API con `npm run start:dev`, las pruebas y la estructura de capas.
++- Backend: ver [backend/README.md](backend/README.md) (`npm run start:dev`, pruebas y estructura de capas).
++- Frontend: `cd frontend && npm install && npm run dev` (abre http://localhost:5173; la URL de la API se cambia con `VITE_API_BASE_URL` en `frontend/.env`).
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 96000f0..dc94415 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -36,18 +36,17 @@ services:
+     ports:
+       - '${BACKEND_PORT:-3000}:3000'
+ 
+-  # Frontend (HU-06). Cuando exista frontend/Dockerfile, quitar los comentarios:
+-  # frontend:
+-  #   build:
+-  #     context: ./frontend
+-  #     args:
+-  #       VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api/v1}
+-  #   restart: unless-stopped
+-  #   depends_on:
+-  #     backend:
+-  #       condition: service_healthy
+-  #   ports:
+-  #     - '${FRONTEND_PORT:-5173}:80'
++  frontend:
++    build:
++      context: ./frontend
++      args:
++        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000/api/v1}
++    restart: unless-stopped
++    depends_on:
++      backend:
++        condition: service_healthy
++    ports:
++      - '${FRONTEND_PORT:-5173}:80'
+ 
+ volumes:
+   db-data:
+diff --git a/frontend/.dockerignore b/frontend/.dockerignore
+new file mode 100644
+index 0000000..1e423ef
+--- /dev/null
++++ b/frontend/.dockerignore
+@@ -0,0 +1,8 @@
++node_modules
++dist
++.env
++.env.*
++!.env.example
++*.log
++Dockerfile
++.dockerignore
+diff --git a/frontend/Dockerfile b/frontend/Dockerfile
+new file mode 100644
+index 0000000..cdd4d0e
+--- /dev/null
++++ b/frontend/Dockerfile
+@@ -0,0 +1,21 @@
++# ---------- Etapa 1: compilar la app de React con Vite ----------
++FROM node:20-bookworm-slim AS build
++WORKDIR /app
++
++COPY package.json package-lock.json ./
++RUN npm ci
++
++COPY . .
++# Vite incrusta las variables VITE_* al compilar, por eso la URL de la API llega como argumento de build.
++ARG VITE_API_BASE_URL=http://localhost:3000/api/v1
++ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
++RUN npm run build
++
++# ---------- Etapa 2: servir los archivos estáticos con nginx ----------
++FROM nginx:1.27-alpine AS runtime
++COPY nginx.conf /etc/nginx/conf.d/default.conf
++COPY --from=build /app/dist /usr/share/nginx/html
++
++EXPOSE 80
++HEALTHCHECK --interval=10s --timeout=3s --retries=5 \
++  CMD wget -q -O /dev/null http://127.0.0.1/ || exit 1
+diff --git a/frontend/nginx.conf b/frontend/nginx.conf
+new file mode 100644
+index 0000000..40a5691
+--- /dev/null
++++ b/frontend/nginx.conf
+@@ -0,0 +1,20 @@
++server {
++    listen 80;
++    server_name _;
++    root /usr/share/nginx/html;
++    index index.html;
++
++    # React Router: cualquier ruta que no sea un archivo devuelve index.html.
++    location / {
++        try_files $uri $uri/ /index.html;
++    }
++
++    # Los archivos con hash en el nombre se pueden guardar en caché mucho tiempo.
++    location /assets/ {
++        expires 1y;
++        add_header Cache-Control "public, immutable";
++    }
++
++    gzip on;
++    gzip_types text/css application/javascript application/json image/svg+xml;
++}
+-- 
+2.43.0
+

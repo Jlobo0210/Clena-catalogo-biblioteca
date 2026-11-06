@@ -90,4 +90,4 @@ Para los DTOs de entrada de cada controlador se usa `class-validator`; el plugin
 ## Pendiente en otras historias
 
 - Migraciones versionadas (`prisma migrate`) y semillas: HU-10.
-- Dockerfile y `docker-compose`: HU-07. CI: HU-08.
+- Docker: `backend/Dockerfile` aplica las migraciones al arrancar; ver el README de la raíz (HU-07).
