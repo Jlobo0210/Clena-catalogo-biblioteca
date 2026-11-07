@@ -34,3 +34,21 @@ export class ConflictError extends DomainError {
     super(message);
   }
 }
+
+/** Credenciales o token inválidos → 401. */
+export class UnauthorizedError extends DomainError {
+  readonly code = 'UNAUTHORIZED';
+
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+/** El usuario está autenticado pero su rol no le permite la acción → 403. */
+export class ForbiddenError extends DomainError {
+  readonly code = 'FORBIDDEN';
+
+  constructor(message: string) {
+    super(message);
+  }
+}
