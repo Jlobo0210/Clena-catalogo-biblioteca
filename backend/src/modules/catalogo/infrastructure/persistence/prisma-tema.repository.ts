@@ -13,7 +13,7 @@ export class PrismaTemaRepository implements TemaRepository {
     await this.prisma.tema.upsert({
       where: { id: data.id },
       create: data,
-      update: { nombre: data.nombre },
+      update: { nombre: data.nombre, slug: data.slug },
     });
   }
 
