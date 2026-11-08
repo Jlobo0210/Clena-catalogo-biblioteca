@@ -418,7 +418,7 @@ model Autor {
 
 model Tema {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  nombre        String   @unique @db.VarChar(100)
+  nombre        String   @unique @db.VarChar(120)
   slug          String   @unique @db.VarChar(120)
   descripcion   String?
   creadoEn      DateTime @default(now()) @map("creado_en") @db.Timestamptz
