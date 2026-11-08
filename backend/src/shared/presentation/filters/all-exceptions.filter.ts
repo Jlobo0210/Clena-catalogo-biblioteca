@@ -15,6 +15,8 @@ const DOMAIN_STATUS: Record<string, number> = {
   VALIDATION_ERROR: HttpStatus.BAD_REQUEST,
   NOT_FOUND: HttpStatus.NOT_FOUND,
   CONFLICT: HttpStatus.CONFLICT,
+  UNAUTHORIZED: HttpStatus.UNAUTHORIZED,
+  FORBIDDEN: HttpStatus.FORBIDDEN,
 };
 
 /** Código estable para cada estado HTTP que lanza Nest o una librería. */
@@ -34,7 +36,7 @@ type Body = Omit<ErrorResponse, 'path' | 'timestamp' | 'requestId'>;
 
 /**
  * Filtro global: toda excepción sale con el mismo formato (ErrorResponse).
- * - DomainError (dominio) -> 400 / 404 / 409 según su código.
+ * - DomainError (dominio) -> 400 / 401 / 403 / 404 / 409 según su código.
  * - HttpException (Nest, ValidationPipe, guards, terminus) -> su estado.
  * - Cualquier otra cosa -> 500 sin filtrar detalles internos al cliente.
  */
