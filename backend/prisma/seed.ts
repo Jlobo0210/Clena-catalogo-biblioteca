@@ -198,8 +198,11 @@ async function sembrarLibro(datos: {
 }
 
 async function main(): Promise<void> {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('Las semillas son de demostración: no se ejecutan en producción.');
+  // En la imagen de Docker NODE_ENV es production; ahí solo se siembra si SEED_DEMO=true (docker-compose de la demo).
+  if (process.env.NODE_ENV === 'production' && process.env.SEED_DEMO !== 'true') {
+    throw new Error(
+      'Las semillas son de demostración: en producción solo se ejecutan con SEED_DEMO=true.',
+    );
   }
   const password = process.env.SEED_PASSWORD;
   if (!password) {

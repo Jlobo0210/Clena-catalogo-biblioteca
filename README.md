@@ -14,7 +14,9 @@ cp .env.example .env          # en PowerShell: Copy-Item .env.example .env
 docker compose up -d --build
 ```
 
-Las credenciales de la base no tienen valor por defecto para que nunca queden en el repositorio; si faltan, `docker compose` se detiene y dice cuál. El resto de variables son opcionales. Al arrancar, el backend espera a que PostgreSQL esté listo, aplica las migraciones pendientes (`prisma migrate deploy`) y luego levanta la API; el frontend se sirve con nginx cuando la API está sana.
+Completa también `SEED_PASSWORD`: es la contraseña de los usuarios de demostración que se crean al arrancar.
+
+Las credenciales de la base no tienen valor por defecto para que nunca queden en el repositorio; si faltan, `docker compose` se detiene y dice cuál. El resto de variables son opcionales. Al arrancar, el backend espera a que PostgreSQL esté listo, aplica las migraciones pendientes (`prisma migrate deploy`), carga los datos semilla de demostración (si `SEED_DEMO=true`, el valor por defecto) y luego levanta la API; el frontend se sirve con nginx cuando la API está sana.
 
 | Servicio | URL |
 |---|---|

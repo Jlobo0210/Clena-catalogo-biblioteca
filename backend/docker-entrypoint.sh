@@ -1,12 +1,13 @@
 #!/bin/sh
-# Aplica las migraciones pendientes y arranca la API.
+# Aplica las migraciones pendientes, carga los datos de demostración y arranca la API.
 set -e
 
-if [ -d prisma/migrations ]; then
-  echo "Aplicando migraciones de Prisma..."
-  npx prisma migrate deploy
-else
-  echo "Todavía no hay migraciones (llegan con HU-10); se omite prisma migrate deploy."
+echo "Aplicando migraciones de Prisma..."
+npx prisma migrate deploy
+
+if [ "${SEED_DEMO:-false}" = "true" ]; then
+  echo "Cargando datos semilla de demostración..."
+  node dist/seed/seed.js
 fi
 
 exec node dist/main
