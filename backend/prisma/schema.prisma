@@ -1,20 +1,236 @@
 // Esquema de Prisma (capa de infraestructura).
 // Los modelos de este archivo NUNCA salen de src/**/infrastructure: se mapean a entidades de dominio.
-// Las migraciones versionadas y el resto del modelo llegan con HU-10 (prisma migrate dev).
+// Referencia del modelo: docs/modelo-datos.md. Índices de expresión y parciales: ver prisma/migrations.
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pg_trgm, unaccent]
+}
+
+enum Rol {
+  ADMINISTRADOR
+  PERSONAL
+  PUBLICO
+}
+
+enum EstadoEjemplar {
+  DISPONIBLE
+  PRESTADO
+  EN_REPARACION
+  PERDIDO
+}
+
+enum TipoMaterial {
+  LIBRO
+  REVISTA
+  TESIS
+  TRABAJO_DE_GRADO
+  MATERIAL_AUDIOVISUAL
+  OTRO
+}
+
+enum Formato {
+  FISICO
+  DIGITAL
+  FISICO_Y_DIGITAL
+}
+
+enum TipoAlerta {
+  RECORDATORIO
+  VENCIMIENTO
+}
+
+model Usuario {
+  id                         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre                     String    @db.VarChar(120)
+  email                      String    @unique @db.VarChar(254)
+  passwordHash               String?   @map("password_hash")
+  rol                        Rol       @default(PUBLICO)
+  consentimientoPrivacidadEn DateTime  @map("consentimiento_privacidad_en") @db.Timestamptz
+  versionAvisoPrivacidad     String    @map("version_aviso_privacidad") @db.VarChar(20)
+  anonimizadoEn              DateTime? @map("anonimizado_en") @db.Timestamptz
+  creadoEn                   DateTime  @default(now()) @map("creado_en") @db.Timestamptz
+  actualizadoEn              DateTime  @updatedAt @map("actualizado_en") @db.Timestamptz
+
+  prestamos            Prestamo[]                  @relation("PrestamoUsuario")
+  prestamosRegistrados Prestamo[]                  @relation("PrestamoRegistradoPor")
+  refreshTokens        RefreshToken[]
+  suscripciones        SuscripcionDisponibilidad[]
+
+  @@map("usuario")
+}
+
+model RefreshToken {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuarioId  String    @map("usuario_id") @db.Uuid
+  tokenHash  String    @unique @map("token_hash")
+  expiraEn   DateTime  @map("expira_en") @db.Timestamptz
+  revocadoEn DateTime? @map("revocado_en") @db.Timestamptz
+  creadoEn   DateTime  @default(now()) @map("creado_en") @db.Timestamptz
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("refresh_token")
+}
+
+model Autor {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre        String   @db.VarChar(200)
+  creadoEn      DateTime @default(now()) @map("creado_en") @db.Timestamptz
+  actualizadoEn DateTime @updatedAt @map("actualizado_en") @db.Timestamptz
+
+  libros LibroAutor[]
+
+  @@map("autor")
 }
 
 model Tema {
-  id        String   @id @default(uuid()) @db.Uuid
-  nombre    String   @unique @db.VarChar(120)
-  creadoEn  DateTime @default(now()) @map("creado_en")
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nombre        String   @unique @db.VarChar(120)
+  slug          String   @unique @db.VarChar(120)
+  descripcion   String?
+  creadoEn      DateTime @default(now()) @map("creado_en") @db.Timestamptz
+  actualizadoEn DateTime @updatedAt @map("actualizado_en") @db.Timestamptz
 
-  @@map("temas")
+  libros LibroTema[]
+
+  @@map("tema")
 }
+
+model Libro {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  titulo          String       @db.VarChar(300)
+  anioPublicacion Int?         @map("anio_publicacion") @db.SmallInt
+  idioma          String       @db.Char(2)
+  isbn            String?      @unique @db.VarChar(13)
+  tipoMaterial    TipoMaterial @default(LIBRO) @map("tipo_material")
+  formato         Formato      @default(FISICO)
+  enlaceDigital   String?      @map("enlace_digital") @db.VarChar(500)
+  creadoEn        DateTime     @default(now()) @map("creado_en") @db.Timestamptz
+  actualizadoEn   DateTime     @updatedAt @map("actualizado_en") @db.Timestamptz
+
+  autores       LibroAutor[]
+  temas         LibroTema[]
+  ejemplares    Ejemplar[]
+  suscripciones SuscripcionDisponibilidad[]
+
+  @@index([idioma])
+  @@index([tipoMaterial])
+  @@index([anioPublicacion])
+  @@map("libro")
+}
+
+model LibroAutor {
+  libroId String @map("libro_id") @db.Uuid
+  autorId String @map("autor_id") @db.Uuid
+  orden   Int    @default(1) @db.SmallInt
+
+  libro Libro @relation(fields: [libroId], references: [id], onDelete: Cascade)
+  autor Autor @relation(fields: [autorId], references: [id], onDelete: Restrict)
+
+  @@id([libroId, autorId])
+  @@index([autorId])
+  @@map("libro_autor")
+}
+
+model LibroTema {
+  libroId String @map("libro_id") @db.Uuid
+  temaId  String @map("tema_id") @db.Uuid
+
+  libro Libro @relation(fields: [libroId], references: [id], onDelete: Cascade)
+  tema  Tema  @relation(fields: [temaId], references: [id], onDelete: Cascade)
+
+  @@id([libroId, temaId])
+  @@index([temaId])
+  @@map("libro_tema")
+}
+
+model Ubicacion {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sala          String   @db.VarChar(60)
+  seccion       String   @db.VarChar(60)
+  estante       String   @db.VarChar(30)
+  codigo        String   @unique @db.VarChar(30)
+  creadoEn      DateTime @default(now()) @map("creado_en") @db.Timestamptz
+  actualizadoEn DateTime @updatedAt @map("actualizado_en") @db.Timestamptz
+
+  ejemplares Ejemplar[]
+
+  @@unique([sala, seccion, estante])
+  @@map("ubicacion")
+}
+
+model Ejemplar {
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  libroId          String         @map("libro_id") @db.Uuid
+  ubicacionId      String         @map("ubicacion_id") @db.Uuid
+  codigoInventario String         @unique @map("codigo_inventario") @db.VarChar(40)
+  estado           EstadoEjemplar @default(DISPONIBLE)
+  observaciones    String?
+  creadoEn         DateTime       @default(now()) @map("creado_en") @db.Timestamptz
+  actualizadoEn    DateTime       @updatedAt @map("actualizado_en") @db.Timestamptz
+
+  libro     Libro      @relation(fields: [libroId], references: [id], onDelete: Restrict)
+  ubicacion Ubicacion  @relation(fields: [ubicacionId], references: [id], onDelete: Restrict)
+  prestamos Prestamo[]
+
+  @@index([libroId, estado])
+  @@index([ubicacionId])
+  @@map("ejemplar")
+}
+
+model Prestamo {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ejemplarId      String    @map("ejemplar_id") @db.Uuid
+  usuarioId       String    @map("usuario_id") @db.Uuid
+  registradoPorId String    @map("registrado_por_id") @db.Uuid
+  fechaPrestamo   DateTime  @default(now()) @map("fecha_prestamo") @db.Timestamptz
+  fechaLimite     DateTime  @map("fecha_limite") @db.Date
+  fechaDevolucion DateTime? @map("fecha_devolucion") @db.Timestamptz
+  creadoEn        DateTime  @default(now()) @map("creado_en") @db.Timestamptz
+  actualizadoEn   DateTime  @updatedAt @map("actualizado_en") @db.Timestamptz
+
+  ejemplar      Ejemplar         @relation(fields: [ejemplarId], references: [id], onDelete: Restrict)
+  usuario       Usuario          @relation("PrestamoUsuario", fields: [usuarioId], references: [id], onDelete: Restrict)
+  registradoPor Usuario          @relation("PrestamoRegistradoPor", fields: [registradoPorId], references: [id], onDelete: Restrict)
+  alertas       AlertaPrestamo[]
+
+  @@index([usuarioId])
+  @@index([ejemplarId])
+  @@map("prestamo")
+}
+
+model AlertaPrestamo {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  prestamoId String     @map("prestamo_id") @db.Uuid
+  tipo       TipoAlerta
+  enviadaEn  DateTime   @default(now()) @map("enviada_en") @db.Timestamptz
+
+  prestamo Prestamo @relation(fields: [prestamoId], references: [id], onDelete: Cascade)
+
+  @@unique([prestamoId, tipo])
+  @@map("alerta_prestamo")
+}
+
+model SuscripcionDisponibilidad {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  usuarioId    String    @map("usuario_id") @db.Uuid
+  libroId      String    @map("libro_id") @db.Uuid
+  notificadaEn DateTime? @map("notificada_en") @db.Timestamptz
+  canceladaEn  DateTime? @map("cancelada_en") @db.Timestamptz
+  creadoEn     DateTime  @default(now()) @map("creado_en") @db.Timestamptz
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  libro   Libro   @relation(fields: [libroId], references: [id], onDelete: Cascade)
+
+  @@index([libroId])
+  @@map("suscripcion_disponibilidad")
+}
+
