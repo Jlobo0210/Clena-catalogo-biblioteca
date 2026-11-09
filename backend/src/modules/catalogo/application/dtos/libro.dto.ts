@@ -52,9 +52,4 @@ export interface LibroOutput {
   actualizadoEn: string;
 }
 
-export interface Pagina<T> {
-  items: T[];
-  total: number;
-  pagina: number;
-  tamano: number;
-}
+export type { Pagina } from './pagina.dto';

@@ -1,4 +1,9 @@
 /** Implementaciones en memoria de los puertos del catálogo, para pruebas unitarias y e2e (sin base de datos). */
+import { Autor } from '../../src/modules/catalogo/domain/entities/autor';
+import {
+  AutorRepository,
+  FiltroAutores,
+} from '../../src/modules/catalogo/domain/repositories/autor.repository';
 import {
   Libro,
   Referencia,
@@ -84,5 +89,53 @@ export class LibrosEnMemoria implements LibroRepository {
     return Promise.resolve(
       ids.flatMap((id) => (this.temas.has(id) ? [this.temas.get(id)!] : [])),
     );
+  }
+}
+
+export class AutoresEnMemoria implements AutorRepository {
+  readonly filas = new Map<string, Autor>();
+  /** Libros asociados por autor (los gestiona HU-16; aquí solo se cuentan). */
+  readonly libros = new Map<string, number>();
+
+  conLibros(autorId: string, cantidad: number): this {
+    this.libros.set(autorId, cantidad);
+    return this;
+  }
+
+  guardar(autor: Autor): Promise<void> {
+    this.filas.set(autor.id, autor);
+    return Promise.resolve();
+  }
+  buscarPorId(id: string): Promise<Autor | null> {
+    return Promise.resolve(this.filas.get(id) ?? null);
+  }
+  listar(f: FiltroAutores): Promise<{ items: Autor[]; total: number }> {
+    const signo = f.direccion === 'asc' ? 1 : -1;
+    const todos = [...this.filas.values()]
+      .filter(
+        (a) =>
+          !f.nombre || a.nombre.toLowerCase().includes(f.nombre.toLowerCase()),
+      )
+      .sort((a, b) => {
+        const comparacion =
+          f.ordenarPor === 'nombre'
+            ? a.nombre.localeCompare(b.nombre, 'es')
+            : a.creadoEn.getTime() - b.creadoEn.getTime();
+        return comparacion === 0
+          ? a.id.localeCompare(b.id)
+          : comparacion * signo;
+      });
+    const inicio = (f.pagina - 1) * f.tamano;
+    return Promise.resolve({
+      items: todos.slice(inicio, inicio + f.tamano),
+      total: todos.length,
+    });
+  }
+  eliminar(id: string): Promise<void> {
+    this.filas.delete(id);
+    return Promise.resolve();
+  }
+  contarLibros(autorId: string): Promise<number> {
+    return Promise.resolve(this.libros.get(autorId) ?? 0);
   }
 }
