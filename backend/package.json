@@ -22,7 +22,8 @@
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "build:seed": "tsc -p tsconfig.seed.json"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

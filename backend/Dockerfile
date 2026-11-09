@@ -8,7 +8,8 @@ COPY prisma ./prisma
 RUN npm ci
 
 COPY . .
-RUN npm run build && npm prune --omit=dev
+# Compila la API y el script de semillas (prisma/seed.ts → dist/seed/seed.js).
+RUN npm run build && npm run build:seed && npm prune --omit=dev
 
 # ---------- Etapa 2: imagen final, solo lo necesario para correr ----------
 FROM node:20-bookworm-slim AS runtime
