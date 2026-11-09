@@ -1,0 +1,36 @@
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.punto {
+  width: var(--tamano-punto);
+  height: var(--tamano-punto);
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.comprobando {
+  color: var(--color-texto-claro);
+}
+
+.comprobando .punto {
+  background: var(--color-texto-claro);
+}
+
+.en-linea {
+  color: var(--color-estado-en-linea);
+}
+
+.en-linea .punto {
+  background: var(--color-estado-en-linea);
+}
+
+.sin-conexion {
+  color: var(--color-estado-sin-conexion);
+}
+
+.sin-conexion .punto {
+  background: var(--color-estado-sin-conexion);
+}

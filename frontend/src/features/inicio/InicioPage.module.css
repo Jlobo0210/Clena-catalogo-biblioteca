@@ -1,0 +1,5 @@
+.inicio {
+  display: grid;
+  gap: var(--espacio-12);
+  padding: var(--espacio-8) 0 var(--espacio-12);
+}

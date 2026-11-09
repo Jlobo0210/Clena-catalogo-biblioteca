@@ -1,0 +1,7 @@
+.caja {
+  display: inline-grid;
+  width: var(--tamano-caja-icono);
+  height: var(--tamano-caja-icono);
+  place-items: center;
+  border-radius: var(--radio-sm);
+}

@@ -1,0 +1,108 @@
+.portada {
+  --color-foco: var(--color-ambar);
+  position: relative;
+  overflow: hidden;
+  padding: var(--espacio-16) var(--espacio-12);
+  color: var(--color-superficie);
+  background: var(--color-azul-aduana);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-xl);
+}
+
+.contenido {
+  position: relative;
+  z-index: 1;
+  width: min(100%, var(--ancho-barra-busqueda));
+  margin: 0 auto;
+}
+
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin: 0 0 var(--espacio-4);
+  padding: var(--espacio-2) var(--espacio-3);
+  color: var(--color-ambar-claro);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radio-pildora);
+  font-size: var(--texto-etiqueta);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.insignia span {
+  width: var(--tamano-punto);
+  height: var(--tamano-punto);
+  background: var(--color-ambar);
+  border-radius: 50%;
+}
+
+.portada h1 {
+  max-width: var(--ancho-titulo-portada);
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-display);
+  line-height: 1.15;
+}
+
+.descripcion {
+  max-width: var(--ancho-texto-portada);
+  margin: 0 0 var(--espacio-8);
+  color: var(--color-superficie-alta);
+  font-size: var(--texto-cuerpo-grande);
+}
+
+.avanzada {
+  margin: var(--espacio-6) 0 0;
+  color: var(--color-superficie-alta);
+  text-align: center;
+}
+
+.avanzada a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  color: var(--color-ambar-claro);
+  font-weight: 700;
+}
+
+.decoracion {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.circulo {
+  position: absolute;
+  right: calc(var(--espacio-8) * -1);
+  bottom: calc(var(--espacio-12) * -1);
+  width: var(--tamano-decoracion);
+  height: var(--tamano-decoracion);
+  background: var(--color-ambar);
+  border-radius: 50%;
+  filter: blur(var(--desenfoque-decoracion));
+  opacity: 0.1;
+}
+
+.estrella {
+  display: none;
+  position: absolute;
+  top: var(--espacio-4);
+  right: var(--espacio-8);
+  width: var(--tamano-estrella);
+  height: var(--tamano-estrella);
+  color: var(--color-ambar);
+  opacity: 0.15;
+}
+
+@media (min-width: 1280px) {
+  .estrella {
+    display: block;
+  }
+}
+
+@media (max-width: 639px) {
+  .portada {
+    padding: var(--espacio-8) var(--espacio-5);
+  }
+}
