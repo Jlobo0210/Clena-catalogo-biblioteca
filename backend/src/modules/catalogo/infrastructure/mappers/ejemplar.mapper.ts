@@ -23,7 +23,7 @@ export const EjemplarMapper = {
         codigo: row.ubicacion.codigo,
       },
       codigoInventario: row.codigoInventario,
-      estado: row.estado as EstadoEjemplar,
+      estado: row.estado,
       observaciones: row.observaciones,
       creadoEn: row.creadoEn,
       actualizadoEn: row.actualizadoEn,
