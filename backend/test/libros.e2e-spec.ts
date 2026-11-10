@@ -150,6 +150,17 @@ describe('Libros (e2e)', () => {
     expect(sinResultados.body).toMatchObject({ total: 0, items: [] });
   });
 
+  it('HU-21: encuentra sin tildes y con errores de escritura', async () => {
+    for (const q of ['garcia marques', 'cien anos soledad']) {
+      const res = await http()
+        .get('/api/v1/libros/buscar')
+        .query({ q })
+        .expect(200);
+      expect(res.body).toMatchObject({ total: 1 });
+      expect((res.body as { items: LibroBody[] }).items[0].id).toBe(creado.id);
+    }
+  });
+
   it('HU-20: valida el texto de búsqueda', async () => {
     await http().get('/api/v1/libros/buscar').expect(400);
     const res = await http()

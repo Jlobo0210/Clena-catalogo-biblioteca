@@ -17,18 +17,25 @@ export const TemaMapper = {
     return Tema.reconstruir({
       id: row.id,
       nombre: row.nombre,
+      descripcion: row.descripcion,
       creadoEn: row.creadoEn,
+      actualizadoEn: row.actualizadoEn,
     });
   },
 
   toPersistence(
     tema: Tema,
-  ): Pick<TemaPrisma, 'id' | 'nombre' | 'slug' | 'creadoEn'> {
+  ): Pick<
+    TemaPrisma,
+    'id' | 'nombre' | 'slug' | 'descripcion' | 'creadoEn' | 'actualizadoEn'
+  > {
     return {
       id: tema.id,
       nombre: tema.nombre,
       slug: aSlug(tema.nombre),
+      descripcion: tema.descripcion,
       creadoEn: tema.creadoEn,
+      actualizadoEn: tema.actualizadoEn,
     };
   },
 };

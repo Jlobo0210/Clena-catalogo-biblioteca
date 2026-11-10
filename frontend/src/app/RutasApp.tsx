@@ -5,6 +5,12 @@ import { PaginaPendiente } from '../shared/components/PaginaPendiente';
 import { NoEncontradaPage } from '../shared/components/NoEncontradaPage';
 import { InicioPage } from '../features/inicio/InicioPage';
 import { BusquedaPage } from '../features/busqueda/BusquedaPage';
+import { RutaProtegida } from '../features/auth/components/RutaProtegida';
+import { IngresarPage } from '../features/auth/pages/IngresarPage';
+import { RegistroPage } from '../features/auth/pages/RegistroPage';
+import { MiCuentaPage } from '../features/cuenta/MiCuentaPage';
+import { PanelPage } from '../features/panel/PanelPage';
+import { UsuariosPage } from '../features/administracion/UsuariosPage';
 
 export function RutasApp() {
   return (
@@ -20,6 +26,24 @@ export function RutasApp() {
           path={RUTAS.temas}
           element={<PaginaPendiente titulo="Explorar por tema" />}
         />
+        <Route path={RUTAS.ingresar} element={<IngresarPage />} />
+        <Route path={RUTAS.registro} element={<RegistroPage />} />
+
+        {/* Cualquier persona con sesión iniciada */}
+        <Route element={<RutaProtegida />}>
+          <Route path={RUTAS.miCuenta} element={<MiCuentaPage />} />
+        </Route>
+
+        {/* Personal del CLENA y administración (HU-13) */}
+        <Route element={<RutaProtegida roles={['PERSONAL', 'ADMINISTRADOR']} />}>
+          <Route path={RUTAS.panel} element={<PanelPage />} />
+        </Route>
+
+        {/* Solo administración */}
+        <Route element={<RutaProtegida roles={['ADMINISTRADOR']} />}>
+          <Route path={RUTAS.usuarios} element={<UsuariosPage />} />
+        </Route>
+
         <Route path="*" element={<NoEncontradaPage />} />
       </Route>
     </Routes>

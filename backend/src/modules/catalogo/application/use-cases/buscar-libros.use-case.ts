@@ -16,6 +16,7 @@ export const TERMINOS_MAX = 10;
  * HU-20: búsqueda simple y pública. El visitante escribe en un solo campo
  * el título, el autor o el tema; cada palabra debe aparecer en alguno de ellos
  * y los resultados salen del más al menos relevante.
+ * HU-21: el repositorio compara sin tildes y tolera errores de escritura.
  */
 export class BuscarLibrosUseCase {
   constructor(private readonly libros: LibroRepository) {}

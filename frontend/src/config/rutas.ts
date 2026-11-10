@@ -3,4 +3,9 @@ export const RUTAS = {
   buscar: '/buscar',
   busquedaAvanzada: '/busqueda-avanzada',
   temas: '/temas',
+  ingresar: '/ingresar',
+  registro: '/registro',
+  miCuenta: '/mi-cuenta',
+  panel: '/panel',
+  usuarios: '/panel/usuarios',
 } as const;
