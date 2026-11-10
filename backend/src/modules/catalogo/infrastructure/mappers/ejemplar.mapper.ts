@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client';
 import { Ejemplar } from '../../domain/entities/ejemplar';
-import { EstadoEjemplar } from '../../domain/value-objects/estado-ejemplar';
 
 export const EJEMPLAR_INCLUDE = {
   ubicacion: true,
