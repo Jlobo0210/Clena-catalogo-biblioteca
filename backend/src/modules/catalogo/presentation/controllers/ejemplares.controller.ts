@@ -28,7 +28,10 @@ import { ObtenerEjemplarUseCase } from '../../application/use-cases/obtener-ejem
 import { ListarEjemplaresUseCase } from '../../application/use-cases/listar-ejemplares.use-case';
 import { ActualizarEjemplarUseCase } from '../../application/use-cases/actualizar-ejemplar.use-case';
 import { EliminarEjemplarUseCase } from '../../application/use-cases/eliminar-ejemplar.use-case';
-import { CrearEjemplarDto, ActualizarEjemplarDto } from '../dtos/ejemplar-request.dto';
+import {
+  CrearEjemplarDto,
+  ActualizarEjemplarDto,
+} from '../dtos/ejemplar-request.dto';
 import {
   EjemplarResponse,
   ListaEjemplaresResponse,

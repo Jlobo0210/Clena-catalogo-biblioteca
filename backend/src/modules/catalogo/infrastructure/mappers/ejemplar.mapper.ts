@@ -30,9 +30,7 @@ export const EjemplarMapper = {
     });
   },
 
-  toPersistence(
-    e: Ejemplar,
-  ): Prisma.EjemplarUncheckedCreateInput {
+  toPersistence(e: Ejemplar): Prisma.EjemplarUncheckedCreateInput {
     return {
       id: e.id,
       libroId: e.libroId,

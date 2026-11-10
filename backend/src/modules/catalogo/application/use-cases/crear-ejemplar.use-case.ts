@@ -18,7 +18,10 @@ export class CrearEjemplarUseCase {
     private readonly reloj: () => Date = () => new Date(),
   ) {}
 
-  async execute(libroId: string, input: CrearEjemplarInput): Promise<EjemplarOutput> {
+  async execute(
+    libroId: string,
+    input: CrearEjemplarInput,
+  ): Promise<EjemplarOutput> {
     const libro = await this.libros.buscarPorId(libroId);
     if (!libro) throw new NotFoundError('Libro no encontrado');
 
@@ -28,10 +31,14 @@ export class CrearEjemplarUseCase {
       );
     }
 
-    const ubicacion = await this.ejemplares.buscarUbicacionPorId(input.ubicacionId);
+    const ubicacion = await this.ejemplares.buscarUbicacionPorId(
+      input.ubicacionId,
+    );
     if (!ubicacion) throw new NotFoundError('Ubicación no encontrada');
 
-    const duplicado = await this.ejemplares.buscarPorCodigo(input.codigoInventario);
+    const duplicado = await this.ejemplares.buscarPorCodigo(
+      input.codigoInventario,
+    );
     if (duplicado) {
       throw new ConflictError(
         `Ya existe un ejemplar con el código «${input.codigoInventario}»`,

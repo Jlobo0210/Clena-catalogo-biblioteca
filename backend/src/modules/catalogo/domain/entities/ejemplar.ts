@@ -98,14 +98,30 @@ export class Ejemplar {
     };
   }
 
-  get id(): string { return this.props.id; }
-  get libroId(): string { return this.props.libroId; }
-  get ubicacion(): UbicacionProps { return { ...this.props.ubicacion }; }
-  get codigoInventario(): string { return this.props.codigoInventario; }
-  get estado(): EstadoEjemplar { return this.props.estado; }
-  get observaciones(): string | null { return this.props.observaciones; }
-  get creadoEn(): Date { return this.props.creadoEn; }
-  get actualizadoEn(): Date { return this.props.actualizadoEn; }
+  get id(): string {
+    return this.props.id;
+  }
+  get libroId(): string {
+    return this.props.libroId;
+  }
+  get ubicacion(): UbicacionProps {
+    return { ...this.props.ubicacion };
+  }
+  get codigoInventario(): string {
+    return this.props.codigoInventario;
+  }
+  get estado(): EstadoEjemplar {
+    return this.props.estado;
+  }
+  get observaciones(): string | null {
+    return this.props.observaciones;
+  }
+  get creadoEn(): Date {
+    return this.props.creadoEn;
+  }
+  get actualizadoEn(): Date {
+    return this.props.actualizadoEn;
+  }
 
   get disponible(): boolean {
     return this.props.estado === 'DISPONIBLE';

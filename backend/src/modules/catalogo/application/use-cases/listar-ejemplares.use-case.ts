@@ -21,7 +21,8 @@ export class ListarEjemplaresUseCase {
     if (!libro) throw new NotFoundError('Libro no encontrado');
 
     const items = await this.ejemplares.listarPorLibro(libroId);
-    const disponibles = await this.ejemplares.contarDisponiblesPorLibro(libroId);
+    const disponibles =
+      await this.ejemplares.contarDisponiblesPorLibro(libroId);
 
     return {
       items: items.map(aEjemplarOutput),

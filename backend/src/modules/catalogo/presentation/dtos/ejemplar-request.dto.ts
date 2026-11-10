@@ -1,18 +1,13 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import {
-  IsIn,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MaxLength,
-} from 'class-validator';
-import {
-  ESTADOS_EJEMPLAR,
-} from '../../domain/value-objects/estado-ejemplar';
+import { IsIn, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { ESTADOS_EJEMPLAR } from '../../domain/value-objects/estado-ejemplar';
 import type { EstadoEjemplar } from '../../domain/value-objects/estado-ejemplar';
 
 export class CrearEjemplarDto {
-  @ApiProperty({ format: 'uuid', description: 'ID de la ubicación (sala, sección, estante)' })
+  @ApiProperty({
+    format: 'uuid',
+    description: 'ID de la ubicación (sala, sección, estante)',
+  })
   @IsUUID()
   ubicacionId!: string;
 
@@ -26,7 +21,11 @@ export class CrearEjemplarDto {
   @IsIn(ESTADOS_EJEMPLAR)
   estado?: EstadoEjemplar;
 
-  @ApiPropertyOptional({ example: 'Lomo deteriorado', maxLength: 500, nullable: true })
+  @ApiPropertyOptional({
+    example: 'Lomo deteriorado',
+    maxLength: 500,
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
   @MaxLength(500)

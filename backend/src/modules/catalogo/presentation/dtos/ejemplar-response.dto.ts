@@ -30,5 +30,6 @@ export class DisponibilidadResponse {
 
 export class ListaEjemplaresResponse {
   @ApiProperty({ type: [EjemplarResponse] }) items!: EjemplarResponse[];
-  @ApiProperty({ type: DisponibilidadResponse }) disponibilidad!: DisponibilidadResponse;
+  @ApiProperty({ type: DisponibilidadResponse })
+  disponibilidad!: DisponibilidadResponse;
 }
