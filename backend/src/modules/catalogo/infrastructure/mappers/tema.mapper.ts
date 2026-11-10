@@ -2,10 +2,10 @@ import { Tema as TemaPrisma } from '@prisma/client';
 import { Tema } from '../../domain/entities/tema';
 
 /** Convierte un nombre en un identificador para URL: «Bases de datos» → «bases-de-datos». */
-function aSlug(nombre: string): string {
+export function aSlug(nombre: string): string {
   return nombre
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
