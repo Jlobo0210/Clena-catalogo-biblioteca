@@ -38,6 +38,15 @@ import { CrearAutorUseCase } from './application/use-cases/crear-autor.use-case'
 import { EliminarAutorUseCase } from './application/use-cases/eliminar-autor.use-case';
 import { ListarAutoresUseCase } from './application/use-cases/listar-autores.use-case';
 import { ObtenerAutorUseCase } from './application/use-cases/obtener-autor.use-case';
+import { ImportarCatalogoUseCase } from './application/use-cases/importar-catalogo.use-case';
+import {
+  IMPORTADOR_CATALOGO,
+  ImportadorCatalogo,
+} from './domain/repositories/importador-catalogo';
+import { LECTOR_CSV, LectorCsv } from './domain/services/lector-csv';
+import { CsvParseLector } from './infrastructure/csv/csv-parse.lector';
+import { PrismaImportadorCatalogo } from './infrastructure/persistence/prisma-importador-catalogo';
+import { ImportacionesController } from './presentation/controllers/importaciones.controller';
 import { PrismaTemaRepository } from './infrastructure/persistence/prisma-tema.repository';
 import { PrismaLibroRepository } from './infrastructure/persistence/prisma-libro.repository';
 import { PrismaEjemplarRepository } from './infrastructure/persistence/prisma-ejemplar.repository';
@@ -53,6 +62,7 @@ import { TemasController } from './presentation/controllers/temas.controller';
     EjemplaresController,
     AutoresController,
     TemasController,
+    ImportacionesController,
   ],
   providers: [
     { provide: TEMA_REPOSITORY, useClass: PrismaTemaRepository },
@@ -184,6 +194,15 @@ import { TemasController } from './presentation/controllers/temas.controller';
       useFactory: (autores: AutorRepository) =>
         new EliminarAutorUseCase(autores),
       inject: [AUTOR_REPOSITORY],
+    },
+    // ── Importación CSV (HU-19) ──
+    { provide: LECTOR_CSV, useClass: CsvParseLector },
+    { provide: IMPORTADOR_CATALOGO, useClass: PrismaImportadorCatalogo },
+    {
+      provide: ImportarCatalogoUseCase,
+      useFactory: (lector: LectorCsv, importador: ImportadorCatalogo) =>
+        new ImportarCatalogoUseCase(lector, importador),
+      inject: [LECTOR_CSV, IMPORTADOR_CATALOGO],
     },
   ],
   exports: [CrearTemaUseCase],
