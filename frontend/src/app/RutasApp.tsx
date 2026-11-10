@@ -11,6 +11,7 @@ import { RegistroPage } from '../features/auth/pages/RegistroPage';
 import { MiCuentaPage } from '../features/cuenta/MiCuentaPage';
 import { PanelPage } from '../features/panel/PanelPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
+import { ExplorarPage } from '../features/temas/ExplorarPage';
 
 export function RutasApp() {
   return (
@@ -22,10 +23,7 @@ export function RutasApp() {
           path={RUTAS.busquedaAvanzada}
           element={<PaginaPendiente titulo="Búsqueda avanzada" />}
         />
-        <Route
-          path={RUTAS.temas}
-          element={<PaginaPendiente titulo="Explorar por tema" />}
-        />
+        <Route path={RUTAS.temas} element={<ExplorarPage />} />
         <Route path={RUTAS.ingresar} element={<IngresarPage />} />
         <Route path={RUTAS.registro} element={<RegistroPage />} />
 

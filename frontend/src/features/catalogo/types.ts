@@ -34,3 +34,19 @@ export interface PaginaLibrosDto {
   pagina: number;
   tamano: number;
 }
+
+export interface TemaDto {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  totalLibros: number;
+  creadoEn: string;
+  actualizadoEn: string;
+}
+
+export interface PaginaTemasDto {
+  items: TemaDto[];
+  total: number;
+  pagina: number;
+  tamano: number;
+}
