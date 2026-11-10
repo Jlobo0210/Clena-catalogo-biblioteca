@@ -12,6 +12,7 @@ import { MiCuentaPage } from '../features/cuenta/MiCuentaPage';
 import { PanelPage } from '../features/panel/PanelPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 import { ExplorarPage } from '../features/temas/ExplorarPage';
+import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
 
 export function RutasApp() {
   return (
@@ -19,6 +20,7 @@ export function RutasApp() {
       <Route element={<AppLayout />}>
         <Route path={RUTAS.inicio} element={<InicioPage />} />
         <Route path={RUTAS.buscar} element={<BusquedaPage />} />
+        <Route path="/libros/:id" element={<DetalleLibroPage />} />
         <Route
           path={RUTAS.busquedaAvanzada}
           element={<PaginaPendiente titulo="Búsqueda avanzada" />}
