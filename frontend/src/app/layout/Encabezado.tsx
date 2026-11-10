@@ -1,9 +1,19 @@
-import { BookOpen, CircleUserRound, Headset, LayoutDashboard, LogIn, LogOut, Shapes } from 'lucide-react';
+import {
+  CircleHelp,
+  CircleUserRound,
+  Home,
+  LayoutDashboard,
+  LibraryBig,
+  LogIn,
+  LogOut,
+  Monitor,
+  RotateCcw,
+  Shapes,
+} from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
 import { terminal } from '../../config/terminal';
 import { useSesion } from '../../features/auth/sesion/contextoSesion';
-import { NOMBRE_ROL } from '../../features/auth/types';
 import { MarcaBiblioteca } from '../../shared/ui/MarcaBiblioteca';
 import styles from './Encabezado.module.css';
 
@@ -39,7 +49,47 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
           </div>
         </div>
 
-        <nav aria-label="Principal" className={styles.navegacion}>
+        <div className={styles.terminal}>
+          <div className={styles.terminalTexto}>
+            <Monitor aria-hidden="true" className={styles.terminalIcono} size={18} />
+            <span>Terminal:</span>
+            <strong>{terminal.codigo.replace('T-04', 'T-04')}</strong>
+          </div>
+          {usuario ? (
+            <>
+              <Link className={styles.usuarioEnlace} to={RUTAS.miCuenta}>
+                <CircleUserRound aria-hidden="true" size={20} />
+                <span>{usuario.nombre}</span>
+              </Link>
+              <button
+                aria-label="Cerrar sesión"
+                className={styles.ingresar}
+                onClick={() => void cerrarSesion()}
+                type="button"
+              >
+                <LogOut aria-hidden="true" size={18} />
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <Link className={styles.ingresar} to={RUTAS.ingresar}>
+              <LogIn aria-hidden="true" size={18} />
+              Inicio de sesión
+            </Link>
+          )}
+          <button
+            aria-label="Reiniciar la terminal"
+            className={styles.reiniciar}
+            onClick={onReiniciar}
+            title="Reiniciar la terminal"
+            type="button"
+          >
+            <RotateCcw aria-hidden="true" size={18} />
+          </button>
+        </div>
+      </div>
+
+      <nav aria-label="Principal" className={styles.navegacion}>
           <NavLink
             className={({ isActive }) =>
               `${styles.enlaceNav} ${isActive ? styles.activo : ''}`
@@ -47,8 +97,11 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
             end
             to={RUTAS.inicio}
           >
-            <BookOpen aria-hidden="true" size={20} />
-            Catálogo
+            <Home aria-hidden="true" size={24} />
+            <span>
+              <strong>Inicio</strong>
+              <small>Búsqueda general</small>
+            </span>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -57,14 +110,30 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
             to={RUTAS.temas}
           >
             <Shapes aria-hidden="true" size={20} />
-            Explorar por tema
+            <span>
+              <strong>Explorar</strong>
+              <small>Búsqueda por tema</small>
+            </span>
           </NavLink>
           <Link
             className={styles.enlaceNav}
             to={{ pathname: RUTAS.inicio, hash: '#contacto' }}
           >
-            <Headset aria-hidden="true" size={20} />
-            Contacto
+            <LibraryBig aria-hidden="true" size={24} />
+            <span>
+              <strong>La Biblioteca</strong>
+              <small>Servicios y horarios</small>
+            </span>
+          </Link>
+          <Link
+            className={styles.enlaceNav}
+            to={{ pathname: RUTAS.inicio, hash: '#ayuda-titulo' }}
+          >
+            <CircleHelp aria-hidden="true" size={24} />
+            <span>
+              <strong>Ayuda</strong>
+              <small>Contacto y asistencia</small>
+            </span>
           </Link>
           {tieneRol('PERSONAL', 'ADMINISTRADOR') ? (
             <NavLink
@@ -74,52 +143,13 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
               to={RUTAS.panel}
             >
               <LayoutDashboard aria-hidden="true" size={20} />
-              Panel
+              <span>
+                <strong>Panel</strong>
+                <small>Administración</small>
+              </span>
             </NavLink>
           ) : null}
         </nav>
-
-        <div className={styles.terminal}>
-          {usuario ? (
-            <>
-              <Link className={styles.terminalTexto} to={RUTAS.miCuenta}>
-                <span>{NOMBRE_ROL[usuario.rol]}</span>
-                <strong>{usuario.nombre}</strong>
-              </Link>
-              <CircleUserRound aria-hidden="true" className={styles.usuario} size={40} />
-              <button
-                aria-label="Cerrar sesión"
-                className={styles.reiniciar}
-                onClick={() => void cerrarSesion()}
-                title="Cerrar sesión"
-                type="button"
-              >
-                <LogOut aria-hidden="true" size={20} />
-              </button>
-            </>
-          ) : (
-            <>
-              <div className={styles.terminalTexto}>
-                <span>Usuario en terminal</span>
-                <strong>{terminal.nombre}</strong>
-              </div>
-              <Link className={styles.ingresar} to={RUTAS.ingresar}>
-                <LogIn aria-hidden="true" size={20} />
-                Iniciar sesión
-              </Link>
-              <button
-                aria-label="Reiniciar la terminal"
-                className={styles.reiniciar}
-                onClick={onReiniciar}
-                title="Reiniciar la terminal"
-                type="button"
-              >
-                <LogOut aria-hidden="true" size={20} />
-              </button>
-            </>
-          )}
-        </div>
-      </div>
     </header>
   );
 }

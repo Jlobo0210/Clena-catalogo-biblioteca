@@ -80,7 +80,7 @@ export function FormularioBusqueda() {
                 setMostrarError(false);
               }
             }}
-            placeholder="Título, autor, materia o palabra clave"
+            placeholder="Título, autor, materia o ejemplares"
             type="search"
             value={texto}
           />
