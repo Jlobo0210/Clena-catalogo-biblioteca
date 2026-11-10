@@ -77,26 +77,30 @@ export class LibrosEnMemoria implements LibroRepository {
       total: todos.length,
     });
   }
-  /** Misma regla y puntaje que la consulta SQL de PrismaLibroRepository.buscar. */
+  /**
+   * Misma regla y puntaje que la consulta SQL de PrismaLibroRepository.buscar.
+   * Sin tildes ni mayúsculas (como f_unaccent + lower). La tolerancia a errores de
+   * pg_trgm se aproxima así: una palabra de 4 o más letras coincide con otra que esté
+   * a un cambio de distancia (vale 0,75 de una coincidencia exacta).
+   */
   buscar(c: ConsultaBusqueda): Promise<{ items: Libro[]; total: number }> {
+    const terminos = [...new Set(c.terminos.map(normalizar))];
+    const frase = normalizar(c.frase);
     const puntuados = [...this.filas.values()]
       .map((l) => {
-        const titulo = l.titulo.toLowerCase();
-        const autores = l.autores.map((a) => a.nombre.toLowerCase()).join(' ');
-        const temas = l.temas.map((t) => t.nombre.toLowerCase()).join(' ');
-        const todo = `${titulo} ${autores} ${temas}`;
-        if (!c.terminos.every((t) => todo.includes(t))) return null;
-        const puntos =
-          c.terminos.reduce(
-            (s, t) =>
-              s +
-              (titulo.includes(t) ? 3 : 0) +
-              (autores.includes(t) ? 2 : 0) +
-              (temas.includes(t) ? 1 : 0),
-            0,
-          ) +
-          (titulo.includes(c.frase) ? 5 : 0) +
-          (titulo.startsWith(c.frase) ? 3 : 0);
+        const titulo = normalizar(l.titulo);
+        const autores = l.autores.map((a) => normalizar(a.nombre));
+        const temas = l.temas.map((t) => normalizar(t.nombre));
+        let puntos = 0;
+        for (const t of terminos) {
+          const enTitulo = parecido(t, titulo) * 3;
+          const enAutores = autores.reduce((s, a) => s + parecido(t, a) * 2, 0);
+          const enTemas = temas.reduce((s, te) => s + parecido(t, te), 0);
+          if (enTitulo + enAutores + enTemas === 0) return null;
+          puntos += enTitulo + enAutores + enTemas;
+        }
+        puntos +=
+          (titulo.includes(frase) ? 5 : 0) + (titulo.startsWith(frase) ? 3 : 0);
         return { l, puntos };
       })
       .filter((x): x is { l: Libro; puntos: number } => x !== null)
@@ -179,6 +183,42 @@ export class AutoresEnMemoria implements AutorRepository {
   }
 }
 
+/** Minúsculas y sin tildes, como f_unaccent(lower(...)) en PostgreSQL. */
+function normalizar(texto: string): string {
+  return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+/** 1 si el término aparece tal cual; 0,75 si alguna palabra está a un cambio (≥ 4 letras); si no, 0. */
+function parecido(termino: string, texto: string): number {
+  if (texto.includes(termino)) return 1;
+  if (termino.length < 4) return 0;
+  return texto.split(/[^a-z0-9ñ]+/).some((p) => aUnCambio(termino, p))
+    ? 0.75
+    : 0;
+}
+
+/** Distancia de edición ≤ 1 (cambiar, quitar o agregar una letra). */
+function aUnCambio(a: string, b: string): boolean {
+  if (Math.abs(a.length - b.length) > 1) return false;
+  let i = 0;
+  let j = 0;
+  let cambios = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    if (++cambios > 1) return false;
+    if (a.length > b.length) i++;
+    else if (b.length > a.length) j++;
+    else {
+      i++;
+      j++;
+    }
+  }
+  return cambios + (a.length - i) + (b.length - j) <= 1;
+}
 export class TemasEnMemoria implements TemaRepository {
   readonly filas = new Map<string, Tema>();
   /** Libros clasificados por tema (los gestiona HU-16; aquí solo se cuentan). */

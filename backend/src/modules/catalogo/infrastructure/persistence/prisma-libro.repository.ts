@@ -103,38 +103,64 @@ export class PrismaLibroRepository implements LibroRepository {
   }
 
   /**
-   * HU-20: cada término debe aparecer en el título, en algún autor o en algún tema.
-   * Relevancia: +3 por término en el título, +2 en un autor, +1 en un tema,
-   * +5 si el título contiene la frase completa y +3 más si empieza con ella.
+   * HU-20 y HU-21: cada término debe aparecer en el título, en algún autor o en algún tema.
+   * Se compara sin tildes ni mayúsculas (f_unaccent + lower) y, para palabras de 4 o más
+   * letras, también con errores de escritura (pg_trgm: `<%`, word_similarity ≥ 0,6).
+   * Cada comparación coincide con la expresión de los índices GIN de la migración inicial,
+   * así PostgreSQL puede usarlos.
+   *
+   * Relevancia por término: 3 en el título, 2 en un autor, 1 en un tema; si la coincidencia
+   * es aproximada, se multiplica por su similitud. Además, +5 si el título contiene la
+   * frase completa y +3 si empieza con ella.
    * Prisma no ordena por una expresión calculada, por eso la consulta es SQL.
    */
   async buscar(
     c: ConsultaBusqueda,
   ): Promise<{ items: Libro[]; total: number }> {
-    const terminos = c.terminos.map((t) => `%${escaparLike(t)}%`);
     const frase = escaparLike(c.frase);
     const coincidencias = Prisma.sql`
-      WITH documento AS (
-        SELECT l.id, l.titulo,
-          coalesce((SELECT string_agg(a.nombre, ' ') FROM libro_autor la
-                    JOIN autor a ON a.id = la.autor_id WHERE la.libro_id = l.id), '') AS autores,
-          coalesce((SELECT string_agg(t.nombre, ' ') FROM libro_tema lt
-                    JOIN tema t ON t.id = lt.tema_id WHERE lt.libro_id = l.id), '') AS temas
-        FROM libro l
+      WITH termino AS (
+        SELECT DISTINCT t,
+          '%' || replace(replace(replace(t, '\\', '\\\\'), '%', '\\%'), '_', '\\_') || '%' AS patron
+        FROM (SELECT f_unaccent(lower(p)) AS t FROM unnest(${c.terminos}::text[]) AS p) x
+      ),
+      coincidencia AS (
+        SELECT tr.t, l.id AS libro_id,
+          3 * CASE WHEN f_unaccent(lower(l.titulo)) LIKE tr.patron THEN 1
+                   ELSE word_similarity(tr.t, f_unaccent(lower(l.titulo))) END AS puntos
+        FROM termino tr
+        JOIN libro l ON f_unaccent(lower(l.titulo)) LIKE tr.patron
+          OR (length(tr.t) >= 4 AND tr.t <% f_unaccent(lower(l.titulo)))
+        UNION ALL
+        SELECT tr.t, la.libro_id,
+          2 * CASE WHEN f_unaccent(lower(a.nombre)) LIKE tr.patron THEN 1
+                   ELSE word_similarity(tr.t, f_unaccent(lower(a.nombre))) END
+        FROM termino tr
+        JOIN autor a ON f_unaccent(lower(a.nombre)) LIKE tr.patron
+          OR (length(tr.t) >= 4 AND tr.t <% f_unaccent(lower(a.nombre)))
+        JOIN libro_autor la ON la.autor_id = a.id
+        UNION ALL
+        SELECT tr.t, lt.libro_id,
+          1 * CASE WHEN f_unaccent(lower(te.nombre)) LIKE tr.patron THEN 1
+                   ELSE word_similarity(tr.t, f_unaccent(lower(te.nombre))) END
+        FROM termino tr
+        JOIN tema te ON f_unaccent(lower(te.nombre)) LIKE tr.patron
+          OR (length(tr.t) >= 4 AND tr.t <% f_unaccent(lower(te.nombre)))
+        JOIN libro_tema lt ON lt.tema_id = te.id
+      ),
+      por_libro AS (
+        SELECT libro_id, count(DISTINCT t) AS cubiertos, sum(puntos) AS puntos
+        FROM coincidencia GROUP BY libro_id
       )
-      SELECT d.id, d.titulo,
-        (SELECT sum(
-             CASE WHEN d.titulo ILIKE p THEN 3 ELSE 0 END
-           + CASE WHEN d.autores ILIKE p THEN 2 ELSE 0 END
-           + CASE WHEN d.temas ILIKE p THEN 1 ELSE 0 END)
-         FROM unnest(${terminos}::text[]) AS p)
-        + CASE WHEN d.titulo ILIKE ${`%${frase}%`} THEN 5 ELSE 0 END
-        + CASE WHEN d.titulo ILIKE ${`${frase}%`} THEN 3 ELSE 0 END AS relevancia
-      FROM documento d
-      WHERE NOT EXISTS (
-        SELECT 1 FROM unnest(${terminos}::text[]) AS p
-        WHERE d.titulo || ' ' || d.autores || ' ' || d.temas NOT ILIKE p
-      )`;
+      SELECT l.id, l.titulo,
+        pl.puntos
+        + CASE WHEN f_unaccent(lower(l.titulo)) LIKE '%' || f_unaccent(lower(${frase})) || '%' THEN 5 ELSE 0 END
+        + CASE WHEN f_unaccent(lower(l.titulo)) LIKE f_unaccent(lower(${frase})) || '%' THEN 3 ELSE 0 END
+          AS relevancia
+      FROM por_libro pl
+      JOIN libro l ON l.id = pl.libro_id
+      -- Cada término tiene que aparecer en algún lado.
+      WHERE pl.cubiertos = (SELECT count(*) FROM termino)`;
 
     const [pagina, conteo] = await this.prisma.$transaction([
       this.prisma.$queryRaw<{ id: string }[]>`

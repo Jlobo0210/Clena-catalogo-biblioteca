@@ -63,6 +63,38 @@ describe('BuscarLibrosUseCase (HU-20)', () => {
     expect((await buscar.execute({ q: 'cien ramírez' })).total).toBe(0);
   });
 
+  describe('HU-21: tolerancia a errores', () => {
+    it('«garcia marques» encuentra «García Márquez»', async () => {
+      const { buscar } = await montar();
+      expect(titulos(await buscar.execute({ q: 'garcia marques' }))).toEqual([
+        'Cien años de soledad',
+        'El otoño del patriarca',
+      ]);
+    });
+
+    it('«cien anos soledad» encuentra «Cien años de soledad»', async () => {
+      const { buscar } = await montar();
+      expect(titulos(await buscar.execute({ q: 'cien anos soledad' }))).toEqual(
+        ['Cien años de soledad'],
+      );
+    });
+
+    it('lo exacto pesa más que lo aproximado', async () => {
+      const { buscar } = await montar();
+      // «historia» está en el título de uno; «Atlas histórico» solo la tiene en el tema.
+      expect(titulos(await buscar.execute({ q: 'historya' }))).toEqual([
+        'Historia de la literatura',
+        'Atlas histórico',
+      ]);
+    });
+
+    it('no corrige palabras de menos de 4 letras', async () => {
+      const { buscar } = await montar();
+      expect((await buscar.execute({ q: 'ciem' })).total).toBe(1);
+      expect((await buscar.execute({ q: 'cim' })).total).toBe(0);
+    });
+  });
+
   it('ordena por relevancia: el título pesa más que el tema', async () => {
     const { buscar } = await montar();
     expect(titulos(await buscar.execute({ q: 'literatura' }))).toEqual([
