@@ -14,6 +14,7 @@ import {
   Length,
   Max,
   MaxLength,
+  MinLength,
   Min,
 } from 'class-validator';
 import type {
@@ -118,7 +119,10 @@ export class ListarLibrosQueryDto {
   @Max(100)
   tamano?: number;
 
-  @ApiPropertyOptional({ description: 'Busca en el título' })
+  @ApiPropertyOptional({
+    description:
+      'Busca en el título. Para buscar también en autores y temas, usa /libros/buscar',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(100)
@@ -171,4 +175,32 @@ export class ListarLibrosQueryDto {
   @IsOptional()
   @IsIn(DIRECCIONES)
   direccion?: Direccion;
+}
+
+export class BuscarLibrosQueryDto {
+  @ApiProperty({
+    example: 'garcia marquez',
+    minLength: 2,
+    maxLength: 100,
+    description: 'Título, autor o tema en un solo campo',
+  })
+  @IsString()
+  @MinLength(2, { message: 'Escribe al menos 2 caracteres para buscar' })
+  @MaxLength(100)
+  q!: string;
+
+  @ApiPropertyOptional({ default: 1, minimum: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  pagina?: number;
+
+  @ApiPropertyOptional({ default: 20, minimum: 1, maximum: 100 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  tamano?: number;
 }
