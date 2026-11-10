@@ -158,3 +158,25 @@
     width: min(calc(100% - var(--espacio-4)), var(--ancho-encabezado));
   }
 }
+
+a.terminalTexto {
+  text-decoration: none;
+}
+
+a.terminalTexto:hover strong {
+  text-decoration: underline;
+}
+
+.ingresar {
+  display: inline-flex;
+  min-height: var(--alto-control);
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-4);
+  color: var(--color-azul-profundo);
+  background: var(--color-ambar);
+  border-radius: var(--radio-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}

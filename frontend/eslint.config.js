@@ -31,4 +31,9 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    // Utilidades de prueba: no participan del fast refresh.
+    files: ['src/test/**/*.{ts,tsx}'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
 );
