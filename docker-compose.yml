@@ -36,6 +36,9 @@ services:
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?Falta JWT_ACCESS_SECRET en .env (ver .env.example)}
       JWT_ACCESS_TTL_SECONDS: ${JWT_ACCESS_TTL_SECONDS:-900}
       JWT_REFRESH_TTL_DAYS: ${JWT_REFRESH_TTL_DAYS:-7}
+      # Préstamos (HU-26): plazo en días y máximo de préstamos sin devolver por usuario.
+      PRESTAMO_DIAS: ${PRESTAMO_DIAS:-15}
+      PRESTAMO_MAX_ACTIVOS: ${PRESTAMO_MAX_ACTIVOS:-3}
       # Datos de demostración: se cargan al arrancar (no duplican si se reinicia).
       SEED_DEMO: ${SEED_DEMO:-true}
       SEED_PASSWORD: ${SEED_PASSWORD:?Falta SEED_PASSWORD en .env (ver .env.example)}
