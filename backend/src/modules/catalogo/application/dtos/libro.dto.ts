@@ -37,6 +37,13 @@ export interface ListarLibrosInput {
   direccion?: Direccion;
 }
 
+export interface BuscarLibrosInput {
+  /** Título, autor o tema, en un solo campo. */
+  q: string;
+  pagina?: number;
+  tamano?: number;
+}
+
 export interface LibroOutput {
   id: string;
   titulo: string;

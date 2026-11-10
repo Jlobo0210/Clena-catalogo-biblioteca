@@ -25,12 +25,14 @@ import { Autenticado } from '../../../auth/presentation/decorators/autenticado.d
 import { Rol } from '../../../auth/domain/value-objects/rol';
 import { ErrorResponse } from '../../../../shared/presentation/http/error-response';
 import { ActualizarLibroUseCase } from '../../application/use-cases/actualizar-libro.use-case';
+import { BuscarLibrosUseCase } from '../../application/use-cases/buscar-libros.use-case';
 import { CrearLibroUseCase } from '../../application/use-cases/crear-libro.use-case';
 import { EliminarLibroUseCase } from '../../application/use-cases/eliminar-libro.use-case';
 import { ListarLibrosUseCase } from '../../application/use-cases/listar-libros.use-case';
 import { ObtenerLibroUseCase } from '../../application/use-cases/obtener-libro.use-case';
 import {
   ActualizarLibroDto,
+  BuscarLibrosQueryDto,
   CrearLibroDto,
   ListarLibrosQueryDto,
 } from '../dtos/libro-request.dto';
@@ -40,8 +42,8 @@ import {
 } from '../dtos/libro-response.dto';
 
 /**
- * HU-16: gestión de libros.
- * Consultar es público; crear, editar y eliminar es solo para el personal y el administrador.
+ * HU-16: gestión de libros. HU-20: búsqueda simple.
+ * Consultar y buscar es público; crear, editar y eliminar es solo para el personal y el administrador.
  */
 @ApiTags('libros')
 @Controller('libros')
@@ -52,6 +54,7 @@ export class LibrosController {
     private readonly listarLibros: ListarLibrosUseCase,
     private readonly actualizarLibro: ActualizarLibroUseCase,
     private readonly eliminarLibro: EliminarLibroUseCase,
+    private readonly buscarLibros: BuscarLibrosUseCase,
   ) {}
 
   @Get()
@@ -60,6 +63,19 @@ export class LibrosController {
   @ApiBadRequestResponse({ type: ErrorResponse })
   listar(@Query() query: ListarLibrosQueryDto) {
     return this.listarLibros.execute(query);
+  }
+
+  // Va antes de GET :id para que «buscar» no se interprete como un id.
+  @Get('buscar')
+  @ApiOperation({
+    summary: 'Buscar libros por título, autor o tema (un solo campo)',
+    description:
+      'Público. Cada palabra debe aparecer en el título, en un autor o en un tema. Ordenado por relevancia.',
+  })
+  @ApiOkResponse({ type: PaginaLibrosResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  buscar(@Query() query: BuscarLibrosQueryDto) {
+    return this.buscarLibros.execute(query);
   }
 
   @Get(':id')

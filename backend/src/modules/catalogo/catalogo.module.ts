@@ -15,6 +15,7 @@ import {
 } from './domain/repositories/autor.repository';
 import { CrearTemaUseCase } from './application/use-cases/crear-tema.use-case';
 import { ActualizarLibroUseCase } from './application/use-cases/actualizar-libro.use-case';
+import { BuscarLibrosUseCase } from './application/use-cases/buscar-libros.use-case';
 import { CrearLibroUseCase } from './application/use-cases/crear-libro.use-case';
 import { EliminarLibroUseCase } from './application/use-cases/eliminar-libro.use-case';
 import { ListarLibrosUseCase } from './application/use-cases/listar-libros.use-case';
@@ -61,6 +62,11 @@ import { AutoresController } from './presentation/controllers/autores.controller
     {
       provide: ListarLibrosUseCase,
       useFactory: (libros: LibroRepository) => new ListarLibrosUseCase(libros),
+      inject: [LIBRO_REPOSITORY],
+    },
+    {
+      provide: BuscarLibrosUseCase,
+      useFactory: (libros: LibroRepository) => new BuscarLibrosUseCase(libros),
       inject: [LIBRO_REPOSITORY],
     },
     {

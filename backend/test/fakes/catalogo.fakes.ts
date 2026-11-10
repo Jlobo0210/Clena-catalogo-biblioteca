@@ -9,6 +9,7 @@ import {
   Referencia,
 } from '../../src/modules/catalogo/domain/entities/libro';
 import {
+  ConsultaBusqueda,
   FiltroLibros,
   LibroRepository,
 } from '../../src/modules/catalogo/domain/repositories/libro.repository';
@@ -69,6 +70,39 @@ export class LibrosEnMemoria implements LibroRepository {
     return Promise.resolve({
       items: todos.slice(inicio, inicio + f.tamano),
       total: todos.length,
+    });
+  }
+  /** Misma regla y puntaje que la consulta SQL de PrismaLibroRepository.buscar. */
+  buscar(c: ConsultaBusqueda): Promise<{ items: Libro[]; total: number }> {
+    const puntuados = [...this.filas.values()]
+      .map((l) => {
+        const titulo = l.titulo.toLowerCase();
+        const autores = l.autores.map((a) => a.nombre.toLowerCase()).join(' ');
+        const temas = l.temas.map((t) => t.nombre.toLowerCase()).join(' ');
+        const todo = `${titulo} ${autores} ${temas}`;
+        if (!c.terminos.every((t) => todo.includes(t))) return null;
+        const puntos =
+          c.terminos.reduce(
+            (s, t) =>
+              s +
+              (titulo.includes(t) ? 3 : 0) +
+              (autores.includes(t) ? 2 : 0) +
+              (temas.includes(t) ? 1 : 0),
+            0,
+          ) +
+          (titulo.includes(c.frase) ? 5 : 0) +
+          (titulo.startsWith(c.frase) ? 3 : 0);
+        return { l, puntos };
+      })
+      .filter((x): x is { l: Libro; puntos: number } => x !== null)
+      .sort(
+        (a, b) =>
+          b.puntos - a.puntos || a.l.titulo.localeCompare(b.l.titulo, 'es'),
+      );
+    const inicio = (c.pagina - 1) * c.tamano;
+    return Promise.resolve({
+      items: puntuados.slice(inicio, inicio + c.tamano).map((x) => x.l),
+      total: puntuados.length,
     });
   }
   eliminar(id: string): Promise<void> {
