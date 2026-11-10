@@ -1,0 +1,9 @@
+.marca {
+  display: inline-grid;
+  width: var(--tamano-marca);
+  height: var(--tamano-marca);
+  place-items: center;
+  color: var(--color-azul-profundo);
+  background: var(--color-ambar);
+  border-radius: var(--radio-sm);
+}

@@ -37,6 +37,13 @@ export interface ListarLibrosInput {
   direccion?: Direccion;
 }
 
+export interface BuscarLibrosInput {
+  /** Título, autor o tema, en un solo campo. */
+  q: string;
+  pagina?: number;
+  tamano?: number;
+}
+
 export interface LibroOutput {
   id: string;
   titulo: string;
@@ -52,9 +59,4 @@ export interface LibroOutput {
   actualizadoEn: string;
 }
 
-export interface Pagina<T> {
-  items: T[];
-  total: number;
-  pagina: number;
-  tamano: number;
-}
+export type { Pagina } from './pagina.dto';
