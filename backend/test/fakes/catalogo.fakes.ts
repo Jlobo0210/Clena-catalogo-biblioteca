@@ -4,6 +4,11 @@ import {
   AutorRepository,
   FiltroAutores,
 } from '../../src/modules/catalogo/domain/repositories/autor.repository';
+import { Tema } from '../../src/modules/catalogo/domain/entities/tema';
+import {
+  FiltroTemas,
+  TemaRepository,
+} from '../../src/modules/catalogo/domain/repositories/tema.repository';
 import {
   Libro,
   Referencia,
@@ -213,4 +218,64 @@ function aUnCambio(a: string, b: string): boolean {
     }
   }
   return cambios + (a.length - i) + (b.length - j) <= 1;
+}
+export class TemasEnMemoria implements TemaRepository {
+  readonly filas = new Map<string, Tema>();
+  /** Libros clasificados por tema (los gestiona HU-16; aquí solo se cuentan). */
+  readonly libros = new Map<string, number>();
+
+  conLibros(temaId: string, cantidad: number): this {
+    this.libros.set(temaId, cantidad);
+    return this;
+  }
+
+  guardar(tema: Tema): Promise<void> {
+    this.filas.set(tema.id, tema);
+    return Promise.resolve();
+  }
+  buscarPorId(id: string): Promise<Tema | null> {
+    return Promise.resolve(this.filas.get(id) ?? null);
+  }
+  buscarPorNombre(nombre: string): Promise<Tema | null> {
+    const buscado = nombre.toLowerCase();
+    return Promise.resolve(
+      [...this.filas.values()].find(
+        (t) => t.nombre.toLowerCase() === buscado,
+      ) ?? null,
+    );
+  }
+  listar(f: FiltroTemas): Promise<{ items: Tema[]; total: number }> {
+    const signo = f.direccion === 'asc' ? 1 : -1;
+    const todos = [...this.filas.values()]
+      .filter(
+        (t) =>
+          !f.nombre || t.nombre.toLowerCase().includes(f.nombre.toLowerCase()),
+      )
+      .sort((a, b) => {
+        const comparacion =
+          f.ordenarPor === 'nombre'
+            ? a.nombre.localeCompare(b.nombre, 'es')
+            : a.creadoEn.getTime() - b.creadoEn.getTime();
+        return comparacion === 0
+          ? a.id.localeCompare(b.id)
+          : comparacion * signo;
+      });
+    const inicio = (f.pagina - 1) * f.tamano;
+    return Promise.resolve({
+      items: todos.slice(inicio, inicio + f.tamano),
+      total: todos.length,
+    });
+  }
+  eliminar(id: string): Promise<void> {
+    this.filas.delete(id);
+    return Promise.resolve();
+  }
+  contarLibros(temaId: string): Promise<number> {
+    return Promise.resolve(this.libros.get(temaId) ?? 0);
+  }
+  contarLibrosPorTema(temaIds: string[]): Promise<Map<string, number>> {
+    return Promise.resolve(
+      new Map(temaIds.map((id) => [id, this.libros.get(id) ?? 0])),
+    );
+  }
 }

@@ -1,0 +1,50 @@
+.pagina {
+  display: grid;
+  gap: var(--espacio-4);
+  padding: var(--espacio-12) 0;
+}
+
+.pagina h1 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titular);
+}
+
+.pagina > p {
+  margin: 0;
+  font-size: var(--texto-cuerpo);
+}
+
+.opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--ancho-minimo-tarjeta), 1fr));
+  gap: var(--espacio-4);
+  margin: var(--espacio-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.opcion {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--espacio-4);
+  padding: var(--espacio-6);
+  color: var(--color-azul-profundo);
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+}
+
+.opcion h2 {
+  margin: 0 0 var(--espacio-1);
+  font-size: var(--texto-titulo);
+}
+
+.opcion a {
+  color: var(--color-azul-profundo);
+}
+
+.opcion p {
+  margin: 0;
+  color: var(--color-texto-secundario);
+}
