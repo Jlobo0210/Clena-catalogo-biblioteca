@@ -10,6 +10,10 @@ import {
   LibroRepository,
 } from './domain/repositories/libro.repository';
 import {
+  EJEMPLAR_REPOSITORY,
+  EjemplarRepository,
+} from './domain/repositories/ejemplar.repository';
+import {
   AUTOR_REPOSITORY,
   AutorRepository,
 } from './domain/repositories/autor.repository';
@@ -24,6 +28,11 @@ import { CrearLibroUseCase } from './application/use-cases/crear-libro.use-case'
 import { EliminarLibroUseCase } from './application/use-cases/eliminar-libro.use-case';
 import { ListarLibrosUseCase } from './application/use-cases/listar-libros.use-case';
 import { ObtenerLibroUseCase } from './application/use-cases/obtener-libro.use-case';
+import { CrearEjemplarUseCase } from './application/use-cases/crear-ejemplar.use-case';
+import { ObtenerEjemplarUseCase } from './application/use-cases/obtener-ejemplar.use-case';
+import { ListarEjemplaresUseCase } from './application/use-cases/listar-ejemplares.use-case';
+import { ActualizarEjemplarUseCase } from './application/use-cases/actualizar-ejemplar.use-case';
+import { EliminarEjemplarUseCase } from './application/use-cases/eliminar-ejemplar.use-case';
 import { ActualizarAutorUseCase } from './application/use-cases/actualizar-autor.use-case';
 import { CrearAutorUseCase } from './application/use-cases/crear-autor.use-case';
 import { EliminarAutorUseCase } from './application/use-cases/eliminar-autor.use-case';
@@ -31,28 +40,34 @@ import { ListarAutoresUseCase } from './application/use-cases/listar-autores.use
 import { ObtenerAutorUseCase } from './application/use-cases/obtener-autor.use-case';
 import { PrismaTemaRepository } from './infrastructure/persistence/prisma-tema.repository';
 import { PrismaLibroRepository } from './infrastructure/persistence/prisma-libro.repository';
+import { PrismaEjemplarRepository } from './infrastructure/persistence/prisma-ejemplar.repository';
 import { PrismaAutorRepository } from './infrastructure/persistence/prisma-autor.repository';
 import { LibrosController } from './presentation/controllers/libros.controller';
+import { EjemplaresController } from './presentation/controllers/ejemplares.controller';
 import { AutoresController } from './presentation/controllers/autores.controller';
 import { TemasController } from './presentation/controllers/temas.controller';
 
-/**
- * Composición del módulo: aquí (y solo aquí) se une cada interfaz con su implementación.
- * Los casos de uso no tienen decoradores de Nest; se construyen con useFactory.
- */
 @Module({
-  controllers: [LibrosController, AutoresController, TemasController],
+  controllers: [
+    LibrosController,
+    EjemplaresController,
+    AutoresController,
+    TemasController,
+  ],
   providers: [
     { provide: TEMA_REPOSITORY, useClass: PrismaTemaRepository },
     { provide: LIBRO_REPOSITORY, useClass: PrismaLibroRepository },
+    { provide: EJEMPLAR_REPOSITORY, useClass: PrismaEjemplarRepository },
     { provide: AUTOR_REPOSITORY, useClass: PrismaAutorRepository },
     { provide: ID_GENERATOR, useClass: UuidIdGenerator },
+    // ── Temas ──
     {
       provide: CrearTemaUseCase,
       useFactory: (temas: TemaRepository, ids: IdGenerator) =>
         new CrearTemaUseCase(temas, ids),
       inject: [TEMA_REPOSITORY, ID_GENERATOR],
     },
+    // ── Libros ──
     {
       provide: ObtenerTemaUseCase,
       useFactory: (temas: TemaRepository) => new ObtenerTemaUseCase(temas),
@@ -105,6 +120,41 @@ import { TemasController } from './presentation/controllers/temas.controller';
       useFactory: (libros: LibroRepository) => new EliminarLibroUseCase(libros),
       inject: [LIBRO_REPOSITORY],
     },
+    // ── Ejemplares ──
+    {
+      provide: CrearEjemplarUseCase,
+      useFactory: (
+        libros: LibroRepository,
+        ejemplares: EjemplarRepository,
+        ids: IdGenerator,
+      ) => new CrearEjemplarUseCase(libros, ejemplares, ids),
+      inject: [LIBRO_REPOSITORY, EJEMPLAR_REPOSITORY, ID_GENERATOR],
+    },
+    {
+      provide: ObtenerEjemplarUseCase,
+      useFactory: (ejemplares: EjemplarRepository) =>
+        new ObtenerEjemplarUseCase(ejemplares),
+      inject: [EJEMPLAR_REPOSITORY],
+    },
+    {
+      provide: ListarEjemplaresUseCase,
+      useFactory: (libros: LibroRepository, ejemplares: EjemplarRepository) =>
+        new ListarEjemplaresUseCase(libros, ejemplares),
+      inject: [LIBRO_REPOSITORY, EJEMPLAR_REPOSITORY],
+    },
+    {
+      provide: ActualizarEjemplarUseCase,
+      useFactory: (ejemplares: EjemplarRepository) =>
+        new ActualizarEjemplarUseCase(ejemplares),
+      inject: [EJEMPLAR_REPOSITORY],
+    },
+    {
+      provide: EliminarEjemplarUseCase,
+      useFactory: (ejemplares: EjemplarRepository) =>
+        new EliminarEjemplarUseCase(ejemplares),
+      inject: [EJEMPLAR_REPOSITORY],
+    },
+    // ── Autores ──
     {
       provide: CrearAutorUseCase,
       useFactory: (autores: AutorRepository, ids: IdGenerator) =>
