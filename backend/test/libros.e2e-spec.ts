@@ -127,6 +127,38 @@ describe('Libros (e2e)', () => {
     await http().get('/api/v1/libros/no-es-uuid').expect(400);
   });
 
+  it('HU-20: la búsqueda es pública y encuentra por título, autor o tema', async () => {
+    const porAutor = await http()
+      .get('/api/v1/libros/buscar')
+      .query({ q: 'García Márquez' })
+      .expect(200);
+    expect(porAutor.body).toMatchObject({ total: 1, pagina: 1, tamano: 20 });
+    expect((porAutor.body as { items: LibroBody[] }).items[0].id).toBe(
+      creado.id,
+    );
+
+    const porTema = await http()
+      .get('/api/v1/libros/buscar')
+      .query({ q: 'literatura' })
+      .expect(200);
+    expect(porTema.body).toMatchObject({ total: 1 });
+
+    const sinResultados = await http()
+      .get('/api/v1/libros/buscar')
+      .query({ q: 'astronomía' })
+      .expect(200);
+    expect(sinResultados.body).toMatchObject({ total: 0, items: [] });
+  });
+
+  it('HU-20: valida el texto de búsqueda', async () => {
+    await http().get('/api/v1/libros/buscar').expect(400);
+    const res = await http()
+      .get('/api/v1/libros/buscar')
+      .query({ q: 'a' })
+      .expect(400);
+    expect(res.body).toMatchObject({ error: 'VALIDATION_ERROR' });
+  });
+
   it('devuelve 404 si el libro no existe', async () => {
     await http()
       .get('/api/v1/libros/55555555-5555-4555-8555-555555555555')
