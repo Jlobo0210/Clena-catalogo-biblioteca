@@ -13,7 +13,11 @@ import {
   AUTOR_REPOSITORY,
   AutorRepository,
 } from './domain/repositories/autor.repository';
+import { ActualizarTemaUseCase } from './application/use-cases/actualizar-tema.use-case';
 import { CrearTemaUseCase } from './application/use-cases/crear-tema.use-case';
+import { EliminarTemaUseCase } from './application/use-cases/eliminar-tema.use-case';
+import { ListarTemasUseCase } from './application/use-cases/listar-temas.use-case';
+import { ObtenerTemaUseCase } from './application/use-cases/obtener-tema.use-case';
 import { ActualizarLibroUseCase } from './application/use-cases/actualizar-libro.use-case';
 import { BuscarLibrosUseCase } from './application/use-cases/buscar-libros.use-case';
 import { CrearLibroUseCase } from './application/use-cases/crear-libro.use-case';
@@ -30,13 +34,14 @@ import { PrismaLibroRepository } from './infrastructure/persistence/prisma-libro
 import { PrismaAutorRepository } from './infrastructure/persistence/prisma-autor.repository';
 import { LibrosController } from './presentation/controllers/libros.controller';
 import { AutoresController } from './presentation/controllers/autores.controller';
+import { TemasController } from './presentation/controllers/temas.controller';
 
 /**
  * Composición del módulo: aquí (y solo aquí) se une cada interfaz con su implementación.
  * Los casos de uso no tienen decoradores de Nest; se construyen con useFactory.
  */
 @Module({
-  controllers: [LibrosController, AutoresController],
+  controllers: [LibrosController, AutoresController, TemasController],
   providers: [
     { provide: TEMA_REPOSITORY, useClass: PrismaTemaRepository },
     { provide: LIBRO_REPOSITORY, useClass: PrismaLibroRepository },
@@ -47,6 +52,26 @@ import { AutoresController } from './presentation/controllers/autores.controller
       useFactory: (temas: TemaRepository, ids: IdGenerator) =>
         new CrearTemaUseCase(temas, ids),
       inject: [TEMA_REPOSITORY, ID_GENERATOR],
+    },
+    {
+      provide: ObtenerTemaUseCase,
+      useFactory: (temas: TemaRepository) => new ObtenerTemaUseCase(temas),
+      inject: [TEMA_REPOSITORY],
+    },
+    {
+      provide: ListarTemasUseCase,
+      useFactory: (temas: TemaRepository) => new ListarTemasUseCase(temas),
+      inject: [TEMA_REPOSITORY],
+    },
+    {
+      provide: ActualizarTemaUseCase,
+      useFactory: (temas: TemaRepository) => new ActualizarTemaUseCase(temas),
+      inject: [TEMA_REPOSITORY],
+    },
+    {
+      provide: EliminarTemaUseCase,
+      useFactory: (temas: TemaRepository) => new EliminarTemaUseCase(temas),
+      inject: [TEMA_REPOSITORY],
     },
     {
       provide: CrearLibroUseCase,
