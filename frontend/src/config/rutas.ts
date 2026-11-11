@@ -9,4 +9,5 @@ export const RUTAS = {
   misPrestamos: '/mis-prestamos',
   panel: '/panel',
   usuarios: '/panel/usuarios',
+  prestamosPersonal: '/panel/prestamos',
 } as const;
