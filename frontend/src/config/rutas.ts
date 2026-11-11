@@ -10,6 +10,7 @@ export const RUTAS = {
   misPrestamos: '/mis-prestamos',
   panel: '/panel',
   usuarios: '/panel/usuarios',
+  prestamosPersonal: '/panel/prestamos',
 } as const;
 
 /** Ruta del detalle de un libro (HU-24). */

@@ -11,6 +11,7 @@ import { RegistroPage } from '../features/auth/pages/RegistroPage';
 import { MiCuentaPage } from '../features/cuenta/MiCuentaPage';
 import { PanelPage } from '../features/panel/PanelPage';
 import { MisPrestamosPage } from '../features/prestamos/MisPrestamosPage';
+import { PrestamosPersonalPage } from '../features/prestamos/PrestamosPersonalPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 import { ExplorarPage } from '../features/temas/ExplorarPage';
 import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
@@ -39,6 +40,7 @@ export function RutasApp() {
         {/* Personal del CLENA y administración (HU-13) */}
         <Route element={<RutaProtegida roles={['PERSONAL', 'ADMINISTRADOR']} />}>
           <Route path={RUTAS.panel} element={<PanelPage />} />
+          <Route path={RUTAS.prestamosPersonal} element={<PrestamosPersonalPage />} />
         </Route>
 
         {/* Solo administración */}
