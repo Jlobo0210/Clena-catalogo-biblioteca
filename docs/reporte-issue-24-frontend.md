@@ -140,3 +140,14 @@ Completar `BusquedaPage` con:
 3. Estados de carga, error y sin resultados.
 4. Enlaces hacia `/libros/:id`.
 5. Paginación o carga progresiva.
+
+## Capturas
+
+| Pantalla | Imagen |
+|---|---|
+| Inicio | ![Inicio](imagenes/hu-24/Inicio.png) |
+| Encabezado | ![Encabezado](imagenes/hu-24/encabezado.png) |
+| Explorar | ![Explorar](imagenes/hu-24/Explorar.png) |
+| Resultados de búsqueda | ![Resultados de búsqueda](<imagenes/hu-24/Resultados de busqueda.png>) |
+| Detalle del libro | ![Detalle del libro](<imagenes/hu-24/Detalles del libro.png>) |
+| Ayuda | ![Ayuda](imagenes/hu-24/Ayuda.png) |

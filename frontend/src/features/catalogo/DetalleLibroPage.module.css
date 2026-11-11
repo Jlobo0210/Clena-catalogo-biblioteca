@@ -354,3 +354,70 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* HU-24 (integración): las acciones son enlaces, no botones. */
+a.primaryAction,
+a.secondaryAction {
+  text-decoration: none;
+}
+
+.availability.noDisponible {
+  color: var(--color-vino);
+  background: var(--color-vino-claro);
+}
+
+.availability.noDisponible span {
+  background: var(--color-vino);
+}
+
+/* Lista de ejemplares dentro de la franja oscura de ubicación. */
+.ejemplares {
+  display: grid;
+  gap: var(--espacio-2);
+  margin: 0 0 var(--espacio-2);
+  padding: 0;
+  list-style: none;
+}
+
+.ejemplares li {
+  display: grid;
+  gap: var(--espacio-1);
+  padding: var(--espacio-3);
+  border-radius: var(--radio-sm);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-3);
+  color: var(--color-texto-claro);
+  font-size: var(--texto-pequeno);
+}
+
+.estadoDisponible,
+.estadoOcupado {
+  padding: 0 var(--espacio-2);
+  border-radius: var(--radio-pildora);
+  color: var(--color-azul-profundo);
+  font-weight: 700;
+}
+
+.estadoDisponible {
+  background: var(--color-estado-en-linea);
+}
+
+.estadoOcupado {
+  background: var(--color-ambar-claro);
+}
+
+.copiado {
+  min-height: 1.5em;
+  margin: var(--espacio-2) 0 0 !important;
+  font-size: var(--texto-pequeno);
+}
+
+.location h2:focus {
+  outline: none;
+}

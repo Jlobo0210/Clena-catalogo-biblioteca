@@ -20,7 +20,7 @@ export function RutasApp() {
       <Route element={<AppLayout />}>
         <Route path={RUTAS.inicio} element={<InicioPage />} />
         <Route path={RUTAS.buscar} element={<BusquedaPage />} />
-        <Route path="/libros/:id" element={<DetalleLibroPage />} />
+        <Route path={RUTAS.libro} element={<DetalleLibroPage />} />
         <Route
           path={RUTAS.busquedaAvanzada}
           element={<PaginaPendiente titulo="Búsqueda avanzada" />}

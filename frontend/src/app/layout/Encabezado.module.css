@@ -196,6 +196,15 @@
 }
 
 @media (max-width: 639px) {
+  /* La marca se ajusta al ancho del celular en vez de ensanchar toda la página (HU-24, 360 px). */
+  .marcaBloque {
+    min-width: 0;
+  }
+
+  .meta {
+    flex-wrap: wrap;
+  }
+
   .terminalTexto span {
     display: none;
   }

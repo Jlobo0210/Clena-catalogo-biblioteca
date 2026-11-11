@@ -6,11 +6,20 @@ import { construirUrlBusqueda } from '../parametrosBusqueda';
 import { Boton } from '../../../shared/ui/Boton';
 import styles from './FormularioBusqueda.module.css';
 
-export function FormularioBusqueda() {
+interface FormularioBusquedaProps {
+  /** Texto con el que empieza el campo (p. ej. la búsqueda actual en la página de resultados). */
+  textoInicial?: string;
+  ambitoInicial?: AmbitoId;
+}
+
+export function FormularioBusqueda({
+  ambitoInicial = 'todo',
+  textoInicial = '',
+}: FormularioBusquedaProps = {}) {
   const navigate = useNavigate();
   const campoRef = useRef<HTMLInputElement>(null);
-  const [texto, setTexto] = useState('');
-  const [ambito, setAmbito] = useState<AmbitoId>('todo');
+  const [texto, setTexto] = useState(textoInicial);
+  const [ambito, setAmbito] = useState<AmbitoId>(ambitoInicial);
   const [mostrarError, setMostrarError] = useState(false);
 
   const enviar = (event: FormEvent<HTMLFormElement>) => {
@@ -80,7 +89,7 @@ export function FormularioBusqueda() {
                 setMostrarError(false);
               }
             }}
-            placeholder="Título, autor, materia o ejemplares"
+            placeholder="Título, autor, materia o palabra clave"
             type="search"
             value={texto}
           />
