@@ -11,6 +11,9 @@ export const RUTAS = {
   panel: '/panel',
   usuarios: '/panel/usuarios',
   prestamosPersonal: '/panel/prestamos',
+  panelAutores: '/panel/autores',
+  panelTemas: '/panel/temas',
+  panelImportar: '/panel/importar',
 } as const;
 
 /** Ruta del detalle de un libro (HU-24). */

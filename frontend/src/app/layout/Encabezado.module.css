@@ -205,6 +205,11 @@
     flex-wrap: wrap;
   }
 
+  /* Con sesión iniciada: terminal, cuenta y botones bajan de línea si no caben. */
+  .terminal {
+    flex-wrap: wrap;
+  }
+
   .terminalTexto span {
     display: none;
   }

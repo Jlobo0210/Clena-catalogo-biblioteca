@@ -12,6 +12,9 @@ import { MiCuentaPage } from '../features/cuenta/MiCuentaPage';
 import { PanelPage } from '../features/panel/PanelPage';
 import { MisPrestamosPage } from '../features/prestamos/MisPrestamosPage';
 import { PrestamosPersonalPage } from '../features/prestamos/PrestamosPersonalPage';
+import { AutoresPage } from '../features/panel/AutoresPage';
+import { TemasPage } from '../features/panel/TemasPage';
+import { ImportarPage } from '../features/panel/ImportarPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 import { ExplorarPage } from '../features/temas/ExplorarPage';
 import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
@@ -41,6 +44,9 @@ export function RutasApp() {
         <Route element={<RutaProtegida roles={['PERSONAL', 'ADMINISTRADOR']} />}>
           <Route path={RUTAS.panel} element={<PanelPage />} />
           <Route path={RUTAS.prestamosPersonal} element={<PrestamosPersonalPage />} />
+          <Route path={RUTAS.panelAutores} element={<AutoresPage />} />
+          <Route path={RUTAS.panelTemas} element={<TemasPage />} />
+          <Route path={RUTAS.panelImportar} element={<ImportarPage />} />
         </Route>
 
         {/* Solo administración */}
