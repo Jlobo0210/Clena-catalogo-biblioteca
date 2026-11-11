@@ -16,8 +16,24 @@ npm run start:dev
 | `npm run lint` | ESLint + Prettier, incluida la **regla de dependencia** entre capas |
 | `npm test` | Pruebas unitarias (dominio y casos de uso) |
 | `npm run test:cov` | Pruebas con cobertura; falla si dominio + aplicación bajan de 70 % |
-| `npm run test:e2e` | Pruebas e2e de la API |
+| `npm run test:e2e` | Pruebas e2e de la API (repositorios en memoria, sin base de datos) |
+| `npm run test:integracion` | Flujos principales contra PostgreSQL real (ver abajo) |
 | `npm run build` | Compila a `dist/` |
+
+### Pruebas de integración (HU-28)
+
+`test/integracion/` prueba la API completa, sin fakes, contra una base PostgreSQL con migraciones y semillas: login, búsqueda con errores de escritura, gestión de libros, préstamo y devolución, e importación CSV. El CI las corre en el job **Integración** con un PostgreSQL desechable.
+
+En local usan `DATABASE_URL` y `SEED_PASSWORD` de `backend/.env`:
+
+```bash
+docker compose up -d db          # desde la raíz del repo
+npx prisma migrate deploy
+npm run prisma:seed
+npm run test:integracion
+```
+
+Crean datos con nombres únicos y borran lo que pueden, así que se pueden repetir; aun así, usa una base de desarrollo o de prueba, nunca una con datos reales.
 
 ## Capas
 
