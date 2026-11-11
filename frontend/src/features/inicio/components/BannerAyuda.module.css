@@ -3,7 +3,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--espacio-8);
-  padding: var(--espacio-8);
+  padding: var(--espacio-6);
+  border: var(--borde-fino) solid var(--color-superficie-alta);
   background: var(--color-superficie-alta);
   border-radius: var(--radio-md);
 }

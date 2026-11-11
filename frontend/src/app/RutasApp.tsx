@@ -13,6 +13,8 @@ import { PanelPage } from '../features/panel/PanelPage';
 import { MisPrestamosPage } from '../features/prestamos/MisPrestamosPage';
 import { PrestamosPersonalPage } from '../features/prestamos/PrestamosPersonalPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
+import { ExplorarPage } from '../features/temas/ExplorarPage';
+import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
 
 export function RutasApp() {
   return (
@@ -20,14 +22,12 @@ export function RutasApp() {
       <Route element={<AppLayout />}>
         <Route path={RUTAS.inicio} element={<InicioPage />} />
         <Route path={RUTAS.buscar} element={<BusquedaPage />} />
+        <Route path={RUTAS.libro} element={<DetalleLibroPage />} />
         <Route
           path={RUTAS.busquedaAvanzada}
           element={<PaginaPendiente titulo="Búsqueda avanzada" />}
         />
-        <Route
-          path={RUTAS.temas}
-          element={<PaginaPendiente titulo="Explorar por tema" />}
-        />
+        <Route path={RUTAS.temas} element={<ExplorarPage />} />
         <Route path={RUTAS.ingresar} element={<IngresarPage />} />
         <Route path={RUTAS.registro} element={<RegistroPage />} />
 

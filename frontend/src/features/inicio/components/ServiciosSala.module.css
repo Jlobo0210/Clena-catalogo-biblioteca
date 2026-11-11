@@ -1,20 +1,21 @@
 .lista {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--ancho-minimo-tarjeta)), 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--espacio-6);
 }
 
 .tarjeta {
   display: flex;
   flex-direction: column;
-  padding: var(--espacio-8);
+  padding: var(--espacio-6);
   background: var(--color-superficie);
+  border: var(--borde-fino) solid var(--color-superficie-alta);
   border-radius: var(--radio-md);
   box-shadow: var(--sombra-sm);
 }
 
 .icono {
-  margin-bottom: var(--espacio-6);
+  margin-bottom: var(--espacio-5);
 }
 
 .ambar {
@@ -33,7 +34,7 @@
 }
 
 .tarjeta h3 {
-  margin: 0 0 var(--espacio-3);
+  margin: 0 0 var(--espacio-2);
   color: var(--color-azul-profundo);
   font-size: var(--texto-titulo);
 }
@@ -53,4 +54,10 @@
   background: var(--color-superficie-baja);
   border-radius: var(--radio-sm);
   font-size: var(--texto-etiqueta);
+}
+
+@media (max-width: 800px) {
+  .lista {
+    grid-template-columns: 1fr;
+  }
 }

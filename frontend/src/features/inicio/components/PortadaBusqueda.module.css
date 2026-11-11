@@ -2,7 +2,7 @@
   --color-foco: var(--color-ambar);
   position: relative;
   overflow: hidden;
-  padding: var(--espacio-16) var(--espacio-12);
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 4rem);
   color: var(--color-superficie);
   background: var(--color-azul-aduana);
   border-radius: var(--radio-lg);
@@ -12,8 +12,9 @@
 .contenido {
   position: relative;
   z-index: 1;
-  width: min(100%, var(--ancho-barra-busqueda));
+  width: min(100%, 70rem);
   margin: 0 auto;
+  text-align: center;
 }
 
 .insignia {
@@ -39,23 +40,30 @@
 }
 
 .portada h1 {
-  max-width: var(--ancho-titulo-portada);
-  margin: 0 0 var(--espacio-4);
-  font-size: var(--texto-display);
+  max-width: 52rem;
+  margin: 0 auto var(--espacio-4);
+  font-size: clamp(2rem, 3.8vw, 3.25rem);
   line-height: 1.15;
 }
 
 .descripcion {
-  max-width: var(--ancho-texto-portada);
-  margin: 0 0 var(--espacio-8);
+  max-width: 48rem;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: var(--espacio-6);
   color: var(--color-superficie-alta);
-  font-size: var(--texto-cuerpo-grande);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
 }
 
 .avanzada {
   margin: var(--espacio-6) 0 0;
   color: var(--color-superficie-alta);
   text-align: center;
+}
+
+.portada :global(form) {
+  width: min(100%, 70rem);
+  margin: 0 auto;
 }
 
 .avanzada a {
@@ -88,9 +96,9 @@
   display: none;
   position: absolute;
   top: var(--espacio-4);
-  right: var(--espacio-8);
-  width: var(--tamano-estrella);
-  height: var(--tamano-estrella);
+  right: 2rem;
+  width: 9rem;
+  height: 9rem;
   color: var(--color-ambar);
   opacity: 0.15;
 }
@@ -104,5 +112,14 @@
 @media (max-width: 639px) {
   .portada {
     padding: var(--espacio-8) var(--espacio-5);
+  }
+
+  @media (max-width: 767px) {
+    .estrella {
+      right: -2rem;
+      top: 1rem;
+      width: 7rem;
+      height: 7rem;
+    }
   }
 }

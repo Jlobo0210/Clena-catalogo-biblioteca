@@ -34,3 +34,50 @@ export interface PaginaLibrosDto {
   pagina: number;
   tamano: number;
 }
+
+export interface TemaDto {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  totalLibros: number;
+  creadoEn: string;
+  actualizadoEn: string;
+}
+
+export interface PaginaTemasDto {
+  items: TemaDto[];
+  total: number;
+  pagina: number;
+  tamano: number;
+}
+
+export type EstadoEjemplar = 'DISPONIBLE' | 'PRESTADO' | 'EN_REPARACION' | 'PERDIDO';
+
+export interface UbicacionDto {
+  id: string;
+  sala: string;
+  seccion: string;
+  estante: string;
+  codigo: string;
+}
+
+export interface EjemplarDto {
+  id: string;
+  libroId: string;
+  ubicacion: UbicacionDto;
+  codigoInventario: string;
+  estado: EstadoEjemplar;
+  observaciones: string | null;
+}
+
+export interface DisponibilidadDto {
+  libroId: string;
+  totalEjemplares: number;
+  disponibles: number;
+  disponible: boolean;
+}
+
+export interface ListaEjemplaresDto {
+  items: EjemplarDto[];
+  disponibilidad: DisponibilidadDto;
+}
