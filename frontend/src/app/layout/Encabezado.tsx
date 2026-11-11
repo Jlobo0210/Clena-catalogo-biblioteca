@@ -1,4 +1,13 @@
-import { BookOpen, CircleUserRound, Headset, LayoutDashboard, LogIn, LogOut, Shapes } from 'lucide-react';
+import {
+  BookOpen,
+  BookMarked,
+  CircleUserRound,
+  Headset,
+  LayoutDashboard,
+  LogIn,
+  LogOut,
+  Shapes,
+} from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
 import { terminal } from '../../config/terminal';
@@ -66,6 +75,17 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
             <Headset aria-hidden="true" size={20} />
             Contacto
           </Link>
+          {usuario ? (
+            <NavLink
+              className={({ isActive }) =>
+                `${styles.enlaceNav} ${isActive ? styles.activo : ''}`
+              }
+              to={RUTAS.misPrestamos}
+            >
+              <BookMarked aria-hidden="true" size={20} />
+              Mis préstamos
+            </NavLink>
+          ) : null}
           {tieneRol('PERSONAL', 'ADMINISTRADOR') ? (
             <NavLink
               className={({ isActive }) =>

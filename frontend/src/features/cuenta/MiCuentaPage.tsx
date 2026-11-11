@@ -1,5 +1,5 @@
 import { LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
 import { Boton } from '../../shared/ui/Boton';
 import { useSesion } from '../auth/sesion/contextoSesion';
@@ -42,7 +42,9 @@ export function MiCuentaPage() {
           </dd>
         </div>
       </dl>
-      <p className={styles.nota}>Pronto podrás ver aquí tus préstamos.</p>
+      <p className={styles.nota}>
+        <Link to={RUTAS.misPrestamos}>Ver mis préstamos y fechas de devolución</Link>
+      </p>
       <Boton icono={LogOut} onClick={() => void cerrar()} variante="oscuro">
         Cerrar sesión
       </Boton>
