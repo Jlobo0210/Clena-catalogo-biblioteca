@@ -1,5 +1,13 @@
 import { apiClient } from '../../../api/apiClient';
-import type { TemaDto } from '../../catalogo/types';
+import type {
+  EjemplarDto,
+  EstadoEjemplar,
+  FormatoMaterial,
+  LibroDto,
+  TemaDto,
+  TipoMaterial,
+  UbicacionDto,
+} from '../../catalogo/types';
 
 /** Gestión del catálogo para el personal (HU-25). Requiere sesión de PERSONAL o ADMINISTRADOR. */
 
@@ -104,4 +112,80 @@ export async function importarCatalogo(archivo: File): Promise<ReporteImportacio
 export async function descargarPlantilla(): Promise<Blob> {
   const response = await apiClient.get<Blob>('/importaciones/plantilla', { responseType: 'blob' });
   return response.data;
+}
+
+/* ── Libros y ejemplares (HU-25, parte 2) ── */
+
+export type OrdenLibros = 'titulo' | 'anio' | 'creadoEn';
+
+export interface FiltroLibros {
+  pagina: number;
+  tamano: number;
+  texto?: string;
+  formato?: FormatoMaterial;
+  tipoMaterial?: TipoMaterial;
+  ordenarPor: OrdenLibros;
+  direccion: Direccion;
+}
+
+export interface DatosLibro {
+  titulo: string;
+  anioPublicacion: number | null;
+  idioma: string;
+  isbn: string | null;
+  tipoMaterial: TipoMaterial;
+  formato: FormatoMaterial;
+  enlaceDigital: string | null;
+  autorIds: string[];
+  temaIds: string[];
+}
+
+export async function listarLibrosPanel(filtro: FiltroLibros, signal: AbortSignal): Promise<Pagina<LibroDto>> {
+  return (await apiClient.get<Pagina<LibroDto>>('/libros', { params: filtro, signal })).data;
+}
+
+export async function crearLibro(datos: DatosLibro): Promise<LibroDto> {
+  return (await apiClient.post<LibroDto>('/libros', datos)).data;
+}
+
+export async function actualizarLibro(id: string, datos: DatosLibro): Promise<LibroDto> {
+  return (await apiClient.patch<LibroDto>(`/libros/${encodeURIComponent(id)}`, datos)).data;
+}
+
+export async function eliminarLibro(id: string): Promise<void> {
+  await apiClient.delete(`/libros/${encodeURIComponent(id)}`);
+}
+
+export interface DatosEjemplar {
+  codigoInventario: string;
+  ubicacionId: string;
+  estado?: EstadoEjemplar;
+  observaciones: string | null;
+}
+
+export async function crearEjemplar(libroId: string, datos: DatosEjemplar): Promise<EjemplarDto> {
+  return (await apiClient.post<EjemplarDto>(`/libros/${encodeURIComponent(libroId)}/ejemplares`, datos)).data;
+}
+
+export async function actualizarEjemplar(libroId: string, id: string, datos: DatosEjemplar): Promise<EjemplarDto> {
+  const url = `/libros/${encodeURIComponent(libroId)}/ejemplares/${encodeURIComponent(id)}`;
+  return (await apiClient.patch<EjemplarDto>(url, datos)).data;
+}
+
+export async function eliminarEjemplar(libroId: string, id: string): Promise<void> {
+  await apiClient.delete(`/libros/${encodeURIComponent(libroId)}/ejemplares/${encodeURIComponent(id)}`);
+}
+
+export interface Lugar {
+  sala: string;
+  seccion: string;
+  estante: string;
+}
+
+export async function listarUbicaciones(signal?: AbortSignal): Promise<UbicacionDto[]> {
+  return (await apiClient.get<UbicacionDto[]>('/ubicaciones', { signal })).data;
+}
+
+export async function crearUbicacion(lugar: Lugar): Promise<UbicacionDto> {
+  return (await apiClient.post<UbicacionDto>('/ubicaciones', lugar)).data;
 }

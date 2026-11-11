@@ -55,8 +55,10 @@ export function PanelPage() {
         <li className={styles.opcion}>
           <BookCopy aria-hidden="true" size={28} />
           <div>
-            <h2>Libros y ejemplares</h2>
-            <p>Registro y edición de libros y de sus ejemplares. Disponible pronto.</p>
+            <h2>
+              <Link to={RUTAS.panelLibros}>Libros y ejemplares</Link>
+            </h2>
+            <p>Registra libros con sus autores y temas, y dónde está cada ejemplar.</p>
           </div>
         </li>
         {tieneRol('ADMINISTRADOR') ? (

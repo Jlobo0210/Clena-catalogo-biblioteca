@@ -15,6 +15,8 @@ import { PrestamosPersonalPage } from '../features/prestamos/PrestamosPersonalPa
 import { AutoresPage } from '../features/panel/AutoresPage';
 import { TemasPage } from '../features/panel/TemasPage';
 import { ImportarPage } from '../features/panel/ImportarPage';
+import { LibrosPanelPage } from '../features/panel/LibrosPanelPage';
+import { LibroPanelPage } from '../features/panel/LibroPanelPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 import { ExplorarPage } from '../features/temas/ExplorarPage';
 import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
@@ -47,6 +49,9 @@ export function RutasApp() {
           <Route path={RUTAS.panelAutores} element={<AutoresPage />} />
           <Route path={RUTAS.panelTemas} element={<TemasPage />} />
           <Route path={RUTAS.panelImportar} element={<ImportarPage />} />
+          <Route path={RUTAS.panelLibros} element={<LibrosPanelPage />} />
+          <Route path={RUTAS.panelLibroNuevo} element={<LibroPanelPage />} />
+          <Route path={RUTAS.panelLibro} element={<LibroPanelPage />} />
         </Route>
 
         {/* Solo administración */}

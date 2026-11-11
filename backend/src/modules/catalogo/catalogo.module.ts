@@ -47,6 +47,16 @@ import { LECTOR_CSV, LectorCsv } from './domain/services/lector-csv';
 import { CsvParseLector } from './infrastructure/csv/csv-parse.lector';
 import { PrismaImportadorCatalogo } from './infrastructure/persistence/prisma-importador-catalogo';
 import { ImportacionesController } from './presentation/controllers/importaciones.controller';
+import {
+  UBICACION_REPOSITORY,
+  UbicacionRepository,
+} from './domain/repositories/ubicacion.repository';
+import {
+  CrearUbicacionUseCase,
+  ListarUbicacionesUseCase,
+} from './application/use-cases/ubicaciones.use-cases';
+import { PrismaUbicacionRepository } from './infrastructure/persistence/prisma-ubicacion.repository';
+import { UbicacionesController } from './presentation/controllers/ubicaciones.controller';
 import { PrismaTemaRepository } from './infrastructure/persistence/prisma-tema.repository';
 import { PrismaLibroRepository } from './infrastructure/persistence/prisma-libro.repository';
 import { PrismaEjemplarRepository } from './infrastructure/persistence/prisma-ejemplar.repository';
@@ -63,6 +73,7 @@ import { TemasController } from './presentation/controllers/temas.controller';
     AutoresController,
     TemasController,
     ImportacionesController,
+    UbicacionesController,
   ],
   providers: [
     { provide: TEMA_REPOSITORY, useClass: PrismaTemaRepository },
@@ -203,6 +214,20 @@ import { TemasController } from './presentation/controllers/temas.controller';
       useFactory: (lector: LectorCsv, importador: ImportadorCatalogo) =>
         new ImportarCatalogoUseCase(lector, importador),
       inject: [LECTOR_CSV, IMPORTADOR_CATALOGO],
+    },
+    // ── Ubicaciones (HU-25) ──
+    { provide: UBICACION_REPOSITORY, useClass: PrismaUbicacionRepository },
+    {
+      provide: ListarUbicacionesUseCase,
+      useFactory: (ubicaciones: UbicacionRepository) =>
+        new ListarUbicacionesUseCase(ubicaciones),
+      inject: [UBICACION_REPOSITORY],
+    },
+    {
+      provide: CrearUbicacionUseCase,
+      useFactory: (ubicaciones: UbicacionRepository) =>
+        new CrearUbicacionUseCase(ubicaciones),
+      inject: [UBICACION_REPOSITORY],
     },
   ],
   exports: [CrearTemaUseCase],
