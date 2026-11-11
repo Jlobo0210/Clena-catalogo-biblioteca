@@ -7,6 +7,7 @@ import {
   PoliticaPrestamos,
   politicaDesdeEntorno,
 } from './application/politica-prestamos';
+import { ListarMisPrestamosUseCase } from './application/use-cases/listar-mis-prestamos.use-case';
 import { ListarPrestamosUseCase } from './application/use-cases/listar-prestamos.use-case';
 import { ObtenerPrestamoUseCase } from './application/use-cases/obtener-prestamo.use-case';
 import { RegistrarDevolucionUseCase } from './application/use-cases/registrar-devolucion.use-case';
@@ -53,6 +54,12 @@ import { PrestamosController } from './presentation/controllers/prestamos.contro
       useFactory: (prestamos: PrestamoRepository) =>
         new ListarPrestamosUseCase(prestamos),
       inject: [PRESTAMO_REPOSITORY],
+    },
+    {
+      provide: ListarMisPrestamosUseCase,
+      useFactory: (listar: ListarPrestamosUseCase) =>
+        new ListarMisPrestamosUseCase(listar),
+      inject: [ListarPrestamosUseCase],
     },
     {
       provide: ObtenerPrestamoUseCase,

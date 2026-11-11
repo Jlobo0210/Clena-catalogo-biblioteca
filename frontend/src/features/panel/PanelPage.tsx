@@ -1,4 +1,4 @@
-import { BookCopy, FileUp, Tags, UserPen, Users } from 'lucide-react';
+import { BookCopy, BookUp, FileUp, Tags, UserPen, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
 import { useSesion } from '../auth/sesion/contextoSesion';
@@ -16,6 +16,15 @@ export function PanelPage() {
         Hola, {usuario?.nombre}. Entraste como <strong>{usuario ? NOMBRE_ROL[usuario.rol] : ''}</strong>.
       </p>
       <ul className={styles.opciones}>
+        <li className={styles.opcion}>
+          <BookUp aria-hidden="true" size={28} />
+          <div>
+            <h2>
+              <Link to={RUTAS.prestamosPersonal}>Préstamos y devoluciones</Link>
+            </h2>
+            <p>Presta un ejemplar con su código y registra las devoluciones.</p>
+          </div>
+        </li>
         <li className={styles.opcion}>
           <UserPen aria-hidden="true" size={28} />
           <div>

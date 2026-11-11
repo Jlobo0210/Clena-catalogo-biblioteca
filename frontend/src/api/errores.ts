@@ -54,7 +54,7 @@ export function normalizarError(error: unknown): ErrorApi {
     case 404:
       return {
         tipo: 'no-encontrado',
-        mensaje: 'El recurso solicitado no está disponible.',
+        mensaje: delServidor ?? 'El recurso solicitado no está disponible.',
       };
     case 400:
       return {

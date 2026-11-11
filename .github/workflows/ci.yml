@@ -77,6 +77,53 @@ jobs:
           path: backend/coverage/
           retention-days: 14
 
+  # HU-28: la API completa contra un PostgreSQL de prueba (migraciones + semillas), sin fakes.
+  integracion:
+    name: Integración (API + PostgreSQL)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        # Base desechable que solo existe durante el job: estas credenciales no son secretas.
+        env:
+          POSTGRES_USER: clena
+          POSTGRES_PASSWORD: clena-ci
+          POSTGRES_DB: clena_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U clena -d clena_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://clena:clena-ci@localhost:5432/clena_test?schema=public
+      SEED_PASSWORD: Prueba12345
+      JWT_ACCESS_SECRET: secreto-solo-para-el-ci-0123456789abcdef
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Instalar dependencias (genera el cliente de Prisma)
+        run: npm ci
+
+      - name: Aplicar migraciones
+        run: npx prisma migrate deploy
+
+      - name: Cargar semillas de prueba
+        run: npm run prisma:seed
+
+      - name: Pruebas de integración (login, búsqueda, libros, préstamos, importación)
+        run: npm run test:integracion -- --ci
+
   frontend:
     name: Frontend (lint, pruebas, build)
     runs-on: ubuntu-latest
@@ -125,11 +172,12 @@ jobs:
   resultado:
     name: Resultado
     if: always()
-    needs: [backend, frontend]
+    needs: [backend, integracion, frontend]
     runs-on: ubuntu-latest
     steps:
-      - name: Verificar que backend y frontend pasaron
+      - name: Verificar que backend, integración y frontend pasaron
         run: |
-          echo "backend: ${{ needs.backend.result }} · frontend: ${{ needs.frontend.result }}"
+          echo "backend: ${{ needs.backend.result }} · integración: ${{ needs.integracion.result }} · frontend: ${{ needs.frontend.result }}"
           test "${{ needs.backend.result }}" = "success"
+          test "${{ needs.integracion.result }}" = "success"
           test "${{ needs.frontend.result }}" = "success"
