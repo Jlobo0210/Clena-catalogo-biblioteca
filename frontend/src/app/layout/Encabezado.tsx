@@ -1,4 +1,5 @@
 import {
+  BookMarked,
   CircleHelp,
   CircleUserRound,
   Home,
@@ -135,6 +136,20 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
               <small>Contacto y asistencia</small>
             </span>
           </Link>
+          {usuario ? (
+            <NavLink
+              className={({ isActive }) =>
+                `${styles.enlaceNav} ${isActive ? styles.activo : ''}`
+              }
+              to={RUTAS.misPrestamos}
+            >
+              <BookMarked aria-hidden="true" size={20} />
+              <span>
+                <strong>Mis préstamos</strong>
+                <small>Vencimientos y devoluciones</small>
+              </span>
+            </NavLink>
+          ) : null}
           {tieneRol('PERSONAL', 'ADMINISTRADOR') ? (
             <NavLink
               className={({ isActive }) =>
