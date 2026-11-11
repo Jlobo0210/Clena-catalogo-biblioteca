@@ -23,12 +23,14 @@ import type { AccessTokenPayload } from '../../../auth/domain/services/token-ser
 import { Autenticado } from '../../../auth/presentation/decorators/autenticado.decorator';
 import { UsuarioActual } from '../../../auth/presentation/decorators/usuario-actual.decorator';
 import { ErrorResponse } from '../../../../shared/presentation/http/error-response';
+import { ListarMisPrestamosUseCase } from '../../application/use-cases/listar-mis-prestamos.use-case';
 import { ListarPrestamosUseCase } from '../../application/use-cases/listar-prestamos.use-case';
 import { ObtenerPrestamoUseCase } from '../../application/use-cases/obtener-prestamo.use-case';
 import { RegistrarDevolucionUseCase } from '../../application/use-cases/registrar-devolucion.use-case';
 import { RegistrarPrestamoUseCase } from '../../application/use-cases/registrar-prestamo.use-case';
 import {
   ListarPrestamosQueryDto,
+  MisPrestamosQueryDto,
   RegistrarPrestamoDto,
 } from '../dtos/prestamo-request.dto';
 import {
@@ -36,7 +38,10 @@ import {
   PrestamoResponse,
 } from '../dtos/prestamo-response.dto';
 
-/** HU-26: préstamos y devoluciones. Todo es solo para el personal y el administrador. */
+/**
+ * HU-26: préstamos y devoluciones, solo para el personal y el administrador.
+ * HU-27: GET /prestamos/mios, para cualquier usuario con sesión.
+ */
 @ApiTags('prestamos')
 @Controller('prestamos')
 @Autenticado(Rol.PERSONAL, Rol.ADMINISTRADOR)
@@ -46,6 +51,7 @@ export class PrestamosController {
     private readonly registrarDevolucion: RegistrarDevolucionUseCase,
     private readonly listarPrestamos: ListarPrestamosUseCase,
     private readonly obtenerPrestamo: ObtenerPrestamoUseCase,
+    private readonly listarMisPrestamos: ListarMisPrestamosUseCase,
   ) {}
 
   @Post()
@@ -94,6 +100,22 @@ export class PrestamosController {
   @ApiBadRequestResponse({ type: ErrorResponse })
   listar(@Query() query: ListarPrestamosQueryDto) {
     return this.listarPrestamos.execute(query);
+  }
+
+  /** Va antes de GET :id para que «mios» no se tome como un id. */
+  @Get('mios')
+  @Autenticado()
+  @ApiOperation({
+    summary:
+      'Mis préstamos (HU-27): activos e históricos del usuario con sesión iniciada',
+  })
+  @ApiOkResponse({ type: PaginaPrestamosResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  mios(
+    @Query() query: MisPrestamosQueryDto,
+    @UsuarioActual() usuario: AccessTokenPayload,
+  ) {
+    return this.listarMisPrestamos.execute(usuario.sub, query);
   }
 
   @Get(':id')

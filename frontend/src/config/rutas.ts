@@ -6,6 +6,7 @@ export const RUTAS = {
   ingresar: '/ingresar',
   registro: '/registro',
   miCuenta: '/mi-cuenta',
+  misPrestamos: '/mis-prestamos',
   panel: '/panel',
   usuarios: '/panel/usuarios',
 } as const;

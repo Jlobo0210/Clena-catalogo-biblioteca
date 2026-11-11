@@ -37,3 +37,8 @@
   margin: 0;
   color: var(--color-texto-secundario);
 }
+
+.nota a {
+  color: var(--color-azul-profundo);
+  font-weight: 700;
+}
