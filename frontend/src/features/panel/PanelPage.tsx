@@ -1,11 +1,11 @@
-import { BookCopy, Users } from 'lucide-react';
+import { BookCopy, FileUp, Tags, UserPen, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
 import { useSesion } from '../auth/sesion/contextoSesion';
 import { NOMBRE_ROL } from '../auth/types';
 import styles from './PanelPage.module.css';
 
-/** Punto de entrada del personal y la administración. Las secciones se completan en HU-25. */
+/** Punto de entrada del personal y la administración (HU-25). */
 export function PanelPage() {
   const { tieneRol, usuario } = useSesion();
 
@@ -17,10 +17,37 @@ export function PanelPage() {
       </p>
       <ul className={styles.opciones}>
         <li className={styles.opcion}>
+          <UserPen aria-hidden="true" size={28} />
+          <div>
+            <h2>
+              <Link to={RUTAS.panelAutores}>Autores</Link>
+            </h2>
+            <p>Agrega, corrige o elimina los autores del catálogo.</p>
+          </div>
+        </li>
+        <li className={styles.opcion}>
+          <Tags aria-hidden="true" size={28} />
+          <div>
+            <h2>
+              <Link to={RUTAS.panelTemas}>Temas</Link>
+            </h2>
+            <p>Organiza los temas con los que se clasifican y exploran los libros.</p>
+          </div>
+        </li>
+        <li className={styles.opcion}>
+          <FileUp aria-hidden="true" size={28} />
+          <div>
+            <h2>
+              <Link to={RUTAS.panelImportar}>Importar desde CSV</Link>
+            </h2>
+            <p>Carga muchos libros y ejemplares a la vez con la plantilla.</p>
+          </div>
+        </li>
+        <li className={styles.opcion}>
           <BookCopy aria-hidden="true" size={28} />
           <div>
-            <h2>Gestionar el catálogo</h2>
-            <p>Libros, autores, temas y ejemplares. Disponible pronto.</p>
+            <h2>Libros y ejemplares</h2>
+            <p>Registro y edición de libros y de sus ejemplares. Disponible pronto.</p>
           </div>
         </li>
         {tieneRol('ADMINISTRADOR') ? (
