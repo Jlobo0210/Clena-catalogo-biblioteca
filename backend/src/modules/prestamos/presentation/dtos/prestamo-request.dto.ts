@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional, OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsEmail,
@@ -94,3 +94,9 @@ export class ListarPrestamosQueryDto {
   @IsIn(DIRECCIONES)
   direccion?: (typeof DIRECCIONES)[number];
 }
+
+/** HU-27: mismos filtros, sin usuario ni ejemplar (el usuario sale del token). */
+export class MisPrestamosQueryDto extends OmitType(ListarPrestamosQueryDto, [
+  'usuarioId',
+  'ejemplarId',
+] as const) {}

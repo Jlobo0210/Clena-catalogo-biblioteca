@@ -10,6 +10,7 @@ import { IngresarPage } from '../features/auth/pages/IngresarPage';
 import { RegistroPage } from '../features/auth/pages/RegistroPage';
 import { MiCuentaPage } from '../features/cuenta/MiCuentaPage';
 import { PanelPage } from '../features/panel/PanelPage';
+import { MisPrestamosPage } from '../features/prestamos/MisPrestamosPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 
 export function RutasApp() {
@@ -32,6 +33,7 @@ export function RutasApp() {
         {/* Cualquier persona con sesión iniciada */}
         <Route element={<RutaProtegida />}>
           <Route path={RUTAS.miCuenta} element={<MiCuentaPage />} />
+          <Route path={RUTAS.misPrestamos} element={<MisPrestamosPage />} />
         </Route>
 
         {/* Personal del CLENA y administración (HU-13) */}

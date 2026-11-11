@@ -5,6 +5,7 @@ import {
 } from '../../../../shared/domain/domain-error';
 import { IdsSecuenciales } from '../../../../../test/fakes/auth.fakes';
 import { PrestamosEnMemoria } from '../../../../../test/fakes/prestamos.fakes';
+import { ListarMisPrestamosUseCase } from './listar-mis-prestamos.use-case';
 import { ListarPrestamosUseCase } from './listar-prestamos.use-case';
 import { ObtenerPrestamoUseCase } from './obtener-prestamo.use-case';
 import { RegistrarDevolucionUseCase } from './registrar-devolucion.use-case';
@@ -219,5 +220,26 @@ describe('ListarPrestamosUseCase y ObtenerPrestamoUseCase', () => {
     await expect(s.obtener.execute('no-existe')).rejects.toBeInstanceOf(
       NotFoundError,
     );
+  });
+});
+
+describe('ListarMisPrestamosUseCase (HU-27)', () => {
+  it('solo devuelve los préstamos del usuario indicado', async () => {
+    const s = montar();
+    s.prestamos.conUsuario('u-2', 'Otra Persona', 'otra@example.com');
+    await s.prestar.execute({ ejemplarId: 'e-1', usuarioId: 'u-1' }, 's-1');
+    await s.prestar.execute({ ejemplarId: 'e-2', usuarioId: 'u-2' }, 's-1');
+    const mios = new ListarMisPrestamosUseCase(s.listar);
+
+    const pagina = await mios.execute('u-1', {
+      estado: 'SIN_DEVOLVER',
+      ordenarPor: 'fechaLimite',
+      direccion: 'asc',
+    });
+
+    expect(pagina).toMatchObject({
+      total: 1,
+      items: [{ usuario: { id: 'u-1' }, ejemplar: { id: 'e-1' } }],
+    });
   });
 });

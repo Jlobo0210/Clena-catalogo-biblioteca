@@ -159,6 +159,34 @@ describe('Préstamos (e2e)', () => {
     await http().get('/api/v1/prestamos/no-uuid').set(PERSONAL).expect(400);
   });
 
+  it('HU-27: cualquier usuario ve solo sus préstamos en /prestamos/mios', async () => {
+    await http().get('/api/v1/prestamos/mios').expect(401);
+
+    const mios = await http()
+      .get('/api/v1/prestamos/mios')
+      .set(PUBLICO)
+      .query({
+        estado: 'SIN_DEVOLVER',
+        ordenarPor: 'fechaLimite',
+        direccion: 'asc',
+      })
+      .expect(200);
+    expect(mios.body).toMatchObject({ total: 1, items: [{ id: prestamo.id }] });
+
+    const ajenos = await http()
+      .get('/api/v1/prestamos/mios')
+      .set(ADMIN)
+      .expect(200);
+    expect(ajenos.body).toMatchObject({ total: 0 });
+
+    // No se puede pedir los préstamos de otra persona por parámetro.
+    await http()
+      .get('/api/v1/prestamos/mios')
+      .set(PUBLICO)
+      .query({ usuarioId: PERSONAL_ID })
+      .expect(400);
+  });
+
   it('registra la devolución una sola vez y el ejemplar queda disponible', async () => {
     const res = await http()
       .post(`/api/v1/prestamos/${prestamo.id}/devolucion`)
