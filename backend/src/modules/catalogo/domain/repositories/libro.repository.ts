@@ -29,6 +29,16 @@ export interface ConsultaBusqueda {
   frase: string;
   pagina: number;
   tamano: number;
+  /** HU-22: filtros que se combinan con la búsqueda de texto. */
+  idioma?: string;
+  tipoMaterial?: TipoMaterial;
+  temaId?: string;
+  anioDesde?: number;
+  anioHasta?: number;
+  soloDisponibles?: boolean;
+  /** HU-22: forzar orden por título o año en vez de relevancia. */
+  ordenarPor?: OrdenLibros;
+  direccion?: Direccion;
 }
 
 /**

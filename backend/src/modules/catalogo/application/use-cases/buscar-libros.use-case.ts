@@ -17,6 +17,8 @@ export const TERMINOS_MAX = 10;
  * el título, el autor o el tema; cada palabra debe aparecer en alguno de ellos
  * y los resultados salen del más al menos relevante.
  * HU-21: el repositorio compara sin tildes y tolera errores de escritura.
+ * HU-22: los filtros (idioma, tipo, tema, año, disponibilidad) y el ordenamiento
+ * se combinan con la búsqueda de texto.
  */
 export class BuscarLibrosUseCase {
   constructor(private readonly libros: LibroRepository) {}
@@ -41,11 +43,26 @@ export class BuscarLibrosUseCase {
       Math.max(1, Math.floor(input.tamano ?? TAMANO_PAGINA_POR_DEFECTO)),
     );
 
+    // HU-22: ordenarPor='relevancia' (o sin especificar) usa el orden por relevancia
+    // del SQL; cualquier otro valor fuerza orden determinista por título o año.
+    const ordenarPor =
+      input.ordenarPor === 'relevancia' || input.ordenarPor === undefined
+        ? undefined
+        : input.ordenarPor;
+
     const { items, total } = await this.libros.buscar({
       terminos,
       frase,
       pagina,
       tamano,
+      idioma: input.idioma,
+      tipoMaterial: input.tipoMaterial,
+      temaId: input.temaId,
+      anioDesde: input.anioDesde,
+      anioHasta: input.anioHasta,
+      soloDisponibles: input.soloDisponibles,
+      ordenarPor,
+      direccion: input.direccion,
     });
     return { items: items.map(aLibroOutput), total, pagina, tamano };
   }
