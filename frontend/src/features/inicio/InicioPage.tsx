@@ -1,5 +1,5 @@
 import { useTotalLibros } from '../catalogo/hooks/useTotalLibros';
-import { AccesosDirectos } from './components/AccesosDirectos';
+import { AgendaCultural } from './components/AgendaCultural';
 import { BannerAyuda } from './components/BannerAyuda';
 import { PortadaBusqueda } from './components/PortadaBusqueda';
 import { ServiciosSala } from './components/ServiciosSala';
@@ -13,7 +13,7 @@ export function InicioPage() {
       <title>Inicio · Consulta Fácil</title>
       <div className={styles.inicio}>
         <PortadaBusqueda totalLibros={total} />
-        <AccesosDirectos />
+        <AgendaCultural />
         <ServiciosSala />
         <BannerAyuda />
       </div>

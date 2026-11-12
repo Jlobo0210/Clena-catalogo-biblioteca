@@ -19,10 +19,12 @@ export const PARAMETROS_BUSQUEDA = {
 interface ParametrosParaConstruir {
   q?: string;
   ambito?: AmbitoId;
+  pagina?: number;
 }
 
 export function construirUrlBusqueda({
   ambito = 'todo',
+  pagina = 1,
   q = '',
 }: ParametrosParaConstruir = {}): string {
   const params = new URLSearchParams();
@@ -34,6 +36,9 @@ export function construirUrlBusqueda({
   if (ambito !== 'todo') {
     params.set(PARAMETROS_BUSQUEDA.ambito, ambito);
   }
+  if (pagina > 1) {
+    params.set(PARAMETROS_BUSQUEDA.pagina, String(pagina));
+  }
 
   const consulta = params.toString();
   return consulta ? `${RUTAS.buscar}?${consulta}` : RUTAS.buscar;
@@ -42,12 +47,15 @@ export function construirUrlBusqueda({
 export function leerParametrosBusqueda(params: URLSearchParams): {
   q: string;
   ambito: AmbitoId;
+  pagina: number;
 } {
   const ambito = params.get(PARAMETROS_BUSQUEDA.ambito) ?? 'todo';
+  const pagina = Number(params.get(PARAMETROS_BUSQUEDA.pagina));
 
   return {
     q: params.get(PARAMETROS_BUSQUEDA.texto) ?? '',
     ambito: esAmbitoId(ambito) ? ambito : 'todo',
+    pagina: Number.isInteger(pagina) && pagina > 1 ? pagina : 1,
   };
 }
 

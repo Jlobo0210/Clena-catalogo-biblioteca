@@ -7,8 +7,8 @@
   display: flex;
   width: 100%;
   align-items: center;
-  gap: var(--espacio-3);
-  padding: var(--espacio-3);
+  gap: 0.5rem;
+  padding: 0.5rem;
   background: var(--color-superficie);
   border-radius: var(--radio-md);
   box-shadow: var(--sombra-xl);
@@ -22,7 +22,8 @@
 }
 
 .selectorContenedor {
-  min-width: var(--ancho-selector);
+  flex: 0 1 13rem;
+  min-width: 11rem;
 }
 
 .iconoSelector,
@@ -40,7 +41,7 @@
 
 .selector,
 .campo {
-  min-height: var(--alto-control-grande);
+  min-height: 3.25rem;
   border: 0;
   border-radius: var(--radio-sm);
   font-size: var(--texto-cuerpo);
@@ -61,12 +62,14 @@
 }
 
 .campoContenedor {
-  flex: 1;
+  flex: 1 1 28rem;
+  min-width: 0;
 }
 
 .campo {
   width: 100%;
-  padding: 0 var(--espacio-4) 0 var(--espacio-10);
+  min-width: 0;
+  padding: 0 var(--espacio-3) 0 var(--espacio-10);
   color: var(--color-texto);
   background: var(--color-superficie);
   border: var(--borde-fino) solid var(--color-borde);
@@ -109,6 +112,6 @@
   }
 
   .barra button {
-    min-height: var(--alto-control-grande);
+    min-height: 3.25rem;
   }
 }

@@ -1,8 +1,111 @@
 .pagina {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  display: grid;
+  gap: var(--espacio-6);
+  padding: var(--espacio-8) 0 var(--espacio-12);
 }
+
+/* Misma franja oscura de la portada: el mensaje de error del formulario está pensado para ese fondo. */
+.franja {
+  display: grid;
+  gap: var(--espacio-4);
+  padding: var(--espacio-8);
+  color: var(--color-superficie);
+  background: var(--color-azul-aduana);
+  border-radius: var(--radio-lg);
+}
+
+.franja h1 {
+  margin: 0;
+  font-size: var(--texto-titular);
+  line-height: 1.2;
+}
+
+.nota {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-azul-profundo);
+  background: var(--color-ambar-claro);
+  border-radius: var(--radio-md);
+}
+
+.nota svg {
+  flex-shrink: 0;
+  margin-top: var(--espacio-1);
+}
+
+.resultados {
+  display: grid;
+  gap: var(--espacio-4);
+}
+
+.resultados h2 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titulo);
+  overflow-wrap: anywhere;
+}
+
+.resultados > p {
+  margin: 0;
+}
+
+.titulo:focus {
+  outline: none;
+}
+
+.titulo:focus-visible {
+  outline: 0.1875rem solid var(--color-foco);
+  outline-offset: 0.1875rem;
+}
+
+.orden {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+}
+
+.lista {
+  display: grid;
+  gap: var(--espacio-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.error {
+  display: grid;
+  justify-items: start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-6);
+  background: var(--color-superficie);
+  border-left: var(--espacio-1) solid var(--color-error);
+  border-radius: var(--radio-md);
+}
+
+.error h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  color: var(--color-error) !important;
+}
+
+.error p {
+  margin: 0;
+}
+
+@media (max-width: 639px) {
+  .pagina {
+    padding-top: var(--espacio-4);
+  }
+
+  .franja {
+    padding: var(--espacio-4);
+  }
+}
+
+/* ── HU-22: layout búsqueda con filtros ───────────────────────────────────── */
 
 .encabezado {
   margin-bottom: 1.5rem;
@@ -26,7 +129,6 @@
   margin: 0;
 }
 
-/* Layout de dos columnas */
 .cuerpo {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -57,21 +159,6 @@
   margin-bottom: 0.75rem;
 }
 
-/* Resultados */
-.resultados {
-  min-height: 300px;
-}
-
-.lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-/* Estados */
 .estado {
   color: var(--color-text-muted, #6b7280);
   font-size: 0.95rem;

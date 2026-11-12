@@ -8,10 +8,9 @@ import {
   ResultadoFila,
 } from '../../domain/repositories/importador-catalogo';
 import { aSlug } from '../mappers/tema.mapper';
+import { codigoUbicacionLibre } from './codigo-ubicacion';
 
 type Tx = Prisma.TransactionClient;
-
-const CODIGO_UBICACION_MAX = 30;
 
 /** Guarda cada fila del CSV en su propia transacción (HU-19). Reglas: ver ImportadorCatalogo. */
 @Injectable()
@@ -171,15 +170,7 @@ async function obtenerUbicacion(
   });
   if (existente) return { id: existente.id, creada: false };
 
-  const base = [u.sala, u.seccion, u.estante]
-    .map((parte) => aSlug(parte).toUpperCase())
-    .join('-')
-    .slice(0, CODIGO_UBICACION_MAX);
-  let codigo = base;
-  for (let n = 2; await tx.ubicacion.findUnique({ where: { codigo } }); n++) {
-    const sufijo = `-${n}`;
-    codigo = base.slice(0, CODIGO_UBICACION_MAX - sufijo.length) + sufijo;
-  }
+  const codigo = await codigoUbicacionLibre(tx, u);
   const creada = await tx.ubicacion.create({
     data: { sala: u.sala, seccion: u.seccion, estante: u.estante, codigo },
     select: { id: true },

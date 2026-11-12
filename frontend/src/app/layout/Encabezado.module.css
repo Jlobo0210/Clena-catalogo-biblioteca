@@ -9,17 +9,17 @@
 .interno {
   display: flex;
   width: min(calc(100% - var(--espacio-8)), var(--ancho-encabezado));
-  min-height: var(--espacio-16);
+  min-height: 4rem;
   align-items: center;
   justify-content: space-between;
-  gap: var(--espacio-8);
+  gap: var(--espacio-4);
   margin: 0 auto;
-  padding: var(--espacio-4) 0;
+  padding: 0.625rem 0;
 }
 
 .marcaBloque {
   display: grid;
-  grid-template-columns: var(--tamano-marca) 1fr;
+  grid-template-columns: 2.75rem 1fr;
   align-items: center;
   gap: var(--espacio-3);
   min-width: max-content;
@@ -27,7 +27,7 @@
 
 .marcaTexto {
   display: grid;
-  gap: var(--espacio-1);
+  gap: 0.125rem;
 }
 
 .meta {
@@ -36,7 +36,7 @@
   gap: var(--espacio-2);
   margin: 0;
   color: var(--color-texto-claro);
-  font-size: var(--texto-pequeno);
+  font-size: 0.75rem;
   line-height: 1.2;
 }
 
@@ -56,7 +56,7 @@
 
 .nombreBiblioteca {
   color: var(--color-superficie);
-  font-size: var(--texto-titulo);
+  font-size: 1.125rem;
   line-height: 1.2;
   text-decoration: none;
 }
@@ -68,51 +68,74 @@
 
 .navegacion {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--espacio-4);
+  width: 100%;
+  align-items: stretch;
+  gap: 0.375rem;
+  margin: 0 auto;
+  padding: 0.375rem max(var(--espacio-4), calc((100% - var(--ancho-encabezado)) / 2));
+  background: var(--color-superficie);
+  border-top: var(--borde-fino) solid var(--color-superficie-alta);
+  border-bottom: var(--borde-fino) solid var(--color-borde);
+  box-shadow: var(--sombra-sm);
 }
 
 .enlaceNav {
   display: inline-flex;
-  min-height: var(--alto-control);
+  flex: 1;
+  min-height: 3.25rem;
   align-items: center;
-  gap: var(--espacio-2);
-  padding: var(--espacio-3) var(--espacio-5);
-  color: var(--color-texto-nav);
+  gap: 0.625rem;
+  padding: 0.5rem 0.875rem;
+  color: var(--color-azul-profundo);
+  background: var(--color-superficie);
+  border: var(--borde-fino) solid transparent;
   border-radius: var(--radio-sm);
-  font-size: var(--texto-etiqueta);
+  font-size: 0.9375rem;
   text-decoration: none;
 }
 
 .enlaceNav:hover,
 .activo {
   color: var(--color-superficie);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-azul-aduana);
+}
+
+.enlaceNav:hover {
+  border-color: var(--color-borde);
+  color: var(--color-azul-profundo);
+  background: var(--color-superficie-baja);
+}
+
+.activo:hover {
+  color: var(--color-superficie);
+  background: var(--color-azul-aduana);
 }
 
 .terminal {
   display: flex;
   align-items: center;
-  gap: var(--espacio-4);
-  padding-left: var(--espacio-6);
-  border-left: var(--borde-fino) solid rgba(255, 255, 255, 0.2);
+  gap: var(--espacio-3);
 }
 
 .terminalTexto {
-  display: grid;
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
   color: var(--color-texto-claro);
-  font-size: var(--texto-pequeno);
-  line-height: 1.2;
-  text-align: right;
+  background: rgba(255, 255, 255, 0.1);
+  border: var(--borde-fino) solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radio-sm);
+  font-size: 0.875rem;
 }
 
 .terminalTexto strong {
   color: var(--color-superficie);
 }
 
-.usuario {
-  color: var(--color-ambar-claro);
+.terminalIcono {
+  color: var(--color-ambar);
+  flex: 0 0 auto;
 }
 
 .reiniciar {
@@ -125,6 +148,30 @@
   border: 0;
   border-radius: 50%;
   cursor: pointer;
+}
+
+.usuarioEnlace {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  color: var(--color-superficie);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.enlaceNav span {
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+.enlaceNav small {
+  color: var(--color-texto-secundario);
+  font-size: 0.8125rem;
+}
+
+.activo small,
+.enlaceNav:hover small {
+  color: var(--color-superficie-alta);
 }
 
 @media (min-width: 1024px) {
@@ -142,20 +189,41 @@
   }
 
   .navegacion {
-    order: 3;
-    width: 100%;
-    justify-content: flex-start;
+    overflow-x: auto;
+    padding-right: var(--espacio-4);
+    padding-left: var(--espacio-4);
   }
 }
 
 @media (max-width: 639px) {
-  .terminalTexto,
-  .usuario {
+  /* La marca se ajusta al ancho del celular en vez de ensanchar toda la página (HU-24, 360 px). */
+  .marcaBloque {
+    min-width: 0;
+  }
+
+  .meta {
+    flex-wrap: wrap;
+  }
+
+  /* Con sesión iniciada: terminal, cuenta y botones bajan de línea si no caben. */
+  .terminal {
+    flex-wrap: wrap;
+  }
+
+  .terminalTexto span {
     display: none;
   }
 
   .interno {
     width: min(calc(100% - var(--espacio-4)), var(--ancho-encabezado));
+  }
+
+  .navegacion {
+    width: 100%;
+  }
+
+  .enlaceNav {
+    min-width: 10rem;
   }
 }
 

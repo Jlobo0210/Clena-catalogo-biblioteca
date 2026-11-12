@@ -12,7 +12,14 @@ import { MiCuentaPage } from '../features/cuenta/MiCuentaPage';
 import { PanelPage } from '../features/panel/PanelPage';
 import { MisPrestamosPage } from '../features/prestamos/MisPrestamosPage';
 import { PrestamosPersonalPage } from '../features/prestamos/PrestamosPersonalPage';
+import { AutoresPage } from '../features/panel/AutoresPage';
+import { TemasPage } from '../features/panel/TemasPage';
+import { ImportarPage } from '../features/panel/ImportarPage';
+import { LibrosPanelPage } from '../features/panel/LibrosPanelPage';
+import { LibroPanelPage } from '../features/panel/LibroPanelPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
+import { ExplorarPage } from '../features/temas/ExplorarPage';
+import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
 
 export function RutasApp() {
   return (
@@ -20,14 +27,12 @@ export function RutasApp() {
       <Route element={<AppLayout />}>
         <Route path={RUTAS.inicio} element={<InicioPage />} />
         <Route path={RUTAS.buscar} element={<BusquedaPage />} />
+        <Route path={RUTAS.libro} element={<DetalleLibroPage />} />
         <Route
           path={RUTAS.busquedaAvanzada}
           element={<PaginaPendiente titulo="Búsqueda avanzada" />}
         />
-        <Route
-          path={RUTAS.temas}
-          element={<PaginaPendiente titulo="Explorar por tema" />}
-        />
+        <Route path={RUTAS.temas} element={<ExplorarPage />} />
         <Route path={RUTAS.ingresar} element={<IngresarPage />} />
         <Route path={RUTAS.registro} element={<RegistroPage />} />
 
@@ -41,6 +46,12 @@ export function RutasApp() {
         <Route element={<RutaProtegida roles={['PERSONAL', 'ADMINISTRADOR']} />}>
           <Route path={RUTAS.panel} element={<PanelPage />} />
           <Route path={RUTAS.prestamosPersonal} element={<PrestamosPersonalPage />} />
+          <Route path={RUTAS.panelAutores} element={<AutoresPage />} />
+          <Route path={RUTAS.panelTemas} element={<TemasPage />} />
+          <Route path={RUTAS.panelImportar} element={<ImportarPage />} />
+          <Route path={RUTAS.panelLibros} element={<LibrosPanelPage />} />
+          <Route path={RUTAS.panelLibroNuevo} element={<LibroPanelPage />} />
+          <Route path={RUTAS.panelLibro} element={<LibroPanelPage />} />
         </Route>
 
         {/* Solo administración */}
