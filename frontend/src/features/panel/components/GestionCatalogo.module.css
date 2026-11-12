@@ -131,6 +131,8 @@
 }
 
 .tablaContenedor {
+  /* Contiene los textos ocultos (p. ej. «Acciones») para que no ensanchen la página en celular. */
+  position: relative;
   overflow-x: auto;
   background: var(--color-superficie);
   border-radius: var(--radio-lg);
@@ -251,4 +253,22 @@
   .orden {
     width: 100%;
   }
+}
+
+/* Parte 2: enlaces con apariencia de botón y formulario de libros. */
+.enlacePrincipal {
+  display: inline-flex;
+  min-height: var(--alto-control);
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-4);
+  color: var(--color-superficie);
+  background: var(--color-azul-profundo);
+  border-radius: var(--radio-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a.secundario {
+  text-decoration: none;
 }
