@@ -30,7 +30,8 @@ export class DisponibilidadResponse {
     nullable: true,
     type: String,
     example: '2026-11-20T00:00:00.000Z',
-    description: 'Fecha límite del préstamo activo más próximo a vencer. Solo cuando disponibles === 0.',
+    description:
+      'Fecha límite del préstamo activo más próximo a vencer. Solo cuando disponibles === 0.',
   })
   proximaDevolucion!: string | null;
 }
