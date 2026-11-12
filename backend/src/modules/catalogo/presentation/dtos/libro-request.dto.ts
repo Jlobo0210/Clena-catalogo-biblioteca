@@ -10,6 +10,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  IsBoolean,
   IsUUID,
   Length,
   Max,
@@ -177,6 +178,9 @@ export class ListarLibrosQueryDto {
   direccion?: Direccion;
 }
 
+const ORDENES_BUSQUEDA = ['relevancia', 'titulo', 'anio'] as const;
+type OrdenBusqueda = (typeof ORDENES_BUSQUEDA)[number];
+
 export class BuscarLibrosQueryDto {
   @ApiProperty({
     example: 'garcia marquez',
@@ -203,4 +207,58 @@ export class BuscarLibrosQueryDto {
   @Min(1)
   @Max(100)
   tamano?: number;
+
+  // ── HU-22: filtros ──────────────────────────────────────────────────────
+
+  @ApiPropertyOptional({ example: 'es', description: 'Código ISO 639-1' })
+  @IsOptional()
+  @IsString()
+  @Length(2, 2)
+  idioma?: string;
+
+  @ApiPropertyOptional({ enum: TIPOS_MATERIAL })
+  @IsOptional()
+  @IsIn(TIPOS_MATERIAL)
+  tipoMaterial?: TipoMaterial;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID()
+  temaId?: string;
+
+  @ApiPropertyOptional({ example: 1990 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  anioDesde?: number;
+
+  @ApiPropertyOptional({ example: 2024 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  anioHasta?: number;
+
+  @ApiPropertyOptional({
+    description: 'true para mostrar solo libros con ejemplares disponibles',
+  })
+  @IsOptional()
+  @IsBoolean()
+  @Type(() => Boolean)
+  soloDisponibles?: boolean;
+
+  // ── HU-22: ordenamiento ─────────────────────────────────────────────────
+
+  @ApiPropertyOptional({
+    enum: ORDENES_BUSQUEDA,
+    default: 'relevancia',
+    description: 'Criterio de ordenamiento',
+  })
+  @IsOptional()
+  @IsIn(ORDENES_BUSQUEDA)
+  ordenarPor?: OrdenBusqueda;
+
+  @ApiPropertyOptional({ enum: DIRECCIONES, default: 'desc' })
+  @IsOptional()
+  @IsIn(DIRECCIONES)
+  direccion?: Direccion;
 }

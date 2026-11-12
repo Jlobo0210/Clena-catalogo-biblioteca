@@ -1,0 +1,84 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+}
+
+.titulo {
+  margin: 0;
+  font-size: var(--texto-cuerpo);
+  font-weight: 700;
+  color: var(--color-azul-profundo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.etiqueta {
+  font-size: var(--texto-pequeno);
+  font-weight: 600;
+  color: var(--color-texto-secundario);
+}
+
+.selector {
+  width: 100%;
+  padding: var(--espacio-2) var(--espacio-3);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font-size: var(--texto-cuerpo);
+  cursor: pointer;
+}
+
+.selector:focus {
+  outline: 2px solid var(--color-azul-profundo);
+  outline-offset: 1px;
+}
+
+.rangoAnio {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.inputAnio {
+  flex: 1;
+  min-width: 0;
+  padding: var(--espacio-2) var(--espacio-3);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font-size: var(--texto-cuerpo);
+}
+
+.inputAnio:focus {
+  outline: 2px solid var(--color-azul-profundo);
+  outline-offset: 1px;
+}
+
+.guion {
+  color: var(--color-texto-secundario);
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  font-size: var(--texto-cuerpo);
+  cursor: pointer;
+  user-select: none;
+}
+
+.check {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: var(--color-azul-profundo);
+}

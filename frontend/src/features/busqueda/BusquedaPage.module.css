@@ -104,3 +104,71 @@
     padding: var(--espacio-4);
   }
 }
+
+/* ── HU-22: layout búsqueda con filtros ───────────────────────────────────── */
+
+.encabezado {
+  margin-bottom: 1.5rem;
+}
+
+.tituloPagina {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text, #1a1a1a);
+  margin: 0 0 0.25rem;
+}
+
+.tituloPagina em {
+  font-style: normal;
+  color: var(--color-primary, #1d4ed8);
+}
+
+.conteo {
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #6b7280);
+  margin: 0;
+}
+
+.cuerpo {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .cuerpo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.columnaFiltros {
+  position: sticky;
+  top: 1rem;
+}
+
+.filtrosHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.estado {
+  color: var(--color-text-muted, #6b7280);
+  font-size: 0.95rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.estadoError {
+  color: var(--color-error, #dc2626);
+  font-size: 0.95rem;
+  padding: 2rem 0;
+  text-align: center;
+}

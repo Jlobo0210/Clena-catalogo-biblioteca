@@ -42,6 +42,16 @@ export interface BuscarLibrosInput {
   q: string;
   pagina?: number;
   tamano?: number;
+  /** HU-22: filtros que se combinan con la búsqueda de texto. */
+  idioma?: string;
+  tipoMaterial?: TipoMaterial;
+  temaId?: string;
+  anioDesde?: number;
+  anioHasta?: number;
+  soloDisponibles?: boolean;
+  /** HU-22: ordenamiento (relevancia es el default para búsqueda). */
+  ordenarPor?: 'relevancia' | OrdenLibros;
+  direccion?: Direccion;
 }
 
 export interface LibroOutput {
