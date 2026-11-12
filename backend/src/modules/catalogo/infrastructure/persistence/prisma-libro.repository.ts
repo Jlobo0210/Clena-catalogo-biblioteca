@@ -162,13 +162,51 @@ export class PrismaLibroRepository implements LibroRepository {
       -- Cada término tiene que aparecer en algún lado.
       WHERE pl.cubiertos = (SELECT count(*) FROM termino)`;
 
+    // HU-22: filtros que se aplican sobre el conjunto de resultados del FTS.
+    const filtros: Prisma.Sql[] = [];
+    if (c.idioma) filtros.push(Prisma.sql`l.idioma = ${c.idioma}`);
+    if (c.tipoMaterial)
+      filtros.push(
+        Prisma.sql`l.tipo_material = ${c.tipoMaterial}::"TipoMaterial"`,
+      );
+    if (c.temaId)
+      filtros.push(
+        Prisma.sql`EXISTS (SELECT 1 FROM libro_tema lt2 WHERE lt2.libro_id = l.id AND lt2.tema_id = ${c.temaId})`,
+      );
+    if (c.anioDesde !== undefined)
+      filtros.push(Prisma.sql`l.anio_publicacion >= ${c.anioDesde}`);
+    if (c.anioHasta !== undefined)
+      filtros.push(Prisma.sql`l.anio_publicacion <= ${c.anioHasta}`);
+    if (c.soloDisponibles)
+      filtros.push(
+        Prisma.sql`EXISTS (SELECT 1 FROM ejemplar e WHERE e.libro_id = l.id AND e.estado = 'DISPONIBLE'::"EstadoEjemplar")`,
+      );
+
+    const clausulaFiltros =
+      filtros.length > 0
+        ? Prisma.sql` AND ${Prisma.join(filtros, ' AND ')}`
+        : Prisma.empty;
+
+    // HU-22: orden configurable; por defecto sigue siendo relevancia.
+    const ordenSQL =
+      c.ordenarPor === 'titulo'
+        ? Prisma.sql`titulo ${c.direccion === 'desc' ? Prisma.sql`DESC` : Prisma.sql`ASC`}, id ASC`
+        : c.ordenarPor === 'anio'
+          ? Prisma.sql`anio_publicacion ${c.direccion === 'desc' ? Prisma.sql`DESC NULLS LAST` : Prisma.sql`ASC NULLS LAST`}, id ASC`
+          : Prisma.sql`relevancia DESC, titulo ASC, id ASC`;
+
     const [pagina, conteo] = await this.prisma.$transaction([
       this.prisma.$queryRaw<{ id: string }[]>`
         SELECT id FROM (${coincidencias}) c
-        ORDER BY relevancia DESC, titulo ASC, id ASC
+        JOIN libro l ON l.id = c.id
+        WHERE 1=1${clausulaFiltros}
+        ORDER BY ${ordenSQL}
         LIMIT ${c.tamano} OFFSET ${(c.pagina - 1) * c.tamano}`,
       this.prisma.$queryRaw<{ total: number }[]>`
-        SELECT count(*)::int AS total FROM (${coincidencias}) c`,
+        SELECT count(*)::int AS total
+        FROM (${coincidencias}) c
+        JOIN libro l ON l.id = c.id
+        WHERE 1=1${clausulaFiltros}`,
     ]);
 
     const ids = pagina.map((r) => r.id);

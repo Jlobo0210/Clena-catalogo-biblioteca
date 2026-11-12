@@ -1,14 +1,87 @@
 .pagina {
-  padding: var(--espacio-12) 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
 }
 
-.pagina h1 {
-  margin-top: 0;
-  color: var(--color-azul-profundo);
-  font-size: var(--texto-titular);
+.encabezado {
+  margin-bottom: 1.5rem;
 }
 
-.pagina a {
-  color: var(--color-azul-profundo);
+.tituloPagina {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text, #1a1a1a);
+  margin: 0 0 0.25rem;
+}
+
+.tituloPagina em {
+  font-style: normal;
+  color: var(--color-primary, #1d4ed8);
+}
+
+.conteo {
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #6b7280);
+  margin: 0;
+}
+
+/* Layout de dos columnas */
+.cuerpo {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .cuerpo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.columnaFiltros {
+  position: sticky;
+  top: 1rem;
+}
+
+.filtrosHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+/* Resultados */
+.resultados {
+  min-height: 300px;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Estados */
+.estado {
+  color: var(--color-text-muted, #6b7280);
+  font-size: 0.95rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.estadoError {
+  color: var(--color-error, #dc2626);
+  font-size: 0.95rem;
+  padding: 2rem 0;
+  text-align: center;
 }
