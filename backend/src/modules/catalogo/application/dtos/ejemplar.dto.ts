@@ -35,4 +35,6 @@ export interface DisponibilidadOutput {
   totalEjemplares: number;
   disponibles: number;
   disponible: boolean;
+  /** ISO 8601. Solo presente cuando disponibles === 0. */
+  proximaDevolucion: string | null;
 }

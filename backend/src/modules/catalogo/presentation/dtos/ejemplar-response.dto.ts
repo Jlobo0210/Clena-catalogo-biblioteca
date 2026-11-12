@@ -26,6 +26,13 @@ export class DisponibilidadResponse {
   @ApiProperty({ example: 3 }) totalEjemplares!: number;
   @ApiProperty({ example: 2 }) disponibles!: number;
   @ApiProperty({ example: true }) disponible!: boolean;
+  @ApiProperty({
+    nullable: true,
+    type: String,
+    example: '2026-11-20T00:00:00.000Z',
+    description: 'Fecha límite del préstamo activo más próximo a vencer. Solo cuando disponibles === 0.',
+  })
+  proximaDevolucion!: string | null;
 }
 
 export class ListaEjemplaresResponse {

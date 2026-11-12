@@ -75,6 +75,8 @@ export interface DisponibilidadDto {
   totalEjemplares: number;
   disponibles: number;
   disponible: boolean;
+  /** ISO 8601. Solo presente (no nulo) cuando disponibles === 0. */
+  proximaDevolucion: string | null;
 }
 
 export interface ListaEjemplaresDto {
