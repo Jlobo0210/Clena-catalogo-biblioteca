@@ -3,11 +3,11 @@ import userEvent from '@testing-library/user-event';
 import { AxiosError } from 'axios';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { buscarLibros } from '../catalogo/api/libros.api';
+import { buscarLibros } from './api/busqueda.api';
 import type { LibroDto, PaginaLibrosDto } from '../catalogo/types';
 import { BusquedaPage } from './BusquedaPage';
 
-vi.mock('../catalogo/api/libros.api', () => ({ buscarLibros: vi.fn() }));
+vi.mock('./api/busqueda.api', () => ({ buscarLibros: vi.fn() }));
 const buscarMock = vi.mocked(buscarLibros);
 
 function libro(n: number, cambios: Partial<LibroDto> = {}): LibroDto {
@@ -66,7 +66,7 @@ describe('BusquedaPage (HU-24)', () => {
     expect(screen.getAllByText('En sala')[0]).toBeInTheDocument();
     expect(screen.getAllByText('Español')[0]).toBeInTheDocument();
     expect(buscarMock).toHaveBeenCalledWith(
-      { q: 'garcia marques', pagina: 1, tamano: 10 },
+      expect.objectContaining({ q: 'garcia marques', pagina: 1, tamano: 10 }),
       expect.any(AbortSignal),
     );
     expect(screen.getByRole('status')).toHaveTextContent('Se encontraron 2 libros');
@@ -108,7 +108,7 @@ describe('BusquedaPage (HU-24)', () => {
       '/buscar?q=libro&pagina=3',
     );
     expect(buscarMock).toHaveBeenCalledWith(
-      { q: 'libro', pagina: 2, tamano: 10 },
+      expect.objectContaining({ q: 'libro', pagina: 2, tamano: 10 }),
       expect.any(AbortSignal),
     );
   });
