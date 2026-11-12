@@ -78,6 +78,7 @@ const lista = (items: EjemplarDto[]) => ({
     totalEjemplares: items.length,
     disponibles: items.filter((e) => e.estado === 'DISPONIBLE').length,
     disponible: true,
+    proximaDevolucion: null,
   },
 });
 const error = (status: number, message: string) =>

@@ -98,4 +98,16 @@ export class PrismaEjemplarRepository implements EjemplarRepository {
     });
     return count > 0;
   }
+
+  async proximaFechaDevolucion(libroId: string): Promise<Date | null> {
+    const result = await this.prisma.prestamo.findFirst({
+      where: {
+        fechaDevolucion: null,
+        ejemplar: { libroId },
+      },
+      orderBy: { fechaLimite: 'asc' },
+      select: { fechaLimite: true },
+    });
+    return result?.fechaLimite ?? null;
+  }
 }

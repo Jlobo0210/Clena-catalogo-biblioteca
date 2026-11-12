@@ -227,7 +227,24 @@ function Ubicacion({ ejemplares, libro }: Detalle) {
       ) : (
         <>
           {disponibles.length === 0 ? (
-            <p>Ningún ejemplar está disponible en este momento. Pregunte al personal cuándo vuelve a estar en sala.</p>
+            <p>
+              Ningún ejemplar está disponible en este momento.
+              {ejemplares.disponibilidad.proximaDevolucion ? (
+                <>
+                  {' '}Fecha estimada de devolución más próxima:{' '}
+                  <strong>
+                    {new Date(ejemplares.disponibilidad.proximaDevolucion).toLocaleDateString('es-CO', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </strong>
+                  .
+                </>
+              ) : (
+                ' Pregunte al personal cuándo vuelve a estar en sala.'
+              )}
+            </p>
           ) : null}
           <ul className={styles.ejemplares}>
             {ejemplares.items.map((ejemplar) => (

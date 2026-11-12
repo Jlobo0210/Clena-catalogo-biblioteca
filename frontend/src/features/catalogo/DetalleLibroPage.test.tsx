@@ -37,7 +37,7 @@ function ejemplar(n: number, estado: EjemplarDto['estado']): EjemplarDto {
   };
 }
 
-function lista(items: EjemplarDto[]): ListaEjemplaresDto {
+function lista(items: EjemplarDto[], proximaDevolucion: string | null = null): ListaEjemplaresDto {
   const disponibles = items.filter((e) => e.estado === 'DISPONIBLE').length;
   return {
     items,
@@ -46,6 +46,7 @@ function lista(items: EjemplarDto[]): ListaEjemplaresDto {
       totalEjemplares: items.length,
       disponibles,
       disponible: disponibles > 0,
+      proximaDevolucion,
     },
   };
 }
@@ -114,13 +115,28 @@ describe('DetalleLibroPage (HU-24)', () => {
     );
   });
 
-  it('avisa cuando ningún ejemplar está disponible', async () => {
+  it('avisa cuando ningún ejemplar está disponible sin fecha estimada', async () => {
     obtenerMock.mockResolvedValue(LIBRO);
-    ejemplaresMock.mockResolvedValue(lista([ejemplar(1, 'PRESTADO')]));
+    ejemplaresMock.mockResolvedValue(lista([ejemplar(1, 'PRESTADO')], null));
     montar();
 
     expect(await screen.findByText('Sin ejemplares disponibles ahora')).toBeInTheDocument();
     expect(screen.getByText(/Ningún ejemplar está disponible en este momento/)).toBeInTheDocument();
+    expect(screen.getByText(/Pregunte al personal/)).toBeInTheDocument();
+    expect(screen.queryByText(/Fecha estimada de devolución/)).not.toBeInTheDocument();
+  });
+
+  it('muestra la fecha estimada de devolución más próxima cuando no hay ejemplares disponibles', async () => {
+    obtenerMock.mockResolvedValue(LIBRO);
+    ejemplaresMock.mockResolvedValue(lista([ejemplar(1, 'PRESTADO')], '2026-11-20T00:00:00.000Z'));
+    montar();
+
+    expect(await screen.findByText('Sin ejemplares disponibles ahora')).toBeInTheDocument();
+    expect(screen.getByText(/Ningún ejemplar está disponible en este momento/)).toBeInTheDocument();
+    expect(screen.getByText(/Fecha estimada de devolución más próxima/)).toBeInTheDocument();
+    // Fecha formateada en español: 20 de noviembre de 2026
+    expect(screen.getByText(/20 de noviembre de 2026/)).toBeInTheDocument();
+    expect(screen.queryByText(/Pregunte al personal/)).not.toBeInTheDocument();
   });
 
   it('copia la ubicación de los ejemplares disponibles', async () => {

@@ -15,6 +15,8 @@ export interface EjemplarRepository {
   buscarUbicacionPorId(id: string): Promise<UbicacionProps | null>;
   listarUbicaciones(): Promise<UbicacionProps[]>;
   tienePrestamosActivos(ejemplarId: string): Promise<boolean>;
+  /** Fecha límite más próxima de préstamos activos del libro, o null. */
+  proximaFechaDevolucion(libroId: string): Promise<Date | null>;
 }
 
 export const EJEMPLAR_REPOSITORY = Symbol('EJEMPLAR_REPOSITORY');

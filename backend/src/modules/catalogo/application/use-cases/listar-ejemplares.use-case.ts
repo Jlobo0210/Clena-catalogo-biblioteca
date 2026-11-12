@@ -20,9 +20,15 @@ export class ListarEjemplaresUseCase {
     const libro = await this.libros.buscarPorId(libroId);
     if (!libro) throw new NotFoundError('Libro no encontrado');
 
-    const items = await this.ejemplares.listarPorLibro(libroId);
-    const disponibles =
-      await this.ejemplares.contarDisponiblesPorLibro(libroId);
+    const [items, disponibles] = await Promise.all([
+      this.ejemplares.listarPorLibro(libroId),
+      this.ejemplares.contarDisponiblesPorLibro(libroId),
+    ]);
+
+    const proximaDevolucion =
+      disponibles === 0
+        ? await this.ejemplares.proximaFechaDevolucion(libroId)
+        : null;
 
     return {
       items: items.map(aEjemplarOutput),
@@ -31,6 +37,9 @@ export class ListarEjemplaresUseCase {
         totalEjemplares: items.length,
         disponibles,
         disponible: disponibles > 0,
+        proximaDevolucion: proximaDevolucion
+          ? proximaDevolucion.toISOString()
+          : null,
       },
     };
   }
