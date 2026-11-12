@@ -190,14 +190,14 @@ export class PrismaLibroRepository implements LibroRepository {
     // HU-22: orden configurable; por defecto sigue siendo relevancia.
     const ordenSQL =
       c.ordenarPor === 'titulo'
-        ? Prisma.sql`titulo ${c.direccion === 'desc' ? Prisma.sql`DESC` : Prisma.sql`ASC`}, id ASC`
+        ? Prisma.sql`l.titulo ${c.direccion === 'desc' ? Prisma.sql`DESC` : Prisma.sql`ASC`}, l.id ASC`
         : c.ordenarPor === 'anio'
-          ? Prisma.sql`anio_publicacion ${c.direccion === 'desc' ? Prisma.sql`DESC NULLS LAST` : Prisma.sql`ASC NULLS LAST`}, id ASC`
-          : Prisma.sql`relevancia DESC, titulo ASC, id ASC`;
+          ? Prisma.sql`l.anio_publicacion ${c.direccion === 'desc' ? Prisma.sql`DESC NULLS LAST` : Prisma.sql`ASC NULLS LAST`}, l.id ASC`
+          : Prisma.sql`c.relevancia DESC, l.titulo ASC, l.id ASC`;
 
     const [pagina, conteo] = await this.prisma.$transaction([
       this.prisma.$queryRaw<{ id: string }[]>`
-        SELECT id FROM (${coincidencias}) c
+        SELECT l.id FROM (${coincidencias}) c
         JOIN libro l ON l.id = c.id
         WHERE 1=1${clausulaFiltros}
         ORDER BY ${ordenSQL}
