@@ -172,3 +172,12 @@
   padding: 2rem 0;
   text-align: center;
 }
+
+/* HU-32: título de la franja con el botón «Ver tutorial» */
+.encabezadoFranja {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+}
