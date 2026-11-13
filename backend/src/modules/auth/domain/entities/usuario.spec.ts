@@ -110,3 +110,37 @@ describe('Rol y RefreshToken', () => {
     );
   });
 });
+
+describe('Usuario.anonimizar (HU-34)', () => {
+  const reconstruido = () =>
+    Usuario.reconstruir({
+      id: 'u-9',
+      nombre: 'Ana Pérez',
+      email: Email.crear('ana@example.com'),
+      passwordHash: 'hash',
+      rol: Rol.PUBLICO,
+      consentimientoPrivacidadEn: new Date('2026-11-01T00:00:00Z'),
+      versionAvisoPrivacidad: '1.0',
+      anonimizadoEn: null,
+      creadoEn: new Date('2026-11-01T00:00:00Z'),
+    });
+
+  it('borra nombre, correo y contraseña, y ya no puede iniciar sesión', () => {
+    const u = reconstruido();
+    const ahora = new Date('2026-11-13T15:00:00Z');
+    u.anonimizar(ahora);
+    expect(u.nombre).toBe('Usuario eliminado');
+    expect(u.email.valor).toBe('eliminado-u-9@anonimo.invalid');
+    expect(u.passwordHash).toBeNull();
+    expect(u.anonimizadoEn).toEqual(ahora);
+    expect(u.puedeIniciarSesion).toBe(false);
+  });
+
+  it('no se anonimiza dos veces', () => {
+    const u = reconstruido();
+    u.anonimizar(new Date());
+    expect(() => u.anonimizar(new Date())).toThrow(
+      'La cuenta ya fue eliminada',
+    );
+  });
+});

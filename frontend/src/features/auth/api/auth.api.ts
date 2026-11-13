@@ -28,6 +28,11 @@ export async function cerrarSesion(refreshToken: string): Promise<void> {
   await apiClient.post('/auth/logout', { refreshToken });
 }
 
+/** HU-34: elimina (anonimiza) la cuenta propia. Se confirma con la contraseña. */
+export async function eliminarCuenta(password: string): Promise<void> {
+  await apiClient.delete('/auth/cuenta', { data: { password } });
+}
+
 export async function obtenerPerfil(): Promise<Usuario> {
   const { data } = await apiClient.get<Usuario>('/auth/me');
   return data;

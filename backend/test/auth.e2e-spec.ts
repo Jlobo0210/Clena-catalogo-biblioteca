@@ -182,4 +182,85 @@ describe('Autenticación y roles (e2e)', () => {
       .send({ refreshToken: nueva.refreshToken })
       .expect(401);
   });
+
+  describe('DELETE /auth/cuenta (HU-34)', () => {
+    async function registrar(email: string): Promise<Sesion> {
+      const res = await http()
+        .post('/api/v1/auth/registro')
+        .send({
+          nombre: 'Carla Borrar',
+          email,
+          password: 'clave-segura-1',
+          aceptaAvisoPrivacidad: true,
+        })
+        .expect(201);
+      return res.body as Sesion;
+    }
+
+    it('401 sin sesión y 400 sin contraseña o con una errada', async () => {
+      await http()
+        .delete('/api/v1/auth/cuenta')
+        .send({ password: 'x' })
+        .expect(401);
+      const s = await registrar('carla1@example.com');
+      const auth = { Authorization: `Bearer ${s.accessToken}` };
+      await http().delete('/api/v1/auth/cuenta').set(auth).send({}).expect(400);
+      const res = await http()
+        .delete('/api/v1/auth/cuenta')
+        .set(auth)
+        .send({ password: 'otra-clave-9' })
+        .expect(400);
+      expect(res.body).toMatchObject({
+        message: 'La contraseña no es correcta',
+      });
+    });
+
+    it('409 si tiene préstamos sin devolver', async () => {
+      const s = await registrar('carla2@example.com');
+      usuarios.prestamosSinDevolver.set(s.usuario.id, 1);
+      const res = await http()
+        .delete('/api/v1/auth/cuenta')
+        .set('Authorization', `Bearer ${s.accessToken}`)
+        .send({ password: 'clave-segura-1' })
+        .expect(409);
+      expect((res.body as { message: string }).message).toMatch(/sin devolver/);
+      usuarios.prestamosSinDevolver.delete(s.usuario.id);
+    });
+
+    it('204: anonimiza, y después no puede entrar ni renovar la sesión', async () => {
+      const s = await registrar('carla3@example.com');
+      const auth = { Authorization: `Bearer ${s.accessToken}` };
+      await http()
+        .delete('/api/v1/auth/cuenta')
+        .set(auth)
+        .send({ password: 'clave-segura-1' })
+        .expect(204);
+
+      const guardado = await usuarios.buscarPorId(s.usuario.id);
+      expect(guardado?.nombre).toBe('Usuario eliminado');
+      expect(guardado?.email.valor).not.toContain('carla3');
+
+      await http()
+        .post('/api/v1/auth/login')
+        .send({ email: 'carla3@example.com', password: 'clave-segura-1' })
+        .expect(401);
+      await http()
+        .post('/api/v1/auth/refresh')
+        .send({ refreshToken: s.refreshToken })
+        .expect(401);
+      await http().get('/api/v1/auth/me').set(auth).expect(401);
+    });
+
+    it('el administrador no puede eliminar su propia cuenta (409)', async () => {
+      const login = await http()
+        .post('/api/v1/auth/login')
+        .send({ email: 'admin@clena.test', password: 'clave-admin-1' })
+        .expect(200);
+      await http()
+        .delete('/api/v1/auth/cuenta')
+        .set('Authorization', `Bearer ${(login.body as Sesion).accessToken}`)
+        .send({ password: 'clave-admin-1' })
+        .expect(409);
+    });
+  });
 });

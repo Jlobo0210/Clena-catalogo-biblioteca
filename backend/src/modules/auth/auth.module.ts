@@ -5,6 +5,7 @@ import { ID_GENERATOR, IdGenerator } from '../../shared/domain/id-generator';
 import { UuidIdGenerator } from '../../shared/infrastructure/uuid-id-generator';
 import { CambiarRolUseCase } from './application/use-cases/cambiar-rol.use-case';
 import { CerrarSesionUseCase } from './application/use-cases/cerrar-sesion.use-case';
+import { EliminarCuentaUseCase } from './application/use-cases/eliminar-cuenta.use-case';
 import { EmisorSesion } from './application/use-cases/emisor-sesion';
 import { IniciarSesionUseCase } from './application/use-cases/iniciar-sesion.use-case';
 import { ListarUsuariosUseCase } from './application/use-cases/listar-usuarios.use-case';
@@ -108,6 +109,12 @@ import { RolesGuard } from './presentation/guards/roles.guard';
       useFactory: (r: RefreshTokenRepository, t: TokenService) =>
         new CerrarSesionUseCase(r, t),
       inject: [REFRESH_TOKEN_REPOSITORY, TOKEN_SERVICE],
+    },
+    {
+      provide: EliminarCuentaUseCase,
+      useFactory: (u: UsuarioRepository, h: PasswordHasher) =>
+        new EliminarCuentaUseCase(u, h),
+      inject: [USUARIO_REPOSITORY, PASSWORD_HASHER],
     },
     {
       provide: ObtenerPerfilUseCase,
