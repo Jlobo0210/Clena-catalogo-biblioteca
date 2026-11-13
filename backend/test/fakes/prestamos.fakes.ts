@@ -2,6 +2,7 @@
 import { ConflictError } from '../../src/shared/domain/domain-error';
 import { Prestamo } from '../../src/modules/prestamos/domain/entities/prestamo';
 import {
+  ConteoPendientes,
   EjemplarParaPrestamo,
   FiltroPrestamos,
   PrestamoDetalle,
@@ -125,6 +126,8 @@ export class PrestamosEnMemoria implements PrestamoRepository {
               !p.fechaDevolucion &&
               p.fechaLimite < f.hoy) ||
             (f.estado === 'DEVUELTO' && !!p.fechaDevolucion)) &&
+          (!f.limiteDesde || p.fechaLimite >= f.limiteDesde) &&
+          (!f.limiteHasta || p.fechaLimite <= f.limiteHasta) &&
           (!f.usuarioId || p.usuarioId === f.usuarioId) &&
           (!f.ejemplarId || p.ejemplarId === f.ejemplarId),
       )
@@ -145,6 +148,19 @@ export class PrestamosEnMemoria implements PrestamoRepository {
     return Promise.resolve({
       items: todos.slice(inicio, inicio + f.tamano).map((p) => this.detalle(p)),
       total: todos.length,
+    });
+  }
+
+  contarPendientes(hoy: string, avisoHasta: string): Promise<ConteoPendientes> {
+    const pendientes = [...this.filas.values()].filter(
+      (p) => !p.fechaDevolucion,
+    );
+    return Promise.resolve({
+      sinDevolver: pendientes.length,
+      vencidos: pendientes.filter((p) => p.fechaLimite < hoy).length,
+      porVencer: pendientes.filter(
+        (p) => p.fechaLimite >= hoy && p.fechaLimite <= avisoHasta,
+      ).length,
     });
   }
 

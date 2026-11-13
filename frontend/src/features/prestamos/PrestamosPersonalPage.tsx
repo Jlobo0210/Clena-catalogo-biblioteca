@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { BookUp, CircleCheck, Undo2 } from 'lucide-react';
+import { BookUp, CalendarClock, CircleCheck, Undo2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { normalizarError } from '../../api/errores';
+import { RUTAS } from '../../config/rutas';
 import { Boton } from '../../shared/ui/Boton';
 import { CampoTexto } from '../auth/components/CampoTexto';
 import formulario from '../auth/components/Formulario.module.css';
@@ -154,6 +156,11 @@ export function PrestamosPersonalPage() {
             </label>
           </fieldset>
         </div>
+        <p className={styles.vacio}>
+          <Link to={RUTAS.prestamosSeguimiento}>
+            <CalendarClock aria-hidden="true" size={18} /> Ver el seguimiento completo de vencidos y próximos a vencer
+          </Link>
+        </p>
 
         {errorLista ? <p role="alert">{errorLista}</p> : null}
         {!prestamos && !errorLista ? <p role="status">Cargando préstamos…</p> : null}

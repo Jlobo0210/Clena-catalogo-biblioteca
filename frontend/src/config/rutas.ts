@@ -11,6 +11,7 @@ export const RUTAS = {
   panel: '/panel',
   usuarios: '/panel/usuarios',
   prestamosPersonal: '/panel/prestamos',
+  prestamosSeguimiento: '/panel/prestamos/seguimiento',
   panelAutores: '/panel/autores',
   panelTemas: '/panel/temas',
   panelImportar: '/panel/importar',

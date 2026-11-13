@@ -1,4 +1,4 @@
-import { BookCopy, BookUp, FileUp, Tags, UserPen, Users } from 'lucide-react';
+import { BookCopy, BookUp, CalendarClock, FileUp, Tags, UserPen, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
 import { useSesion } from '../auth/sesion/contextoSesion';
@@ -23,6 +23,15 @@ export function PanelPage() {
               <Link to={RUTAS.prestamosPersonal}>Préstamos y devoluciones</Link>
             </h2>
             <p>Presta un ejemplar con su código y registra las devoluciones.</p>
+          </div>
+        </li>
+        <li className={styles.opcion}>
+          <CalendarClock aria-hidden="true" size={28} />
+          <div>
+            <h2>
+              <Link to={RUTAS.prestamosSeguimiento}>Seguimiento de préstamos</Link>
+            </h2>
+            <p>Revisa los préstamos vencidos y los que están por vencer, con los días de retraso.</p>
           </div>
         </li>
         <li className={styles.opcion}>

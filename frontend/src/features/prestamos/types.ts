@@ -9,6 +9,8 @@ export interface Prestamo {
   fechaDevolucion: string | null;
   /** Días para el límite; negativo = días de atraso; null si ya se devolvió. */
   diasRestantes: number | null;
+  /** Días de retraso (0 si está al día); null si ya se devolvió (HU-36). */
+  diasRetraso?: number | null;
   ejemplar: { id: string; codigoInventario: string };
   libro: { id: string; titulo: string };
   usuario: { id: string; nombre: string; email: string };

@@ -159,6 +159,53 @@ describe('Préstamos (e2e)', () => {
     await http().get('/api/v1/prestamos/no-uuid').set(PERSONAL).expect(400);
   });
 
+  it('HU-36: seguimiento de vencidos y próximos a vencer', async () => {
+    await http().get('/api/v1/prestamos/resumen').set(PUBLICO).expect(403);
+    const resumen = await http()
+      .get('/api/v1/prestamos/resumen')
+      .set(PERSONAL)
+      .query({ diasAviso: 30 })
+      .expect(200);
+    expect(resumen.body).toMatchObject({
+      diasAviso: 30,
+      sinDevolver: 1,
+      vencidos: 0,
+      porVencer: 1,
+    });
+
+    const porVencer = await http()
+      .get('/api/v1/prestamos')
+      .set(ADMIN)
+      .query({ estado: 'POR_VENCER', diasAviso: 30 })
+      .expect(200);
+    expect(porVencer.body).toMatchObject({
+      total: 1,
+      items: [{ id: prestamo.id, diasRetraso: 0 }],
+    });
+
+    await http()
+      .get('/api/v1/prestamos')
+      .set(PERSONAL)
+      .query({ limiteDesde: '2026-02-30' })
+      .expect(400);
+    await http()
+      .get('/api/v1/prestamos')
+      .set(PERSONAL)
+      .query({ limiteDesde: '30/11/2026' })
+      .expect(400);
+    const alReves = await http()
+      .get('/api/v1/prestamos')
+      .set(PERSONAL)
+      .query({ limiteDesde: '2026-12-01', limiteHasta: '2026-11-01' })
+      .expect(400);
+    expect(JSON.stringify(alReves.body)).toContain('posterior');
+    await http()
+      .get('/api/v1/prestamos/resumen')
+      .set(PERSONAL)
+      .query({ diasAviso: 0 })
+      .expect(400);
+  });
+
   it('HU-27: cualquier usuario ve solo sus préstamos en /prestamos/mios', async () => {
     await http().get('/api/v1/prestamos/mios').expect(401);
 

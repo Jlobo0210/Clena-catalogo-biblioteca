@@ -12,6 +12,7 @@ import { ListarPrestamosUseCase } from './application/use-cases/listar-prestamos
 import { ObtenerPrestamoUseCase } from './application/use-cases/obtener-prestamo.use-case';
 import { RegistrarDevolucionUseCase } from './application/use-cases/registrar-devolucion.use-case';
 import { RegistrarPrestamoUseCase } from './application/use-cases/registrar-prestamo.use-case';
+import { ResumenPrestamosUseCase } from './application/use-cases/resumen-prestamos.use-case';
 import {
   PRESTAMO_REPOSITORY,
   PrestamoRepository,
@@ -60,6 +61,12 @@ import { PrestamosController } from './presentation/controllers/prestamos.contro
       useFactory: (listar: ListarPrestamosUseCase) =>
         new ListarMisPrestamosUseCase(listar),
       inject: [ListarPrestamosUseCase],
+    },
+    {
+      provide: ResumenPrestamosUseCase,
+      useFactory: (prestamos: PrestamoRepository) =>
+        new ResumenPrestamosUseCase(prestamos),
+      inject: [PRESTAMO_REPOSITORY],
     },
     {
       provide: ObtenerPrestamoUseCase,

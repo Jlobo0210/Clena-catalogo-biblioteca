@@ -3,21 +3,43 @@ import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsIn,
+  IsISO8601,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
   Max,
+  Matches,
   MaxLength,
   Min,
 } from 'class-validator';
-import type {
-  FiltroEstadoPrestamo,
-  OrdenPrestamos,
-} from '../../domain/repositories/prestamo.repository';
+import type { EstadoConsultaPrestamo } from '../../application/dtos/prestamo.dto';
+import type { OrdenPrestamos } from '../../domain/repositories/prestamo.repository';
 
-const ESTADOS: FiltroEstadoPrestamo[] = ['SIN_DEVOLVER', 'VENCIDO', 'DEVUELTO'];
+const ESTADOS: EstadoConsultaPrestamo[] = [
+  'SIN_DEVOLVER',
+  'VENCIDO',
+  'POR_VENCER',
+  'DEVUELTO',
+];
+const FORMATO_DIA = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Días que cuentan como «próximo a vencer» (HU-36). */
+class DiasAvisoQueryDto {
+  @ApiPropertyOptional({
+    default: 3,
+    minimum: 1,
+    maximum: 30,
+    description: 'Días que cuentan como «próximo a vencer»',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'diasAviso debe ser un número entero' })
+  @Min(1)
+  @Max(30)
+  diasAviso?: number;
+}
 const ORDENES: OrdenPrestamos[] = ['fechaPrestamo', 'fechaLimite'];
 const DIRECCIONES = ['asc', 'desc'] as const;
 
@@ -50,7 +72,7 @@ export class RegistrarPrestamoDto {
   usuarioEmail?: string;
 }
 
-export class ListarPrestamosQueryDto {
+export class ListarPrestamosQueryDto extends DiasAvisoQueryDto {
   @ApiPropertyOptional({ default: 1, minimum: 1 })
   @IsOptional()
   @Type(() => Number)
@@ -68,11 +90,12 @@ export class ListarPrestamosQueryDto {
 
   @ApiPropertyOptional({
     enum: ESTADOS,
-    description: 'SIN_DEVOLVER incluye los vencidos',
+    description:
+      'SIN_DEVOLVER incluye los vencidos; POR_VENCER: sin devolver y con límite entre hoy y los próximos diasAviso días',
   })
   @IsOptional()
   @IsIn(ESTADOS)
-  estado?: FiltroEstadoPrestamo;
+  estado?: EstadoConsultaPrestamo;
 
   @ApiPropertyOptional({ format: 'uuid' })
   @IsOptional()
@@ -83,6 +106,34 @@ export class ListarPrestamosQueryDto {
   @IsOptional()
   @IsUUID('4')
   ejemplarId?: string;
+
+  @ApiPropertyOptional({
+    example: '2026-11-01',
+    description: 'Fecha límite desde este día (incluido)',
+  })
+  @IsOptional()
+  @Matches(FORMATO_DIA, {
+    message: 'limiteDesde debe tener el formato AAAA-MM-DD',
+  })
+  @IsISO8601(
+    { strict: true },
+    { message: 'limiteDesde no es una fecha válida' },
+  )
+  limiteDesde?: string;
+
+  @ApiPropertyOptional({
+    example: '2026-11-30',
+    description: 'Fecha límite hasta este día (incluido)',
+  })
+  @IsOptional()
+  @Matches(FORMATO_DIA, {
+    message: 'limiteHasta debe tener el formato AAAA-MM-DD',
+  })
+  @IsISO8601(
+    { strict: true },
+    { message: 'limiteHasta no es una fecha válida' },
+  )
+  limiteHasta?: string;
 
   @ApiPropertyOptional({ enum: ORDENES, default: 'fechaPrestamo' })
   @IsOptional()
@@ -95,8 +146,13 @@ export class ListarPrestamosQueryDto {
   direccion?: (typeof DIRECCIONES)[number];
 }
 
-/** HU-27: mismos filtros, sin usuario ni ejemplar (el usuario sale del token). */
+/** HU-27: mismos filtros, sin usuario, ejemplar ni rango de fechas (el usuario sale del token). */
 export class MisPrestamosQueryDto extends OmitType(ListarPrestamosQueryDto, [
   'usuarioId',
   'ejemplarId',
+  'limiteDesde',
+  'limiteHasta',
 ] as const) {}
+
+/** HU-36: parámetros del resumen de préstamos pendientes. */
+export class ResumenPrestamosQueryDto extends DiasAvisoQueryDto {}

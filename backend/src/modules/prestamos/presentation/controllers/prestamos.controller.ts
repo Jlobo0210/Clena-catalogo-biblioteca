@@ -28,19 +28,23 @@ import { ListarPrestamosUseCase } from '../../application/use-cases/listar-prest
 import { ObtenerPrestamoUseCase } from '../../application/use-cases/obtener-prestamo.use-case';
 import { RegistrarDevolucionUseCase } from '../../application/use-cases/registrar-devolucion.use-case';
 import { RegistrarPrestamoUseCase } from '../../application/use-cases/registrar-prestamo.use-case';
+import { ResumenPrestamosUseCase } from '../../application/use-cases/resumen-prestamos.use-case';
 import {
   ListarPrestamosQueryDto,
   MisPrestamosQueryDto,
   RegistrarPrestamoDto,
+  ResumenPrestamosQueryDto,
 } from '../dtos/prestamo-request.dto';
 import {
   PaginaPrestamosResponse,
   PrestamoResponse,
+  ResumenPrestamosResponse,
 } from '../dtos/prestamo-response.dto';
 
 /**
  * HU-26: préstamos y devoluciones, solo para el personal y el administrador.
  * HU-27: GET /prestamos/mios, para cualquier usuario con sesión.
+ * HU-36: vencidos y próximos a vencer (filtros de GET /prestamos) y GET /prestamos/resumen.
  */
 @ApiTags('prestamos')
 @Controller('prestamos')
@@ -52,6 +56,7 @@ export class PrestamosController {
     private readonly listarPrestamos: ListarPrestamosUseCase,
     private readonly obtenerPrestamo: ObtenerPrestamoUseCase,
     private readonly listarMisPrestamos: ListarMisPrestamosUseCase,
+    private readonly resumenPrestamos: ResumenPrestamosUseCase,
   ) {}
 
   @Post()
@@ -94,12 +99,25 @@ export class PrestamosController {
 
   @Get()
   @ApiOperation({
-    summary: 'Historial de préstamos (filtros por estado, usuario y ejemplar)',
+    summary:
+      'Historial de préstamos (filtros por estado, fecha límite, usuario y ejemplar)',
   })
   @ApiOkResponse({ type: PaginaPrestamosResponse })
   @ApiBadRequestResponse({ type: ErrorResponse })
   listar(@Query() query: ListarPrestamosQueryDto) {
     return this.listarPrestamos.execute(query);
+  }
+
+  /** Va antes de GET :id para que «resumen» no se tome como un id. */
+  @Get('resumen')
+  @ApiOperation({
+    summary:
+      'Seguimiento (HU-36): cuántos préstamos están sin devolver, vencidos y próximos a vencer',
+  })
+  @ApiOkResponse({ type: ResumenPrestamosResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  resumen(@Query() query: ResumenPrestamosQueryDto) {
+    return this.resumenPrestamos.execute(query.diasAviso);
   }
 
   /** Va antes de GET :id para que «mios» no se tome como un id. */

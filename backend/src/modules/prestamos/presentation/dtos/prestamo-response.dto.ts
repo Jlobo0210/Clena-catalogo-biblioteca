@@ -37,10 +37,27 @@ export class PrestamoResponse {
       'Días para el límite; negativo = días de atraso; null si ya se devolvió',
   })
   diasRestantes!: number | null;
+  @ApiProperty({
+    example: 0,
+    nullable: true,
+    type: Number,
+    description: 'Días de retraso (0 si está al día); null si ya se devolvió',
+  })
+  diasRetraso!: number | null;
   @ApiProperty({ type: EjemplarRef }) ejemplar!: EjemplarRef;
   @ApiProperty({ type: LibroRef }) libro!: LibroRef;
   @ApiProperty({ type: UsuarioRef }) usuario!: UsuarioRef;
   @ApiProperty({ type: PersonalRef }) registradoPor!: PersonalRef;
+}
+
+/** HU-36: resumen del seguimiento de devoluciones. */
+export class ResumenPrestamosResponse {
+  @ApiProperty({ example: '2026-11-12', description: 'Hoy en Colombia' })
+  hoy!: string;
+  @ApiProperty({ example: 3 }) diasAviso!: number;
+  @ApiProperty({ example: 7 }) sinDevolver!: number;
+  @ApiProperty({ example: 2 }) vencidos!: number;
+  @ApiProperty({ example: 1 }) porVencer!: number;
 }
 
 export class PaginaPrestamosResponse {
