@@ -3,12 +3,15 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 import { DatabaseHealthIndicator } from './database.health';
 
+/** Rutas de salud: /health para Docker y el despliegue, y /api/v1/health como pide el enunciado. */
+export const RUTAS_SALUD = ['health', 'api/v1/health'];
+
 /**
- * GET /health (fuera de /api/v1, para Docker y el despliegue).
+ * GET /health y GET /api/v1/health (las dos responden lo mismo).
  * Vive en infraestructura porque es operación, no negocio: revisa la conexión con PostgreSQL.
  */
 @ApiTags('salud')
-@Controller('health')
+@Controller(RUTAS_SALUD)
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,

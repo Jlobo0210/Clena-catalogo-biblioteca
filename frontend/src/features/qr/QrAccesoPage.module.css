@@ -1,0 +1,105 @@
+.pagina {
+  display: grid;
+  gap: var(--espacio-4);
+  padding: var(--espacio-12) 0;
+}
+
+.pagina h1 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titular);
+}
+
+.intro {
+  max-width: 48rem;
+  margin: 0;
+  font-size: var(--texto-cuerpo);
+}
+
+.cartel {
+  display: grid;
+  justify-items: center;
+  gap: var(--espacio-3);
+  width: min(100%, 26rem);
+  padding: var(--espacio-8) var(--espacio-6);
+  text-align: center;
+  background: var(--color-superficie);
+  border: 0.125rem solid var(--color-azul-profundo);
+  border-radius: var(--radio-lg);
+}
+
+.cartelTitulo {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titulo);
+  font-weight: 700;
+}
+
+.qr {
+  width: min(100%, 18.75rem);
+  height: auto;
+}
+
+.cartelTexto {
+  margin: 0;
+  font-size: var(--texto-cuerpo);
+}
+
+.url {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  overflow-wrap: anywhere;
+}
+
+.cargando,
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: 18.75rem;
+  margin: 0;
+}
+
+.error {
+  color: var(--color-error);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+
+.descargar {
+  display: inline-flex;
+  min-height: var(--alto-control);
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-4);
+  color: var(--color-azul-profundo);
+  background: var(--color-ambar);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-etiqueta);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Al imprimir sale solo el cartel con el QR. */
+@media print {
+  :global(body *) {
+    visibility: hidden;
+  }
+
+  .cartel,
+  .cartel * {
+    visibility: visible;
+  }
+
+  .cartel {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

@@ -79,8 +79,18 @@ describe('Base de la API (e2e)', () => {
       });
     });
 
-    it('no queda bajo /api/v1', () => {
-      return request(app.getHttpServer()).get('/api/v1/health').expect(404);
+    it('también responde en /api/v1/health', async () => {
+      prismaFalso.$queryRaw.mockResolvedValueOnce([{ 1: 1 }]);
+      const res = await request(app.getHttpServer())
+        .get('/api/v1/health')
+        .expect(200);
+      expect(res.body).toMatchObject({ status: 'ok' });
+    });
+
+    it('no se duplica el prefijo', () => {
+      return request(app.getHttpServer())
+        .get('/api/v1/api/v1/health')
+        .expect(404);
     });
   });
 
@@ -102,7 +112,7 @@ describe('Base de la API (e2e)', () => {
       .expect(200);
     const spec = res.body as { paths: Record<string, unknown> };
     expect(Object.keys(spec.paths)).toEqual(
-      expect.arrayContaining(['/health', '/api/v1/ejemplo']),
+      expect.arrayContaining(['/health', '/api/v1/health', '/api/v1/ejemplo']),
     );
   });
 

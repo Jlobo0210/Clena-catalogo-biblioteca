@@ -1,4 +1,4 @@
-import { BookCopy, BookUp, CalendarClock, FileUp, Tags, UserPen, Users } from 'lucide-react';
+import { BookCopy, BookUp, CalendarClock, FileUp, QrCode, Tags, UserPen, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
 import { useSesion } from '../auth/sesion/contextoSesion';
@@ -68,6 +68,15 @@ export function PanelPage() {
               <Link to={RUTAS.panelLibros}>Libros y ejemplares</Link>
             </h2>
             <p>Registra libros con sus autores y temas, y dónde está cada ejemplar.</p>
+          </div>
+        </li>
+        <li className={styles.opcion}>
+          <QrCode aria-hidden="true" size={28} />
+          <div>
+            <h2>
+              <Link to={RUTAS.panelQr}>Código QR de acceso</Link>
+            </h2>
+            <p>Descarga o imprime el QR que abre la búsqueda en el celular.</p>
           </div>
         </li>
         {tieneRol('ADMINISTRADOR') ? (

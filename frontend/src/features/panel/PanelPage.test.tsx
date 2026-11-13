@@ -25,6 +25,7 @@ describe('PanelPage (HU-25)', () => {
       'href',
       '/panel/prestamos/seguimiento',
     );
+    expect(screen.getByRole('link', { name: 'Código QR de acceso' })).toHaveAttribute('href', '/panel/qr');
     expect(screen.queryByRole('link', { name: 'Usuarios y roles' })).not.toBeInTheDocument();
   });
 
