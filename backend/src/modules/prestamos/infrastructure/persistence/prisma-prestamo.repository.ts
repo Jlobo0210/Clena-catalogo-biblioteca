@@ -4,6 +4,7 @@ import { ConflictError } from '../../../../shared/domain/domain-error';
 import { PrismaService } from '../../../../shared/infrastructure/prisma/prisma.service';
 import { Prestamo } from '../../domain/entities/prestamo';
 import {
+  ConteoPendientes,
   EjemplarParaPrestamo,
   FiltroPrestamos,
   PrestamoDetalle,
@@ -160,11 +161,18 @@ export class PrismaPrestamoRepository implements PrestamoRepository {
       Prisma.PrestamoWhereInput
     > = {
       SIN_DEVOLVER: { fechaDevolucion: null },
-      VENCIDO: { fechaDevolucion: null, fechaLimite: { lt: aFechaDb(f.hoy) } },
+      VENCIDO: { fechaDevolucion: null },
       DEVUELTO: { fechaDevolucion: { not: null } },
+    };
+    // Las condiciones sobre la fecha límite se combinan en un solo filtro.
+    const fechaLimite: Prisma.DateTimeFilter = {
+      ...(f.estado === 'VENCIDO' ? { lt: aFechaDb(f.hoy) } : {}),
+      ...(f.limiteDesde ? { gte: aFechaDb(f.limiteDesde) } : {}),
+      ...(f.limiteHasta ? { lte: aFechaDb(f.limiteHasta) } : {}),
     };
     const where: Prisma.PrestamoWhereInput = {
       ...(f.estado ? porEstado[f.estado] : {}),
+      ...(Object.keys(fechaLimite).length > 0 ? { fechaLimite } : {}),
       ...(f.usuarioId ? { usuarioId: f.usuarioId } : {}),
       ...(f.ejemplarId ? { ejemplarId: f.ejemplarId } : {}),
     };
@@ -181,5 +189,25 @@ export class PrismaPrestamoRepository implements PrestamoRepository {
       this.prisma.prestamo.count({ where }),
     ]);
     return { items: filas.map(aDetalle), total };
+  }
+
+  async contarPendientes(
+    hoy: string,
+    avisoHasta: string,
+  ): Promise<ConteoPendientes> {
+    const sinDevolver = { fechaDevolucion: null };
+    const [total, vencidos, porVencer] = await this.prisma.$transaction([
+      this.prisma.prestamo.count({ where: sinDevolver }),
+      this.prisma.prestamo.count({
+        where: { ...sinDevolver, fechaLimite: { lt: aFechaDb(hoy) } },
+      }),
+      this.prisma.prestamo.count({
+        where: {
+          ...sinDevolver,
+          fechaLimite: { gte: aFechaDb(hoy), lte: aFechaDb(avisoHasta) },
+        },
+      }),
+    ]);
+    return { sinDevolver: total, vencidos, porVencer };
   }
 }

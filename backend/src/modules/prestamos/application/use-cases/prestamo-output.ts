@@ -6,13 +6,15 @@ export function aPrestamoOutput(
   p: PrestamoDetalle,
   ahora: Date,
 ): PrestamoOutput {
+  const dias = diasRestantes(p.fechaLimite, p.fechaDevolucion, ahora);
   return {
     id: p.id,
     estado: estadoPrestamo(p.fechaLimite, p.fechaDevolucion, ahora),
     fechaPrestamo: p.fechaPrestamo.toISOString(),
     fechaLimite: p.fechaLimite,
     fechaDevolucion: p.fechaDevolucion?.toISOString() ?? null,
-    diasRestantes: diasRestantes(p.fechaLimite, p.fechaDevolucion, ahora),
+    diasRestantes: dias,
+    diasRetraso: dias === null ? null : Math.max(0, -dias),
     ejemplar: p.ejemplar,
     libro: p.libro,
     usuario: p.usuario,

@@ -15,14 +15,40 @@ export async function obtenerMisPrestamos(filtro: FiltroMisPrestamos = {}): Prom
   return data;
 }
 
-export interface FiltroPrestamosPersonal extends FiltroMisPrestamos {
+/** POR_VENCER (HU-36): sin devolver y con la fecha límite en los próximos días de aviso. */
+export type EstadoSeguimiento = 'SIN_DEVOLVER' | 'VENCIDO' | 'POR_VENCER' | 'DEVUELTO';
+
+export interface FiltroPrestamosPersonal extends Omit<FiltroMisPrestamos, 'estado'> {
+  estado?: EstadoSeguimiento;
   usuarioId?: string;
   ejemplarId?: string;
+  /** Rango de la fecha límite («YYYY-MM-DD»), ambos extremos incluidos (HU-36). */
+  limiteDesde?: string;
+  limiteHasta?: string;
+  diasAviso?: number;
 }
 
-/** HU-26 (personal): historial de préstamos con filtros. */
-export async function listarPrestamos(filtro: FiltroPrestamosPersonal = {}): Promise<PaginaPrestamos> {
-  const { data } = await apiClient.get<PaginaPrestamos>('/prestamos', { params: filtro });
+/** HU-26 (personal): historial de préstamos con filtros. HU-36: vencidos y próximos a vencer. */
+export async function listarPrestamos(
+  filtro: FiltroPrestamosPersonal = {},
+  signal?: AbortSignal,
+): Promise<PaginaPrestamos> {
+  const { data } = await apiClient.get<PaginaPrestamos>('/prestamos', { params: filtro, signal });
+  return data;
+}
+
+export interface ResumenPrestamos {
+  /** Hoy en Colombia («YYYY-MM-DD»). */
+  hoy: string;
+  diasAviso: number;
+  sinDevolver: number;
+  vencidos: number;
+  porVencer: number;
+}
+
+/** HU-36 (personal): cuántos préstamos están sin devolver, vencidos y próximos a vencer. */
+export async function obtenerResumenPrestamos(signal?: AbortSignal): Promise<ResumenPrestamos> {
+  const { data } = await apiClient.get<ResumenPrestamos>('/prestamos/resumen', { signal });
   return data;
 }
 

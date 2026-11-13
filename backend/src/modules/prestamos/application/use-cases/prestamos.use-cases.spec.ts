@@ -10,6 +10,7 @@ import { ListarPrestamosUseCase } from './listar-prestamos.use-case';
 import { ObtenerPrestamoUseCase } from './obtener-prestamo.use-case';
 import { RegistrarDevolucionUseCase } from './registrar-devolucion.use-case';
 import { RegistrarPrestamoUseCase } from './registrar-prestamo.use-case';
+import { ResumenPrestamosUseCase } from './resumen-prestamos.use-case';
 
 const PRESTADO_EL = new Date('2026-11-10T15:00:00Z');
 
@@ -35,6 +36,7 @@ function montar(ahora = PRESTADO_EL) {
     devolver: new RegistrarDevolucionUseCase(prestamos, ahoraFn),
     listar: new ListarPrestamosUseCase(prestamos, ahoraFn),
     obtener: new ObtenerPrestamoUseCase(prestamos, ahoraFn),
+    resumen: new ResumenPrestamosUseCase(prestamos, ahoraFn),
   };
 }
 
@@ -220,6 +222,136 @@ describe('ListarPrestamosUseCase y ObtenerPrestamoUseCase', () => {
     await expect(s.obtener.execute('no-existe')).rejects.toBeInstanceOf(
       NotFoundError,
     );
+  });
+});
+
+describe('Seguimiento de vencidos y próximos a vencer (HU-36)', () => {
+  /**
+   * Tres préstamos de 15 días hechos el 1, el 10 y el 14 de noviembre (límites 16, 25 y 29),
+   * y otro del 10 ya devuelto. «Hoy» es el 26 de noviembre en Colombia.
+   */
+  async function conSeguimiento() {
+    const s = montar(new Date('2026-11-01T15:00:00Z'));
+    s.prestamos.conUsuario('u-2', 'Otra Persona', 'otra@example.com');
+    const vencido = await s.prestar.execute(
+      { ejemplarId: 'e-1', usuarioId: 'u-1' },
+      's-1',
+    );
+    s.avanzarA(new Date('2026-11-10T15:00:00Z'));
+    const vencidoAyer = await s.prestar.execute(
+      { ejemplarId: 'e-2', usuarioId: 'u-2' },
+      's-1',
+    );
+    s.avanzarA(new Date('2026-11-14T15:00:00Z'));
+    const porVencer = await s.prestar.execute(
+      { ejemplarId: 'e-4', usuarioId: 'u-1' },
+      's-1',
+    );
+    s.avanzarA(new Date('2026-11-26T15:00:00Z'));
+    return { s, vencido, vencidoAyer, porVencer };
+  }
+
+  it('lista los próximos a vencer dentro de los días de aviso', async () => {
+    const { s, porVencer } = await conSeguimiento();
+
+    await expect(
+      s.listar.execute({ estado: 'POR_VENCER' }),
+    ).resolves.toMatchObject({
+      total: 1,
+      items: [{ id: porVencer.id, diasRestantes: 3, diasRetraso: 0 }],
+    });
+    await expect(
+      s.listar.execute({ estado: 'POR_VENCER', diasAviso: 2 }),
+    ).resolves.toMatchObject({ total: 0 });
+  });
+
+  it('los vencidos traen los días de retraso y se ordenan por fecha límite', async () => {
+    const { s, vencido, vencidoAyer } = await conSeguimiento();
+
+    const r = await s.listar.execute({
+      estado: 'VENCIDO',
+      ordenarPor: 'fechaLimite',
+      direccion: 'asc',
+    });
+    expect(r.items).toMatchObject([
+      {
+        id: vencido.id,
+        estado: 'VENCIDO',
+        fechaLimite: '2026-11-16',
+        diasRetraso: 10,
+        usuario: { nombre: 'Visitante Demo' },
+        libro: { titulo: 'Cien años de soledad' },
+        ejemplar: { codigoInventario: 'INV-0000-1' },
+      },
+      { id: vencidoAyer.id, diasRetraso: 1 },
+    ]);
+  });
+
+  it('filtra por rango de fecha límite (ambos extremos incluidos)', async () => {
+    const { s, vencidoAyer, porVencer } = await conSeguimiento();
+
+    await expect(
+      s.listar.execute({
+        limiteDesde: '2026-11-25',
+        limiteHasta: '2026-11-29',
+        ordenarPor: 'fechaLimite',
+        direccion: 'asc',
+      }),
+    ).resolves.toMatchObject({
+      total: 2,
+      items: [{ id: vencidoAyer.id }, { id: porVencer.id }],
+    });
+    // Con POR_VENCER, el rango se cruza con «de hoy a hoy + aviso».
+    await expect(
+      s.listar.execute({ estado: 'POR_VENCER', limiteHasta: '2026-11-28' }),
+    ).resolves.toMatchObject({ total: 0 });
+  });
+
+  it('rechaza un rango con «desde» posterior a «hasta»', async () => {
+    const { s } = await conSeguimiento();
+    await expect(
+      s.listar.execute({
+        limiteDesde: '2026-11-30',
+        limiteHasta: '2026-11-01',
+      }),
+    ).rejects.toBeInstanceOf(ValidationError);
+  });
+
+  it('el resumen cuenta sin devolver, vencidos y próximos a vencer', async () => {
+    const { s, vencido } = await conSeguimiento();
+    s.prestamos.conEjemplar('e-5', 'INV-0003-1', 'Poesía');
+    s.prestamos.conUsuario('u-3', 'Tercera Persona', 'tercera@example.com');
+    const devuelto = await s.prestar.execute(
+      { ejemplarId: 'e-5', usuarioId: 'u-3' },
+      's-1',
+    );
+    await s.devolver.execute(devuelto.id);
+
+    await expect(s.resumen.execute()).resolves.toEqual({
+      hoy: '2026-11-26',
+      diasAviso: 3,
+      sinDevolver: 3,
+      vencidos: 2,
+      porVencer: 1,
+    });
+    await expect(s.resumen.execute(100)).resolves.toMatchObject({
+      diasAviso: 30,
+    });
+
+    await s.devolver.execute(vencido.id);
+    await expect(s.resumen.execute()).resolves.toMatchObject({
+      sinDevolver: 2,
+      vencidos: 1,
+    });
+  });
+
+  it('un préstamo devuelto no tiene días de retraso', async () => {
+    const { s, vencido } = await conSeguimiento();
+    await expect(s.devolver.execute(vencido.id)).resolves.toMatchObject({
+      estado: 'DEVUELTO',
+      diasRestantes: null,
+      diasRetraso: null,
+    });
   });
 });
 

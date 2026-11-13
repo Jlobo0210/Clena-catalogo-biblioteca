@@ -21,6 +21,10 @@ describe('PanelPage (HU-25)', () => {
     expect(screen.getByRole('link', { name: 'Autores' })).toHaveAttribute('href', '/panel/autores');
     expect(screen.getByRole('link', { name: 'Temas' })).toHaveAttribute('href', '/panel/temas');
     expect(screen.getByRole('link', { name: 'Importar desde CSV' })).toHaveAttribute('href', '/panel/importar');
+    expect(screen.getByRole('link', { name: 'Seguimiento de préstamos' })).toHaveAttribute(
+      'href',
+      '/panel/prestamos/seguimiento',
+    );
     expect(screen.getByRole('link', { name: 'Código QR de acceso' })).toHaveAttribute('href', '/panel/qr');
     expect(screen.queryByRole('link', { name: 'Usuarios y roles' })).not.toBeInTheDocument();
   });

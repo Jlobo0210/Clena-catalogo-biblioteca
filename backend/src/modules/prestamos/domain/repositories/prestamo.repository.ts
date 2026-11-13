@@ -41,8 +41,20 @@ export interface FiltroPrestamos {
   estado?: FiltroEstadoPrestamo;
   usuarioId?: string;
   ejemplarId?: string;
+  /** Rango de la fecha límite («YYYY-MM-DD»), ambos extremos incluidos (HU-36). */
+  limiteDesde?: string;
+  limiteHasta?: string;
   ordenarPor: OrdenPrestamos;
   direccion: 'asc' | 'desc';
+}
+
+/** HU-36: préstamos sin devolver, separados por urgencia. */
+export interface ConteoPendientes {
+  sinDevolver: number;
+  /** La fecha límite ya pasó. */
+  vencidos: number;
+  /** La fecha límite está entre hoy y `avisoHasta`. */
+  porVencer: number;
 }
 
 export interface PrestamoRepository {
@@ -65,6 +77,7 @@ export interface PrestamoRepository {
   listar(
     filtro: FiltroPrestamos,
   ): Promise<{ items: PrestamoDetalle[]; total: number }>;
+  contarPendientes(hoy: string, avisoHasta: string): Promise<ConteoPendientes>;
 }
 
 export const PRESTAMO_REPOSITORY = Symbol('PRESTAMO_REPOSITORY');
