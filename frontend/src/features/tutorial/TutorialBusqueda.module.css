@@ -1,0 +1,116 @@
+.fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--espacio-4);
+  background: rgba(14, 13, 57, 0.6);
+}
+
+.dialogo {
+  position: relative;
+  display: grid;
+  gap: var(--espacio-3);
+  width: min(100%, 34rem);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: var(--espacio-8) var(--espacio-6) var(--espacio-6);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-xl);
+}
+
+.cerrar {
+  position: absolute;
+  top: var(--espacio-3);
+  right: var(--espacio-3);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--color-azul-profundo);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+}
+
+.cerrar:hover {
+  background: var(--color-superficie-media);
+}
+
+.progreso {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+  font-weight: 600;
+}
+
+.icono {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--color-azul-profundo);
+  background: var(--color-ambar-claro);
+  border-radius: var(--radio-md);
+}
+
+.titulo {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titular);
+}
+
+.texto {
+  margin: 0;
+  font-size: var(--texto-cuerpo);
+  line-height: 1.5;
+}
+
+.ejemplo {
+  margin: 0;
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-texto-secundario);
+  background: var(--color-superficie-baja);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-etiqueta);
+}
+
+.puntos {
+  display: flex;
+  gap: var(--espacio-2);
+  margin: var(--espacio-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.punto,
+.puntoActivo {
+  width: 0.625rem;
+  height: 0.625rem;
+  background: var(--color-borde);
+  border-radius: var(--radio-pildora);
+}
+
+.puntoActivo {
+  width: 1.75rem;
+  background: var(--color-azul-profundo);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-2);
+}
+
+/* Más específico que la variante del botón: secundario claro sobre el fondo blanco. */
+.dialogo .secundario {
+  color: var(--color-azul-profundo);
+  background: var(--color-superficie-media);
+  border-color: var(--color-borde);
+}

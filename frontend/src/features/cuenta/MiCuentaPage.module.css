@@ -1,0 +1,44 @@
+.pagina {
+  display: grid;
+  justify-items: start;
+  gap: var(--espacio-6);
+  padding: var(--espacio-12) 0;
+}
+
+.pagina h1 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titular);
+}
+
+.datos {
+  display: grid;
+  width: min(100%, 40rem);
+  gap: var(--espacio-4);
+  margin: 0;
+  padding: var(--espacio-6);
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+}
+
+.datos dt {
+  color: var(--color-texto-tenue);
+  font-size: var(--texto-pequeno);
+}
+
+.datos dd {
+  margin: 0;
+  font-size: var(--texto-cuerpo);
+  font-weight: 600;
+}
+
+.nota {
+  margin: 0;
+  color: var(--color-texto-secundario);
+}
+
+.nota a {
+  color: var(--color-azul-profundo);
+  font-weight: 700;
+}

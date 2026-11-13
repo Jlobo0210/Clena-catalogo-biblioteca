@@ -1,0 +1,146 @@
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Rol } from '../../../auth/domain/value-objects/rol';
+import type { AccessTokenPayload } from '../../../auth/domain/services/token-service';
+import { Autenticado } from '../../../auth/presentation/decorators/autenticado.decorator';
+import { UsuarioActual } from '../../../auth/presentation/decorators/usuario-actual.decorator';
+import { ErrorResponse } from '../../../../shared/presentation/http/error-response';
+import { ListarMisPrestamosUseCase } from '../../application/use-cases/listar-mis-prestamos.use-case';
+import { ListarPrestamosUseCase } from '../../application/use-cases/listar-prestamos.use-case';
+import { ObtenerPrestamoUseCase } from '../../application/use-cases/obtener-prestamo.use-case';
+import { RegistrarDevolucionUseCase } from '../../application/use-cases/registrar-devolucion.use-case';
+import { RegistrarPrestamoUseCase } from '../../application/use-cases/registrar-prestamo.use-case';
+import { ResumenPrestamosUseCase } from '../../application/use-cases/resumen-prestamos.use-case';
+import {
+  ListarPrestamosQueryDto,
+  MisPrestamosQueryDto,
+  RegistrarPrestamoDto,
+  ResumenPrestamosQueryDto,
+} from '../dtos/prestamo-request.dto';
+import {
+  PaginaPrestamosResponse,
+  PrestamoResponse,
+  ResumenPrestamosResponse,
+} from '../dtos/prestamo-response.dto';
+
+/**
+ * HU-26: préstamos y devoluciones, solo para el personal y el administrador.
+ * HU-27: GET /prestamos/mios, para cualquier usuario con sesión.
+ * HU-36: vencidos y próximos a vencer (filtros de GET /prestamos) y GET /prestamos/resumen.
+ */
+@ApiTags('prestamos')
+@Controller('prestamos')
+@Autenticado(Rol.PERSONAL, Rol.ADMINISTRADOR)
+export class PrestamosController {
+  constructor(
+    private readonly registrarPrestamo: RegistrarPrestamoUseCase,
+    private readonly registrarDevolucion: RegistrarDevolucionUseCase,
+    private readonly listarPrestamos: ListarPrestamosUseCase,
+    private readonly obtenerPrestamo: ObtenerPrestamoUseCase,
+    private readonly listarMisPrestamos: ListarMisPrestamosUseCase,
+    private readonly resumenPrestamos: ResumenPrestamosUseCase,
+  ) {}
+
+  @Post()
+  @ApiOperation({
+    summary:
+      'Prestar un ejemplar disponible a un usuario (calcula la fecha límite)',
+  })
+  @ApiCreatedResponse({ type: PrestamoResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  @ApiNotFoundResponse({
+    description: 'El ejemplar o el usuario no existen',
+    type: ErrorResponse,
+  })
+  @ApiConflictResponse({
+    description:
+      'El ejemplar no está disponible o el usuario llegó al máximo de préstamos',
+    type: ErrorResponse,
+  })
+  prestar(
+    @Body() dto: RegistrarPrestamoDto,
+    @UsuarioActual() personal: AccessTokenPayload,
+  ) {
+    return this.registrarPrestamo.execute(dto, personal.sub);
+  }
+
+  @Post(':id/devolucion')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Registrar la devolución: el ejemplar vuelve a estar disponible',
+  })
+  @ApiOkResponse({ type: PrestamoResponse })
+  @ApiNotFoundResponse({ type: ErrorResponse })
+  @ApiConflictResponse({
+    description: 'El préstamo ya fue devuelto',
+    type: ErrorResponse,
+  })
+  devolver(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.registrarDevolucion.execute(id);
+  }
+
+  @Get()
+  @ApiOperation({
+    summary:
+      'Historial de préstamos (filtros por estado, fecha límite, usuario y ejemplar)',
+  })
+  @ApiOkResponse({ type: PaginaPrestamosResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  listar(@Query() query: ListarPrestamosQueryDto) {
+    return this.listarPrestamos.execute(query);
+  }
+
+  /** Va antes de GET :id para que «resumen» no se tome como un id. */
+  @Get('resumen')
+  @ApiOperation({
+    summary:
+      'Seguimiento (HU-36): cuántos préstamos están sin devolver, vencidos y próximos a vencer',
+  })
+  @ApiOkResponse({ type: ResumenPrestamosResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  resumen(@Query() query: ResumenPrestamosQueryDto) {
+    return this.resumenPrestamos.execute(query.diasAviso);
+  }
+
+  /** Va antes de GET :id para que «mios» no se tome como un id. */
+  @Get('mios')
+  @Autenticado()
+  @ApiOperation({
+    summary:
+      'Mis préstamos (HU-27): activos e históricos del usuario con sesión iniciada',
+  })
+  @ApiOkResponse({ type: PaginaPrestamosResponse })
+  @ApiBadRequestResponse({ type: ErrorResponse })
+  mios(
+    @Query() query: MisPrestamosQueryDto,
+    @UsuarioActual() usuario: AccessTokenPayload,
+  ) {
+    return this.listarMisPrestamos.execute(usuario.sub, query);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Consultar un préstamo' })
+  @ApiOkResponse({ type: PrestamoResponse })
+  @ApiNotFoundResponse({ type: ErrorResponse })
+  obtener(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.obtenerPrestamo.execute(id);
+  }
+}

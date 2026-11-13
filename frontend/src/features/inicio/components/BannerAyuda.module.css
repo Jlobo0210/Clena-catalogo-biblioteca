@@ -1,0 +1,65 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-8);
+  padding: var(--espacio-6);
+  border: var(--borde-fino) solid var(--color-superficie-alta);
+  background: var(--color-superficie-alta);
+  border-radius: var(--radio-md);
+}
+
+.texto {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-4);
+}
+
+.icono {
+  display: inline-grid;
+  width: var(--tamano-caja-icono);
+  height: var(--tamano-caja-icono);
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--color-azul-profundo);
+  background: var(--color-ambar);
+  border-radius: 50%;
+}
+
+.banner h2 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titulo);
+}
+
+.banner p {
+  margin: var(--espacio-2) 0 0;
+  color: var(--color-texto-secundario);
+}
+
+.accion {
+  display: grid;
+  flex: 0 0 auto;
+  gap: var(--espacio-3);
+}
+
+.panel {
+  max-width: var(--ancho-minimo-tarjeta);
+  margin: 0 !important;
+  padding: var(--espacio-3);
+  background: var(--color-superficie);
+  border-radius: var(--radio-sm);
+}
+
+@media (max-width: 639px) {
+  .banner {
+    align-items: stretch;
+    flex-direction: column;
+    padding: var(--espacio-6);
+  }
+
+  .accion,
+  .accion button {
+    width: 100%;
+  }
+}

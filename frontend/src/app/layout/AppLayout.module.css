@@ -1,0 +1,19 @@
+.layout {
+  min-height: 100dvh;
+  background: var(--color-fondo);
+}
+
+.contenido {
+  min-height: calc(100dvh - var(--alto-shell));
+}
+
+.contenedor {
+  width: min(calc(100% - var(--espacio-8)), var(--ancho-contenido));
+  margin: 0 auto;
+}
+
+@media (max-width: 639px) {
+  .contenedor {
+    width: min(calc(100% - var(--espacio-4)), var(--ancho-contenido));
+  }
+}

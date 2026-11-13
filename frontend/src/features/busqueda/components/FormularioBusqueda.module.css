@@ -1,0 +1,117 @@
+.formulario {
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+.barra {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--color-superficie);
+  border-radius: var(--radio-md);
+  box-shadow: var(--sombra-xl);
+}
+
+.selectorContenedor,
+.campoContenedor {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.selectorContenedor {
+  flex: 0 1 13rem;
+  min-width: 11rem;
+}
+
+.iconoSelector,
+.iconoCampo {
+  position: absolute;
+  left: var(--espacio-3);
+  z-index: 1;
+  color: var(--color-ocre);
+  pointer-events: none;
+}
+
+.iconoCampo {
+  color: var(--color-azul-profundo);
+}
+
+.selector,
+.campo {
+  min-height: 3.25rem;
+  border: 0;
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-cuerpo);
+}
+
+.selector {
+  width: 100%;
+  padding: 0 var(--espacio-10) 0 var(--espacio-10);
+  color: var(--color-texto);
+  appearance: none;
+  background: var(--color-superficie-baja);
+}
+
+.flecha {
+  position: absolute;
+  right: var(--espacio-3);
+  pointer-events: none;
+}
+
+.campoContenedor {
+  flex: 1 1 28rem;
+  min-width: 0;
+}
+
+.campo {
+  width: 100%;
+  min-width: 0;
+  padding: 0 var(--espacio-3) 0 var(--espacio-10);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: var(--borde-fino) solid var(--color-borde);
+  font-size: var(--texto-busqueda);
+}
+
+.campo::placeholder {
+  color: var(--color-texto-tenue);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.limpiar {
+  color: var(--color-azul-profundo);
+  background: var(--color-superficie-baja);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin: 0;
+  color: var(--color-ambar-claro);
+  font-size: var(--texto-etiqueta);
+}
+
+@media (max-width: 767px) {
+  .barra {
+    display: grid;
+    align-items: stretch;
+  }
+
+  .selectorContenedor,
+  .campoContenedor,
+  .selector,
+  .campo,
+  .barra button {
+    width: 100%;
+  }
+
+  .barra button {
+    min-height: 3.25rem;
+  }
+}

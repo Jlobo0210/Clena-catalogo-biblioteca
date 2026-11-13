@@ -1,0 +1,63 @@
+.pagina {
+  display: grid;
+  gap: var(--espacio-4);
+  padding: var(--espacio-12) 0;
+}
+
+.pagina h1 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titular);
+}
+
+.aviso {
+  min-height: 1.5em;
+  margin: 0;
+  color: var(--color-verde);
+  font-weight: 600;
+}
+
+.tablaContenedor {
+  overflow-x: auto;
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-etiqueta);
+}
+
+.tabla caption {
+  padding: var(--espacio-4);
+  color: var(--color-texto-secundario);
+  text-align: left;
+}
+
+.tabla th,
+.tabla td {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-top: var(--borde-fino) solid var(--color-superficie-alta);
+  text-align: left;
+}
+
+.tabla thead th {
+  color: var(--color-texto-tenue);
+  font-size: var(--texto-pequeno);
+}
+
+.selector {
+  min-height: var(--alto-control);
+  padding: 0 var(--espacio-3);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: var(--borde-medio) solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font: inherit;
+}
+
+.nota {
+  color: var(--color-texto-tenue);
+}

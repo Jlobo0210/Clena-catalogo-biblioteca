@@ -1,0 +1,183 @@
+.pagina {
+  display: grid;
+  gap: var(--espacio-6);
+  padding: var(--espacio-8) 0 var(--espacio-12);
+}
+
+/* Misma franja oscura de la portada: el mensaje de error del formulario está pensado para ese fondo. */
+.franja {
+  display: grid;
+  gap: var(--espacio-4);
+  padding: var(--espacio-8);
+  color: var(--color-superficie);
+  background: var(--color-azul-aduana);
+  border-radius: var(--radio-lg);
+}
+
+.franja h1 {
+  margin: 0;
+  font-size: var(--texto-titular);
+  line-height: 1.2;
+}
+
+.nota {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-azul-profundo);
+  background: var(--color-ambar-claro);
+  border-radius: var(--radio-md);
+}
+
+.nota svg {
+  flex-shrink: 0;
+  margin-top: var(--espacio-1);
+}
+
+.resultados {
+  display: grid;
+  gap: var(--espacio-4);
+}
+
+.resultados h2 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titulo);
+  overflow-wrap: anywhere;
+}
+
+.resultados > p {
+  margin: 0;
+}
+
+.titulo:focus {
+  outline: none;
+}
+
+.titulo:focus-visible {
+  outline: 0.1875rem solid var(--color-foco);
+  outline-offset: 0.1875rem;
+}
+
+.orden {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+}
+
+.lista {
+  display: grid;
+  gap: var(--espacio-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.error {
+  display: grid;
+  justify-items: start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-6);
+  background: var(--color-superficie);
+  border-left: var(--espacio-1) solid var(--color-error);
+  border-radius: var(--radio-md);
+}
+
+.error h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  color: var(--color-error) !important;
+}
+
+.error p {
+  margin: 0;
+}
+
+@media (max-width: 639px) {
+  .pagina {
+    padding-top: var(--espacio-4);
+  }
+
+  .franja {
+    padding: var(--espacio-4);
+  }
+}
+
+/* ── HU-22: layout búsqueda con filtros ───────────────────────────────────── */
+
+.encabezado {
+  margin-bottom: 1.5rem;
+}
+
+.tituloPagina {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text, #1a1a1a);
+  margin: 0 0 0.25rem;
+}
+
+.tituloPagina em {
+  font-style: normal;
+  color: var(--color-primary, #1d4ed8);
+}
+
+.conteo {
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #6b7280);
+  margin: 0;
+}
+
+.cuerpo {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .cuerpo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.columnaFiltros {
+  position: sticky;
+  top: 1rem;
+}
+
+.filtrosHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.estado {
+  color: var(--color-text-muted, #6b7280);
+  font-size: 0.95rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.estadoError {
+  color: var(--color-error, #dc2626);
+  font-size: 0.95rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+/* HU-32: título de la franja con el botón «Ver tutorial» */
+.encabezadoFranja {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+}

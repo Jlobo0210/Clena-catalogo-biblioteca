@@ -1,0 +1,125 @@
+.portada {
+  --color-foco: var(--color-ambar);
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 4rem);
+  color: var(--color-superficie);
+  background: var(--color-azul-aduana);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-xl);
+}
+
+.contenido {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 70rem);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin: 0 0 var(--espacio-4);
+  padding: var(--espacio-2) var(--espacio-3);
+  color: var(--color-ambar-claro);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radio-pildora);
+  font-size: var(--texto-etiqueta);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.insignia span {
+  width: var(--tamano-punto);
+  height: var(--tamano-punto);
+  background: var(--color-ambar);
+  border-radius: 50%;
+}
+
+.portada h1 {
+  max-width: 52rem;
+  margin: 0 auto var(--espacio-4);
+  font-size: clamp(2rem, 3.8vw, 3.25rem);
+  line-height: 1.15;
+}
+
+.descripcion {
+  max-width: 48rem;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: var(--espacio-6);
+  color: var(--color-superficie-alta);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+}
+
+.avanzada {
+  margin: var(--espacio-6) 0 0;
+  color: var(--color-superficie-alta);
+  text-align: center;
+}
+
+.portada :global(form) {
+  width: min(100%, 70rem);
+  margin: 0 auto;
+}
+
+.avanzada a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  color: var(--color-ambar-claro);
+  font-weight: 700;
+}
+
+.decoracion {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.circulo {
+  position: absolute;
+  right: calc(var(--espacio-8) * -1);
+  bottom: calc(var(--espacio-12) * -1);
+  width: var(--tamano-decoracion);
+  height: var(--tamano-decoracion);
+  background: var(--color-ambar);
+  border-radius: 50%;
+  filter: blur(var(--desenfoque-decoracion));
+  opacity: 0.1;
+}
+
+.estrella {
+  display: none;
+  position: absolute;
+  top: var(--espacio-4);
+  right: 2rem;
+  width: 9rem;
+  height: 9rem;
+  color: var(--color-ambar);
+  opacity: 0.15;
+}
+
+@media (min-width: 1280px) {
+  .estrella {
+    display: block;
+  }
+}
+
+@media (max-width: 639px) {
+  .portada {
+    padding: var(--espacio-8) var(--espacio-5);
+  }
+
+  @media (max-width: 767px) {
+    .estrella {
+      right: -2rem;
+      top: 1rem;
+      width: 7rem;
+      height: 7rem;
+    }
+  }
+}

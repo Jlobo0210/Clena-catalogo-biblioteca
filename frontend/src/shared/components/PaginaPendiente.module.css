@@ -1,0 +1,13 @@
+.pagina {
+  padding: var(--espacio-12) 0;
+}
+
+.pagina h1,
+.pagina p {
+  margin-top: 0;
+}
+
+.pagina a {
+  color: var(--color-azul-profundo);
+  font-weight: 600;
+}
