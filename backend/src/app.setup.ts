@@ -6,6 +6,7 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AllExceptionsFilter } from './shared/presentation/filters/all-exceptions.filter';
 import { ErrorResponse } from './shared/presentation/http/error-response';
+import { RUTAS_SALUD } from './shared/infrastructure/health/health.controller';
 
 export const API_PREFIX = 'api/v1';
 export const DOCS_PATH = 'docs';
@@ -16,7 +17,8 @@ export const DOCS_PATH = 'docs';
  */
 export function configureApp(app: INestApplication): void {
   app.setGlobalPrefix(API_PREFIX, {
-    exclude: [{ path: 'health', method: RequestMethod.GET }],
+    // Las rutas de salud ya traen su ruta completa (incluida /api/v1/health).
+    exclude: RUTAS_SALUD.map((path) => ({ path, method: RequestMethod.GET })),
   });
 
   app.useGlobalPipes(

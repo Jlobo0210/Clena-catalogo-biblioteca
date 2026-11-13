@@ -2,6 +2,21 @@
 
 Catálogo bibliográfico accesible para la Biblioteca del CLENA. Backend en NestJS (Clean Architecture) + Prisma, frontend en React y base de datos PostgreSQL.
 
+## Problema
+El buscador actual de la Biblioteca del CLENA es antiguo y poco intuitivo: quien no sabe usarlo no logra ubicar un libro sin ayuda. Consulta Fácil permite buscar por título, autor o tema, aunque haya errores de escritura, y muestra la sala, la sección, el estante y la disponibilidad. Se puede usar desde el celular escaneando un QR.
+
+**Equipo de origen:** G8 (Introducción a la Ingeniería de Sistemas).
+
+## Integrantes y roles
+| Integrante | Rol Scrum |
+|---|---|
+| Kesly Rodríguez | Development Team |
+| Joshua Lobo | Development Team |
+| Santiago Vengoechea | Development Team |
+| Luis Robles | Development Team |
+
+**URL desplegada:** pendiente (Sprint 3, #38).
+
 ## Cómo levantar el proyecto con Docker
 
 Requisitos: [Docker Desktop](https://www.docker.com/products/docker-desktop/) (o Docker Engine con Compose v2).

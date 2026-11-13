@@ -20,6 +20,7 @@ import { LibroPanelPage } from '../features/panel/LibroPanelPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 import { ExplorarPage } from '../features/temas/ExplorarPage';
 import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
+import { QrAccesoPage } from '../features/qr/QrAccesoPage';
 
 export function RutasApp() {
   return (
@@ -46,6 +47,7 @@ export function RutasApp() {
         <Route element={<RutaProtegida roles={['PERSONAL', 'ADMINISTRADOR']} />}>
           <Route path={RUTAS.panel} element={<PanelPage />} />
           <Route path={RUTAS.prestamosPersonal} element={<PrestamosPersonalPage />} />
+          <Route path={RUTAS.panelQr} element={<QrAccesoPage />} />
           <Route path={RUTAS.panelAutores} element={<AutoresPage />} />
           <Route path={RUTAS.panelTemas} element={<TemasPage />} />
           <Route path={RUTAS.panelImportar} element={<ImportarPage />} />

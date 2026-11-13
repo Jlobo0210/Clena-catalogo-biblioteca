@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { CircleAlert, Info, RotateCw, SlidersHorizontal } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { CircleAlert, CircleHelp, Info, RotateCw, SlidersHorizontal } from 'lucide-react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Boton } from '../../shared/ui/Boton';
 import { useConsulta } from '../../shared/hooks/useConsulta';
@@ -16,6 +16,8 @@ import {
   leerFiltrosDeUrl,
   leerParametrosBusqueda,
 } from './parametrosBusqueda';
+import { TutorialBusqueda } from '../tutorial/TutorialBusqueda';
+import { marcarTutorialVisto, tutorialYaVisto } from '../tutorial/tutorialVisto';
 import styles from './BusquedaPage.module.css';
 
 export const RESULTADOS_POR_PAGINA = 10;
@@ -37,6 +39,20 @@ export function BusquedaPage() {
   const pagina = filtros.pagina ?? 1;
 
   const texto = q.trim();
+
+  // HU-32: el tutorial se abre solo la primera vez y se repite con el botón
+  const [tutorialAbierto, setTutorialAbierto] = useState(() => !tutorialYaVisto());
+  const botonTutorialRef = useRef<HTMLButtonElement>(null);
+  const cerrarTutorial = (motivo: 'terminado' | 'saltado') => {
+    marcarTutorialVisto();
+    setTutorialAbierto(false);
+    // Al terminar, el foco va al campo de búsqueda; al saltarlo, vuelve al botón.
+    requestAnimationFrame(() => {
+      if (motivo === 'terminado') document.getElementById('texto-busqueda')?.focus();
+      else botonTutorialRef.current?.focus();
+    });
+  };
+
   const puedeBuscar = texto.length >= MINIMO_CARACTERES;
 
   // useConsulta de HU-24, con los parámetros de filtro de HU-22
@@ -95,7 +111,17 @@ export function BusquedaPage() {
 
       {/* HU-24: franja de búsqueda */}
       <section aria-labelledby="buscar-titulo" className={styles.franja}>
-        <h1 id="buscar-titulo">Buscar libros</h1>
+        <div className={styles.encabezadoFranja}>
+          <h1 id="buscar-titulo">Buscar libros</h1>
+          <Boton
+            icono={CircleHelp}
+            onClick={() => setTutorialAbierto(true)}
+            ref={botonTutorialRef}
+            variante="translucido"
+          >
+            Ver tutorial
+          </Boton>
+        </div>
         <FormularioBusqueda
           ambitoInicial={ambito}
           key={`${texto}|${ambito}`}
@@ -212,6 +238,8 @@ export function BusquedaPage() {
           </p>
         </section>
       </div>
+
+      {tutorialAbierto ? <TutorialBusqueda onCerrar={cerrarTutorial} /> : null}
     </div>
   );
 }
