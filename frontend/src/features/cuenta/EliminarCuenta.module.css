@@ -1,0 +1,53 @@
+.seccion {
+  display: grid;
+  gap: var(--espacio-3);
+  width: min(100%, 40rem);
+  padding: var(--espacio-6);
+  background: var(--color-superficie);
+  border: 0.125rem solid var(--color-vino-claro);
+  border-radius: var(--radio-lg);
+}
+
+.seccion h2 {
+  margin: 0;
+  color: var(--color-vino);
+  font-size: var(--texto-titulo);
+}
+
+.seccion p,
+.seccion ul {
+  margin: 0;
+  font-size: var(--texto-cuerpo);
+}
+
+.seccion ul {
+  display: grid;
+  gap: var(--espacio-1);
+  padding-left: var(--espacio-6);
+}
+
+.nota {
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-texto-secundario);
+  background: var(--color-superficie-baja);
+  border-radius: var(--radio-sm);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+
+/* Más específicos que la variante del botón. */
+.seccion .peligro {
+  color: var(--color-superficie);
+  background: var(--color-vino);
+  justify-self: start;
+}
+
+.seccion .cancelar {
+  color: var(--color-azul-profundo);
+  background: var(--color-superficie-media);
+  border-color: var(--color-borde);
+}

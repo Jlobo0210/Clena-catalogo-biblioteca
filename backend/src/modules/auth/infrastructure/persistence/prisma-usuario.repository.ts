@@ -63,4 +63,30 @@ export class PrismaUsuarioRepository implements UsuarioRepository {
     ]);
     return { items: rows.map((r) => UsuarioMapper.toDomain(r)), total };
   }
+
+  contarPrestamosSinDevolver(usuarioId: string): Promise<number> {
+    return this.prisma.prestamo.count({
+      where: { usuarioId, fechaDevolucion: null },
+    });
+  }
+
+  async guardarAnonimizado(usuario: Usuario): Promise<void> {
+    const data = UsuarioMapper.toPersistence(usuario);
+    await this.prisma.$transaction([
+      this.prisma.usuario.update({
+        where: { id: usuario.id },
+        data: {
+          nombre: data.nombre,
+          email: data.email,
+          passwordHash: null,
+          anonimizadoEn: data.anonimizadoEn,
+        },
+      }),
+      // Las sesiones y las suscripciones también identifican a la persona: se borran.
+      this.prisma.refreshToken.deleteMany({ where: { usuarioId: usuario.id } }),
+      this.prisma.suscripcionDisponibilidad.deleteMany({
+        where: { usuarioId: usuario.id },
+      }),
+    ]);
+  }
 }
