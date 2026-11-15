@@ -18,6 +18,7 @@ import {
 } from '../api/catalogo-admin.api';
 import estilos from './GestionCatalogo.module.css';
 import styles from './LibroFormulario.module.css';
+import { TablaDesplazable } from '../../../shared/ui/TablaDesplazable';
 
 /** PRESTADO no se elige a mano: lo pone el registro de préstamos (HU-26). */
 const ESTADOS_ELEGIBLES: EstadoEjemplar[] = ['DISPONIBLE', 'EN_REPARACION', 'PERDIDO'];
@@ -122,7 +123,7 @@ export function EjemplaresLibro({ libroId }: { libroId: string }) {
           </Boton>
         </div>
       ) : (
-        <div className={estilos.tablaContenedor}>
+        <TablaDesplazable className={estilos.tablaContenedor} etiqueta="Ejemplares del libro">
           <table className={estilos.tabla}>
             <caption>
               {ejemplares.datos.items.length === 0
@@ -200,7 +201,7 @@ export function EjemplaresLibro({ libroId }: { libroId: string }) {
               )}
             </tbody>
           </table>
-        </div>
+        </TablaDesplazable>
       )}
     </section>
   );

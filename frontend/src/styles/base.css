@@ -5,7 +5,9 @@
 }
 
 html {
-  min-width: 22.5rem;
+  /* En px y no en rem: con la letra al 200 % un mínimo de 22.5rem obligaba a 720 px y
+     aparecía scroll horizontal en el celular (HU-33, WCAG 1.4.4 y 1.4.10). */
+  min-width: 320px;
   scroll-behavior: smooth;
 }
 
