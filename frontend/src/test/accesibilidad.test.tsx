@@ -12,6 +12,10 @@ import { MiCuentaPage } from '../features/cuenta/MiCuentaPage';
 import { PanelPage } from '../features/panel/PanelPage';
 import { TutorialBusqueda } from '../features/tutorial/TutorialBusqueda';
 import { TablaDesplazable } from '../shared/ui/TablaDesplazable';
+import { listarTemas } from '../features/catalogo/api/temas.api';
+import { ExplorarPage } from '../features/temas/ExplorarPage';
+import { listarLibrosDeTema, obtenerTema } from '../features/temas/api/categorias.api';
+import { CategoriaPage } from '../features/temas/CategoriaPage';
 import { violacionesAxe } from './axe';
 import { ConSesion, sesionFalsa, usuarioDePrueba } from './sesionFalsa';
 
@@ -20,6 +24,20 @@ vi.mock('../features/catalogo/api/libros.api', () => ({
   obtenerLibro: vi.fn(),
   listarEjemplares: vi.fn(),
 }));
+vi.mock('../features/catalogo/api/temas.api', () => ({ listarTemas: vi.fn() }));
+vi.mock('../features/temas/api/categorias.api', () => ({
+  obtenerTema: vi.fn(),
+  listarLibrosDeTema: vi.fn(),
+}));
+
+const TEMA = {
+  id: 't-1',
+  nombre: 'Literatura',
+  descripcion: 'Novela, cuento y poesía.',
+  totalLibros: 1,
+  creadoEn: '2026-11-01T00:00:00Z',
+  actualizadoEn: '2026-11-01T00:00:00Z',
+};
 
 const LIBRO: LibroDto = {
   id: 'l-1',
@@ -68,6 +86,21 @@ describe('Accesibilidad con axe (HU-33)', () => {
     vi.mocked(buscarLibros).mockResolvedValue({ items: [LIBRO], total: 1, pagina: 1, tamano: 10 });
     const { container } = enRuta('/buscar?q=garcia', '/buscar', <BusquedaPage />);
     await screen.findByRole('heading', { name: /1 resultado para/ });
+    expect(await violacionesAxe(container)).toEqual([]);
+  });
+
+  it('HU-35: explorar por categorías', async () => {
+    vi.mocked(listarTemas).mockResolvedValue({ items: [TEMA], total: 1, pagina: 1, tamano: 100 });
+    const { container } = enRuta('/temas', '/temas', <ExplorarPage />);
+    await screen.findByRole('heading', { name: 'Literatura' });
+    expect(await violacionesAxe(container)).toEqual([]);
+  });
+
+  it('HU-35: libros de una categoría con sus filtros', async () => {
+    vi.mocked(obtenerTema).mockResolvedValue(TEMA);
+    vi.mocked(listarLibrosDeTema).mockResolvedValue({ items: [LIBRO], total: 1, pagina: 1, tamano: 10 });
+    const { container } = enRuta('/temas/t-1', '/temas/:id', <CategoriaPage />);
+    await screen.findByRole('heading', { name: '1 libro en «Literatura»' });
     expect(await violacionesAxe(container)).toEqual([]);
   });
 

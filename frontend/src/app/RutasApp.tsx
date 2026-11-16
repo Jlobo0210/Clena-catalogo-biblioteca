@@ -20,6 +20,7 @@ import { LibrosPanelPage } from '../features/panel/LibrosPanelPage';
 import { LibroPanelPage } from '../features/panel/LibroPanelPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 import { ExplorarPage } from '../features/temas/ExplorarPage';
+import { CategoriaPage } from '../features/temas/CategoriaPage';
 import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
 import { QrAccesoPage } from '../features/qr/QrAccesoPage';
 
@@ -35,6 +36,7 @@ export function RutasApp() {
           element={<PaginaPendiente titulo="Búsqueda avanzada" />}
         />
         <Route path={RUTAS.temas} element={<ExplorarPage />} />
+        <Route path={RUTAS.tema} element={<CategoriaPage />} />
         <Route path={RUTAS.ingresar} element={<IngresarPage />} />
         <Route path={RUTAS.registro} element={<RegistroPage />} />
 
