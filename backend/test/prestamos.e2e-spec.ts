@@ -5,8 +5,16 @@ import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { configureApp } from '../src/app.setup';
 import { TOKEN_SERVICE } from '../src/modules/auth/domain/services/token-service';
+import { Prestamo } from '../src/modules/prestamos/domain/entities/prestamo';
+import {
+  fechaEnColombia,
+  sumarDias,
+} from '../src/modules/prestamos/domain/fecha-calendario';
+import { ALERTA_PRESTAMO_REPOSITORY } from '../src/modules/prestamos/domain/repositories/alerta-prestamo.repository';
 import { PRESTAMO_REPOSITORY } from '../src/modules/prestamos/domain/repositories/prestamo.repository';
+import { SERVICIO_CORREO } from '../src/shared/domain/correo';
 import { PrismaService } from '../src/shared/infrastructure/prisma/prisma.service';
+import { AlertasEnMemoria, CorreoFalso } from './fakes/alertas.fakes';
 import { TokensFalsos } from './fakes/auth.fakes';
 import { PrestamosEnMemoria } from './fakes/prestamos.fakes';
 
@@ -38,6 +46,8 @@ describe('Préstamos (e2e)', () => {
     .conEjemplar(EN_REPARACION, 'INV-0001-1', 'Redes', 'EN_REPARACION')
     .conUsuario(USUARIO, 'Visitante Demo', 'publico@clena.example')
     .conUsuario(PERSONAL_ID, 'Personal Demo', 'personal@clena.example');
+  const alertas = new AlertasEnMemoria(prestamos);
+  const correo = new CorreoFalso();
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
@@ -45,6 +55,10 @@ describe('Préstamos (e2e)', () => {
       .useValue({ $queryRaw: jest.fn(), $disconnect: jest.fn() })
       .overrideProvider(PRESTAMO_REPOSITORY)
       .useValue(prestamos)
+      .overrideProvider(ALERTA_PRESTAMO_REPOSITORY)
+      .useValue(alertas)
+      .overrideProvider(SERVICIO_CORREO)
+      .useValue(correo)
       .overrideProvider(TOKEN_SERVICE)
       .useValue(new TokensFalsos())
       .compile();
@@ -253,5 +267,52 @@ describe('Préstamos (e2e)', () => {
       .query({ estado: 'DEVUELTO' })
       .expect(200);
     expect(historial.body).toMatchObject({ total: 1 });
+  });
+
+  it('HU-29: la administración envía las alertas de devolución una sola vez', async () => {
+    const enviar = () => http().post('/api/v1/prestamos/alertas/envios');
+    await enviar().expect(401);
+    await enviar().set(PERSONAL).expect(403);
+    await enviar().set(PUBLICO).expect(403);
+
+    // Un préstamo que vence mañana y otro que venció hace 3 días.
+    const hoy = fechaEnColombia(new Date());
+    prestamos
+      .conEjemplar('e-alerta-1', 'INV-0901-1', 'Rayuela', 'PRESTADO')
+      .conEjemplar('e-alerta-2', 'INV-0902-1', 'Aura', 'PRESTADO');
+    for (const [id, ejemplarId, dias] of [
+      ['p-alerta-1', 'e-alerta-1', 1],
+      ['p-alerta-2', 'e-alerta-2', -3],
+    ] as const) {
+      prestamos.filas.set(
+        id,
+        Prestamo.reconstruir({
+          id,
+          ejemplarId,
+          usuarioId: USUARIO,
+          registradoPorId: PERSONAL_ID,
+          fechaPrestamo: new Date(),
+          fechaLimite: sumarDias(hoy, dias),
+          fechaDevolucion: null,
+        }),
+      );
+    }
+
+    const res = await enviar().set(ADMIN).expect(200);
+    expect(res.body).toEqual({
+      hoy,
+      recordatorios: 1,
+      vencimientos: 1,
+      fallidos: 0,
+    });
+    expect(correo.para('publico@clena.example').map((m) => m.asunto)).toEqual([
+      'Recordatorio: tu préstamo de «Rayuela» vence mañana',
+      'Tu préstamo de «Aura» está vencido',
+    ]);
+
+    // Repetirlo no duplica correos.
+    const otra = await enviar().set(ADMIN).expect(200);
+    expect(otra.body).toMatchObject({ recordatorios: 0, vencimientos: 0 });
+    expect(correo.enviados).toHaveLength(2);
   });
 });
