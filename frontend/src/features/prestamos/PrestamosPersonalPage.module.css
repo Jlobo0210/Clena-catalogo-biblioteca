@@ -79,6 +79,10 @@
 
 .tablaContenedor {
   overflow-x: auto;
+  /* HU-33: dentro de un grid, sin esto la tabla ensancha la página en vez de desplazarse sola. */
+  min-width: 0;
+  /* Las etiquetas visualmente ocultas (posición absoluta) quedan dentro y no ensanchan la página. */
+  position: relative;
 }
 
 .tabla {

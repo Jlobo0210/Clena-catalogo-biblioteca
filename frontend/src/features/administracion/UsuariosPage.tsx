@@ -4,6 +4,7 @@ import { cambiarRol, listarUsuarios } from '../auth/api/auth.api';
 import { useSesion } from '../auth/sesion/contextoSesion';
 import { NOMBRE_ROL, type Rol, type Usuario } from '../auth/types';
 import styles from './UsuariosPage.module.css';
+import { TablaDesplazable } from '../../shared/ui/TablaDesplazable';
 
 const ROLES: Rol[] = ['PUBLICO', 'PERSONAL', 'ADMINISTRADOR'];
 
@@ -52,7 +53,7 @@ export function UsuariosPage() {
       {error ? <p role="alert">{error}</p> : null}
       {!usuarios && !error ? <p role="status">Cargando usuarios…</p> : null}
       {usuarios ? (
-        <div className={styles.tablaContenedor}>
+        <TablaDesplazable className={styles.tablaContenedor} etiqueta="Cuentas registradas">
           <table className={styles.tabla}>
             <caption>{usuarios.length} cuentas registradas</caption>
             <thead>
@@ -90,7 +91,7 @@ export function UsuariosPage() {
               ))}
             </tbody>
           </table>
-        </div>
+        </TablaDesplazable>
       ) : null}
     </section>
   );
