@@ -39,6 +39,16 @@ services:
       # Préstamos (HU-26): plazo en días y máximo de préstamos sin devolver por usuario.
       PRESTAMO_DIAS: ${PRESTAMO_DIAS:-15}
       PRESTAMO_MAX_ACTIVOS: ${PRESTAMO_MAX_ACTIVOS:-3}
+      # Alertas de devolución (HU-29). Sin SMTP_HOST los correos solo quedan en el log.
+      ALERTA_DIAS_ANTES: ${ALERTA_DIAS_ANTES:-2}
+      ALERTAS_HORARIO: ${ALERTAS_HORARIO:-0 8 * * *}
+      ALERTAS_ACTIVAS: ${ALERTAS_ACTIVAS:-true}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      CORREO_REMITENTE: ${CORREO_REMITENTE:-}
       # Datos de demostración: se cargan al arrancar (no duplican si se reinicia).
       SEED_DEMO: ${SEED_DEMO:-true}
       SEED_PASSWORD: ${SEED_PASSWORD:?Falta SEED_PASSWORD en .env (ver .env.example)}
