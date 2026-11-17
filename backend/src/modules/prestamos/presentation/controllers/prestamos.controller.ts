@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Logger,
   Param,
   ParseUUIDPipe,
   Post,
@@ -23,6 +24,7 @@ import type { AccessTokenPayload } from '../../../auth/domain/services/token-ser
 import { Autenticado } from '../../../auth/presentation/decorators/autenticado.decorator';
 import { UsuarioActual } from '../../../auth/presentation/decorators/usuario-actual.decorator';
 import { ErrorResponse } from '../../../../shared/presentation/http/error-response';
+import { EnviarAlertasPrestamoUseCase } from '../../application/use-cases/enviar-alertas-prestamo.use-case';
 import { ListarMisPrestamosUseCase } from '../../application/use-cases/listar-mis-prestamos.use-case';
 import { ListarPrestamosUseCase } from '../../application/use-cases/listar-prestamos.use-case';
 import { ObtenerPrestamoUseCase } from '../../application/use-cases/obtener-prestamo.use-case';
@@ -38,6 +40,7 @@ import {
 import {
   PaginaPrestamosResponse,
   PrestamoResponse,
+  ResultadoAlertasResponse,
   ResumenPrestamosResponse,
 } from '../dtos/prestamo-response.dto';
 
@@ -45,6 +48,7 @@ import {
  * HU-26: préstamos y devoluciones, solo para el personal y el administrador.
  * HU-27: GET /prestamos/mios, para cualquier usuario con sesión.
  * HU-36: vencidos y próximos a vencer (filtros de GET /prestamos) y GET /prestamos/resumen.
+ * HU-29: POST /prestamos/alertas/envios, para que la administración envíe las alertas sin esperar a la tarea.
  */
 @ApiTags('prestamos')
 @Controller('prestamos')
@@ -57,7 +61,10 @@ export class PrestamosController {
     private readonly obtenerPrestamo: ObtenerPrestamoUseCase,
     private readonly listarMisPrestamos: ListarMisPrestamosUseCase,
     private readonly resumenPrestamos: ResumenPrestamosUseCase,
+    private readonly enviarAlertas: EnviarAlertasPrestamoUseCase,
   ) {}
+
+  private readonly logger = new Logger('AlertasPrestamo');
 
   @Post()
   @ApiOperation({
@@ -106,6 +113,29 @@ export class PrestamosController {
   @ApiBadRequestResponse({ type: ErrorResponse })
   listar(@Query() query: ListarPrestamosQueryDto) {
     return this.listarPrestamos.execute(query);
+  }
+
+  @Post('alertas/envios')
+  @Autenticado(Rol.ADMINISTRADOR)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      'Enviar ya las alertas de devolución (HU-29); la tarea programada lo hace cada día',
+    description:
+      'Envía los recordatorios de los préstamos que vencen pronto y los avisos de los vencidos. Cada alerta se envía una sola vez por préstamo, así que repetirlo no duplica correos.',
+  })
+  @ApiOkResponse({ type: ResultadoAlertasResponse })
+  async enviarAlertasAhora(): Promise<ResultadoAlertasResponse> {
+    const { fallos, ...resultado } = await this.enviarAlertas.execute();
+    this.logger.log(
+      `Envío manual del ${resultado.hoy}: ${resultado.recordatorios} recordatorios, ${resultado.vencimientos} avisos de vencimiento, ${fallos.length} fallidos`,
+    );
+    for (const f of fallos) {
+      this.logger.warn(
+        `No se pudo enviar la alerta ${f.tipo} del préstamo ${f.prestamoId}: ${f.motivo}`,
+      );
+    }
+    return { ...resultado, fallidos: fallos.length };
   }
 
   /** Va antes de GET :id para que «resumen» no se tome como un id. */
