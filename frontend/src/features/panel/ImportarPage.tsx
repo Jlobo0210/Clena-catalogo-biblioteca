@@ -7,6 +7,7 @@ import { Boton } from '../../shared/ui/Boton';
 import { descargarPlantilla, importarCatalogo, type ReporteImportacion } from './api/catalogo-admin.api';
 import estilosGestion from './components/GestionCatalogo.module.css';
 import styles from './ImportarPage.module.css';
+import { TablaDesplazable } from '../../shared/ui/TablaDesplazable';
 
 const TAMANO_MAXIMO = 2 * 1024 * 1024;
 const formatoNumero = new Intl.NumberFormat('es-CO');
@@ -209,7 +210,7 @@ function Reporte({
         </p>
       ) : null}
       {reporte.errores.length > 0 ? (
-        <div className={estilosGestion.tablaContenedor}>
+        <TablaDesplazable className={estilosGestion.tablaContenedor} etiqueta="Filas con error">
           <table className={estilosGestion.tabla}>
             <caption>Filas con error (el número es la línea del archivo; la cabecera es la línea 1)</caption>
             <thead>
@@ -237,7 +238,7 @@ function Reporte({
               ))}
             </tbody>
           </table>
-        </div>
+        </TablaDesplazable>
       ) : null}
     </section>
   );

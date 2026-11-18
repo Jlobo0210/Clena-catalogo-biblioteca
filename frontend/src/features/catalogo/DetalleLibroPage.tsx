@@ -10,7 +10,7 @@ import {
   Tag,
 } from 'lucide-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { RUTAS } from '../../config/rutas';
+import { RUTAS, rutaTema } from '../../config/rutas';
 import { useConsulta } from '../../shared/hooks/useConsulta';
 import { listarEjemplares, obtenerLibro } from './api/libros.api';
 import {
@@ -187,7 +187,15 @@ export function DetalleLibroPage() {
             </h2>
             <div>
               {temas.length ? (
-                temas.map((tema) => <span key={tema}>{tema}</span>)
+                libro.temas.map((tema) => (
+                  <Link
+                    aria-label={`Ver más libros de ${tema.nombre}`}
+                    key={tema.id}
+                    to={rutaTema(tema.id)}
+                  >
+                    {tema.nombre}
+                  </Link>
+                ))
               ) : (
                 <p>No hay temas asociados.</p>
               )}
@@ -237,6 +245,8 @@ function Ubicacion({ ejemplares, libro }: Detalle) {
                       day: 'numeric',
                       month: 'long',
                       year: 'numeric',
+                      // Es una fecha de calendario (DATE a medianoche UTC): en Colombia mostraría el día anterior.
+                      timeZone: 'UTC',
                     })}
                   </strong>
                   .

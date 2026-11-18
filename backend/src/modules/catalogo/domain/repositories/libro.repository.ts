@@ -17,6 +17,8 @@ export interface FiltroLibros {
   temaId?: string;
   anioDesde?: number;
   anioHasta?: number;
+  /** HU-35: solo libros con al menos un ejemplar disponible. */
+  soloDisponibles?: boolean;
   ordenarPor: OrdenLibros;
   direccion: Direccion;
 }

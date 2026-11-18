@@ -20,6 +20,7 @@ import { LibrosPanelPage } from '../features/panel/LibrosPanelPage';
 import { LibroPanelPage } from '../features/panel/LibroPanelPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 import { ExplorarPage } from '../features/temas/ExplorarPage';
+import { CategoriaPage } from '../features/temas/CategoriaPage';
 import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
 import { QrAccesoPage } from '../features/qr/QrAccesoPage';
 import { BibliotecaPage } from '../features/biblioteca/BibliotecaPage';
@@ -41,6 +42,7 @@ export function RutasApp() {
         <Route path={RUTAS.biblioteca} element={<BibliotecaPage />} />
         <Route path={RUTAS.ayuda} element={<AyudaPage />} />
         <Route path={RUTAS.formularioAyuda} element={<FormularioParticipacionPage />} />
+        <Route path={RUTAS.tema} element={<CategoriaPage />} />
         <Route path={RUTAS.ingresar} element={<IngresarPage />} />
         <Route path={RUTAS.registro} element={<RegistroPage />} />
 

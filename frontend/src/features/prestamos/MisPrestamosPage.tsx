@@ -9,6 +9,7 @@ import { TarjetaPrestamo } from './components/TarjetaPrestamo';
 import type { Prestamo } from './types';
 import { DIAS_AVISO, formatearInstante, urgenciaDe } from './urgencia';
 import styles from './MisPrestamosPage.module.css';
+import { TablaDesplazable } from '../../shared/ui/TablaDesplazable';
 
 interface Datos {
   pendientes: Prestamo[];
@@ -86,7 +87,7 @@ export function MisPrestamosPage() {
             {datos.historial.length === 0 ? (
               <p className={styles.vacio}>Aún no has devuelto ningún préstamo.</p>
             ) : (
-              <div className={styles.tablaContenedor}>
+              <TablaDesplazable className={styles.tablaContenedor} etiqueta="Historial de préstamos devueltos">
                 <table className={styles.tabla}>
                   <caption className="visualmente-oculto">Préstamos devueltos, del más reciente al más antiguo</caption>
                   <thead>
@@ -106,7 +107,7 @@ export function MisPrestamosPage() {
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </TablaDesplazable>
             )}
           </section>
         </>

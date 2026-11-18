@@ -16,6 +16,7 @@ import type { Prestamo } from './types';
 import { DIAS_AVISO, formatearDia, formatearInstante, textoPlazo, urgenciaDe } from './urgencia';
 import plazos from './PrestamosPersonalPage.module.css';
 import styles from './SeguimientoPrestamosPage.module.css';
+import { TablaDesplazable } from '../../shared/ui/TablaDesplazable';
 
 export const PRESTAMOS_POR_PAGINA = 20;
 
@@ -282,7 +283,7 @@ export function SeguimientoPrestamosPage() {
               : `${estado.titulo}: ${consulta.datos.total}${hayFechas ? ' con esas fechas' : ''}.`}
           </p>
           {consulta.datos.total > 0 ? (
-            <div className={gestion.tablaContenedor}>
+            <TablaDesplazable className={gestion.tablaContenedor} etiqueta="Seguimiento de préstamos">
               <table className={gestion.tabla}>
                 <caption className="visualmente-oculto">
                   {estado.titulo}, ordenados por {orden.etiqueta.toLowerCase()}
@@ -340,7 +341,7 @@ export function SeguimientoPrestamosPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </TablaDesplazable>
           ) : null}
           <Paginacion
             pagina={consulta.datos.pagina}

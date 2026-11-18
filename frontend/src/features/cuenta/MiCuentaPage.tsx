@@ -4,6 +4,7 @@ import { RUTAS } from '../../config/rutas';
 import { Boton } from '../../shared/ui/Boton';
 import { useSesion } from '../auth/sesion/contextoSesion';
 import { NOMBRE_ROL } from '../auth/types';
+import { EliminarCuenta } from './EliminarCuenta';
 import styles from './MiCuentaPage.module.css';
 
 const formatoFecha = new Intl.DateTimeFormat('es-CO', { dateStyle: 'long' });
@@ -48,6 +49,7 @@ export function MiCuentaPage() {
       <Boton icono={LogOut} onClick={() => void cerrar()} variante="oscuro">
         Cerrar sesión
       </Boton>
+      <EliminarCuenta />
     </section>
   );
 }

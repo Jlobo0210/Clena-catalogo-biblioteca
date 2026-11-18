@@ -33,6 +33,7 @@ export interface ListarLibrosInput {
   temaId?: string;
   anioDesde?: number;
   anioHasta?: number;
+  soloDisponibles?: boolean;
   ordenarPor?: OrdenLibros;
   direccion?: Direccion;
 }

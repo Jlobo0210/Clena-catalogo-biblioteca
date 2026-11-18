@@ -17,6 +17,9 @@ import { IdGenerator } from '../../src/shared/domain/id-generator';
 
 export class UsuariosEnMemoria implements UsuarioRepository {
   readonly filas = new Map<string, Usuario>();
+  /** Préstamos sin devolver por usuario (HU-34); las pruebas lo llenan a mano. */
+  readonly prestamosSinDevolver = new Map<string, number>();
+  readonly anonimizados: string[] = [];
 
   guardar(u: Usuario): Promise<void> {
     this.filas.set(u.id, u);
@@ -43,6 +46,14 @@ export class UsuariosEnMemoria implements UsuarioRepository {
       items: todos.slice(inicio, inicio + f.tamano),
       total: todos.length,
     });
+  }
+  contarPrestamosSinDevolver(usuarioId: string): Promise<number> {
+    return Promise.resolve(this.prestamosSinDevolver.get(usuarioId) ?? 0);
+  }
+  guardarAnonimizado(u: Usuario): Promise<void> {
+    this.filas.set(u.id, u);
+    this.anonimizados.push(u.id);
+    return Promise.resolve();
   }
 }
 

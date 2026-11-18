@@ -14,6 +14,13 @@ export interface UsuarioRepository {
   buscarPorId(id: string): Promise<Usuario | null>;
   buscarPorEmail(email: string): Promise<Usuario | null>;
   listar(filtro: FiltroUsuarios): Promise<{ items: Usuario[]; total: number }>;
+  /** HU-34: préstamos que la persona aún no ha devuelto (impiden eliminar la cuenta). */
+  contarPrestamosSinDevolver(usuarioId: string): Promise<number>;
+  /**
+   * HU-34: guarda el usuario ya anonimizado y borra en la misma transacción lo que lo
+   * identifica fuera de la tabla usuario (sesiones y suscripciones de disponibilidad).
+   */
+  guardarAnonimizado(usuario: Usuario): Promise<void>;
 }
 
 export const USUARIO_REPOSITORY = Symbol('USUARIO_REPOSITORY');
