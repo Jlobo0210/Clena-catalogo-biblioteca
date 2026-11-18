@@ -13,6 +13,40 @@ datasource db {
   extensions = [pg_trgm, unaccent]
 }
 
+model ConfiguracionBiblioteca {
+  id       Int    @id @default(1)
+  horarios String @db.VarChar(1000)
+  telefono String @db.VarChar(30)
+  correo   String @db.VarChar(254)
+
+  @@map("configuracion_biblioteca")
+}
+
+enum TipoParticipacion {
+  LIBRO
+  SUGERENCIA
+  QUEJA
+  FELICITACION
+}
+
+enum EstadoParticipacion {
+  PENDIENTE
+}
+
+model SolicitudParticipacion {
+  id       String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tipo     TipoParticipacion
+  titulo   String?              @db.VarChar(300)
+  autor    String?              @db.VarChar(200)
+  mensaje  String?              @db.VarChar(3000)
+  nombre   String?              @db.VarChar(120)
+  correo   String?              @db.VarChar(254)
+  creadaEn DateTime             @default(now()) @map("creada_en") @db.Timestamptz
+  estado   EstadoParticipacion  @default(PENDIENTE)
+
+  @@map("solicitud_participacion")
+}
+
 enum Rol {
   ADMINISTRADOR
   PERSONAL

@@ -85,13 +85,13 @@
 .enlaceNav {
   display: inline-flex;
   flex: 1;
-  min-height: 3.25rem;
+  min-height: 4rem;
   align-items: center;
   gap: 0.625rem;
   padding: 0.5rem 0.875rem;
   color: var(--color-azul-profundo);
   background: var(--color-superficie);
-  border: var(--borde-fino) solid transparent;
+  border: var(--borde-fino) solid var(--color-borde);
   border-radius: var(--radio-sm);
   font-size: 0.9375rem;
   text-decoration: none;
@@ -173,9 +173,12 @@
   font-size: 0.8125rem;
 }
 
-.activo small,
-.enlaceNav:hover small {
+.activo small {
   color: var(--color-superficie-alta);
+}
+
+.enlaceNav:not(.activo):hover small {
+  color: var(--color-texto-secundario);
 }
 
 @media (min-width: 1024px) {
@@ -225,10 +228,13 @@
 
   .navegacion {
     width: 100%;
+    flex-wrap: wrap;
+    overflow: visible;
   }
 
   .enlaceNav {
-    min-width: 10rem;
+    flex: 1 1 45%;
+    min-width: 0;
   }
 }
 

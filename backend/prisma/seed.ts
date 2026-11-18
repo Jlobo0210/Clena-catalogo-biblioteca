@@ -209,6 +209,12 @@ async function main(): Promise<void> {
     throw new Error('Falta SEED_PASSWORD en .env (ver .env.example).');
   }
 
+  await prisma.configuracionBiblioteca.upsert({
+    where: { id: 1 },
+    update: {},
+    create: { id: 1, horarios: 'Lunes a Viernes: 8:00 a.m. – 5:00 p.m.\nSábados: 9:00 a.m. – 1:00 p.m.', telefono: '+57 300 555 0100', correo: 'biblioteca@example.com' },
+  });
+
   await sembrarUsuarios(password);
   const temaIds = await sembrarTemas();
   const autorIds: string[] = [];
