@@ -118,6 +118,37 @@ describe('Libros (e2e)', () => {
     expect(res.body).toMatchObject({ total: 1, pagina: 1, tamano: 20 });
   });
 
+  it('HU-35: explorar una categoría con los filtros de la búsqueda', async () => {
+    const base = { temaId: TEMA, idioma: 'es', ordenarPor: 'titulo' };
+    const todos = await http().get('/api/v1/libros').query(base).expect(200);
+    expect(todos.body).toMatchObject({ total: 1 });
+
+    // Sin ejemplares disponibles no aparece; «false» no filtra.
+    const solo = await http()
+      .get('/api/v1/libros')
+      .query({ ...base, soloDisponibles: 'true' })
+      .expect(200);
+    expect(solo.body).toMatchObject({ total: 0 });
+    const sinFiltro = await http()
+      .get('/api/v1/libros')
+      .query({ ...base, soloDisponibles: 'false' })
+      .expect(200);
+    expect(sinFiltro.body).toMatchObject({ total: 1 });
+
+    libros.conDisponibles.add(creado.id);
+    const conDisponible = await http()
+      .get('/api/v1/libros')
+      .query({ ...base, soloDisponibles: 'true' })
+      .expect(200);
+    expect(conDisponible.body).toMatchObject({ total: 1 });
+    libros.conDisponibles.clear();
+
+    await http()
+      .get('/api/v1/libros')
+      .query({ soloDisponibles: 'quizas' })
+      .expect(400);
+  });
+
   it('rechaza filtros inválidos', async () => {
     await http().get('/api/v1/libros').query({ tamano: 500 }).expect(400);
     await http()

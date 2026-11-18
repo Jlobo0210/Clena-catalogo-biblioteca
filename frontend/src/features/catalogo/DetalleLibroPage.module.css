@@ -286,11 +286,22 @@
   gap: var(--espacio-2);
 }
 
-.tags span {
+.tags a {
   padding: var(--espacio-2) var(--espacio-4);
   border-radius: var(--radio-pildora);
   color: var(--color-azul-profundo);
   background: var(--color-superficie-alta);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.tags a:hover {
+  background: var(--color-ambar-claro);
+}
+
+.tags a:focus-visible {
+  outline: 0.1875rem solid var(--color-foco);
+  outline-offset: 0.1875rem;
 }
 
 .tags p {

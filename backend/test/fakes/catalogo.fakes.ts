@@ -25,6 +25,8 @@ export class LibrosEnMemoria implements LibroRepository {
   readonly temas = new Map<string, Referencia>();
   /** Ejemplares por libro (los gestiona HU-17; aquí solo se cuentan). */
   readonly ejemplares = new Map<string, number>();
+  /** Libros con al menos un ejemplar disponible (filtro soloDisponibles). */
+  readonly conDisponibles = new Set<string>();
 
   conAutor(id: string, nombre: string): this {
     this.autores.set(id, { id, nombre });
@@ -68,7 +70,8 @@ export class LibrosEnMemoria implements LibroRepository {
           (f.anioDesde === undefined ||
             (l.anioPublicacion ?? -Infinity) >= f.anioDesde) &&
           (f.anioHasta === undefined ||
-            (l.anioPublicacion ?? Infinity) <= f.anioHasta),
+            (l.anioPublicacion ?? Infinity) <= f.anioHasta) &&
+          (!f.soloDisponibles || this.conDisponibles.has(l.id)),
       )
       .sort((a, b) => (valor(a) > valor(b) ? signo : -signo));
     const inicio = (f.pagina - 1) * f.tamano;

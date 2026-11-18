@@ -19,18 +19,33 @@ const IDIOMAS = [
   { valor: 'pt', etiqueta: 'Portugués' },
 ];
 
-const ORDENES = [
+type Orden = NonNullable<FiltrosBusqueda['ordenarPor']>;
+
+const ORDENES_BUSQUEDA: { valor: Orden; etiqueta: string }[] = [
   { valor: 'relevancia', etiqueta: 'Relevancia' },
   { valor: 'titulo', etiqueta: 'Título (A–Z)' },
   { valor: 'anio', etiqueta: 'Año (más reciente)' },
 ];
 
+/** El título va de la A a la Z; el año y la relevancia, de mayor a menor. */
+const DIRECCION_DEL_ORDEN: Record<Orden, 'asc' | 'desc'> = {
+  relevancia: 'desc',
+  titulo: 'asc',
+  anio: 'desc',
+};
+
 interface PanelFiltrosProps {
   filtros: FiltrosBusqueda;
   onChange: (cambios: Partial<FiltrosBusqueda>) => void;
+  /** Órdenes que se ofrecen (HU-35: una categoría no ordena por relevancia). */
+  ordenes?: { valor: Orden; etiqueta: string }[];
 }
 
-export function PanelFiltros({ filtros, onChange }: PanelFiltrosProps) {
+export function PanelFiltros({
+  filtros,
+  onChange,
+  ordenes = ORDENES_BUSQUEDA,
+}: PanelFiltrosProps) {
   return (
     <aside aria-label="Filtros de búsqueda" className={styles.panel}>
       <h2 className={styles.titulo}>Filtrar resultados</h2>
@@ -136,14 +151,13 @@ export function PanelFiltros({ filtros, onChange }: PanelFiltrosProps) {
         <select
           className={styles.selector}
           id="filtro-orden"
-          onChange={(e) =>
-            onChange({
-              ordenarPor: e.target.value as FiltrosBusqueda['ordenarPor'],
-            })
-          }
-          value={filtros.ordenarPor ?? 'relevancia'}
+          onChange={(e) => {
+            const ordenarPor = e.target.value as Orden;
+            onChange({ ordenarPor, direccion: DIRECCION_DEL_ORDEN[ordenarPor] });
+          }}
+          value={filtros.ordenarPor ?? ordenes[0].valor}
         >
-          {ORDENES.map((op) => (
+          {ordenes.map((op) => (
             <option key={op.valor} value={op.valor}>
               {op.etiqueta}
             </option>

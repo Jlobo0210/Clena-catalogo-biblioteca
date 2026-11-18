@@ -78,6 +78,9 @@ export class PrismaLibroRepository implements LibroRepository {
       ...(f.anioDesde !== undefined || f.anioHasta !== undefined
         ? { anioPublicacion: { gte: f.anioDesde, lte: f.anioHasta } }
         : {}),
+      ...(f.soloDisponibles
+        ? { ejemplares: { some: { estado: 'DISPONIBLE' } } }
+        : {}),
     };
     const orden: Record<
       FiltroLibros['ordenarPor'],

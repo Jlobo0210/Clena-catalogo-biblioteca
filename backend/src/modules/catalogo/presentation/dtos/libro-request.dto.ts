@@ -1,5 +1,9 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+
+/** «true»/«false» de la URL a booleano; cualquier otro texto se deja para que @IsBoolean lo rechace. */
+const aBooleano = ({ value }: { value: unknown }): unknown =>
+  value === 'true' ? true : value === 'false' ? false : value;
 import {
   ArrayMaxSize,
   ArrayNotEmpty,
@@ -166,6 +170,15 @@ export class ListarLibrosQueryDto {
   @Type(() => Number)
   @IsInt()
   anioHasta?: number;
+
+  @ApiPropertyOptional({
+    description:
+      'HU-35: true para mostrar solo libros con ejemplares disponibles',
+  })
+  @IsOptional()
+  @Transform(aBooleano)
+  @IsBoolean()
+  soloDisponibles?: boolean;
 
   @ApiPropertyOptional({ enum: ORDENES, default: 'titulo' })
   @IsOptional()

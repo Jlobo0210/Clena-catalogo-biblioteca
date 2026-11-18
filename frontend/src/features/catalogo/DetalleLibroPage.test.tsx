@@ -97,6 +97,18 @@ describe('DetalleLibroPage (HU-24)', () => {
     expect(ejemplaresMock).toHaveBeenCalledWith('l-1', expect.any(AbortSignal));
   });
 
+  it('HU-35: cada tema lleva a los demás libros de su categoría', async () => {
+    obtenerMock.mockResolvedValue(LIBRO);
+    ejemplaresMock.mockResolvedValue(lista([ejemplar(1, 'DISPONIBLE')]));
+    montar();
+
+    await cargado();
+    expect(screen.getByRole('link', { name: 'Ver más libros de Literatura' })).toHaveAttribute(
+      'href',
+      '/temas/t-1',
+    );
+  });
+
   it('dice dónde está cada ejemplar y cuántos hay disponibles', async () => {
     obtenerMock.mockResolvedValue(LIBRO);
     ejemplaresMock.mockResolvedValue(
