@@ -14,7 +14,11 @@ import { ALERTA_PRESTAMO_REPOSITORY } from '../src/modules/prestamos/domain/repo
 import { PRESTAMO_REPOSITORY } from '../src/modules/prestamos/domain/repositories/prestamo.repository';
 import { SERVICIO_CORREO } from '../src/shared/domain/correo';
 import { PrismaService } from '../src/shared/infrastructure/prisma/prisma.service';
-import { AlertasEnMemoria, CorreoFalso, SuscripcionesEnMemoria } from './fakes/alertas.fakes';
+import {
+  AlertasEnMemoria,
+  CorreoFalso,
+  SuscripcionesEnMemoria,
+} from './fakes/alertas.fakes';
 import { SUSCRIPCION_DISPONIBILIDAD_REPOSITORY } from '../src/modules/suscripciones/domain/suscripcion-disponibilidad.repository';
 import { TokensFalsos } from './fakes/auth.fakes';
 import { PrestamosEnMemoria } from './fakes/prestamos.fakes';

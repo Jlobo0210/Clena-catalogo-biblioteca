@@ -3,15 +3,18 @@ import userEvent from '@testing-library/user-event';
 import { AxiosError, AxiosHeaders } from 'axios';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { cancelarSuscripcion, suscribirse } from './api/suscripciones.api';
 import { listarEjemplares, obtenerLibro } from './api/libros.api';
 import type { EjemplarDto, LibroDto, ListaEjemplaresDto } from './types';
 import { DetalleLibroPage } from './DetalleLibroPage';
 import { ConSesion, sesionFalsa, usuarioDePrueba } from '../../test/sesionFalsa';
 
 vi.mock('./api/suscripciones.api', () => ({
-  suscribirse: vi.fn().mockResolvedValue({ id: 'sub-1', usuarioId: 'u-1', libroId: 'l-1', creadoEn: new Date().toISOString() }),
-  cancelarSuscripcion: vi.fn().mockResolvedValue(undefined),
+  suscribirse: vi.fn(),
+  cancelarSuscripcion: vi.fn(),
 }));
+const suscribirseMock = vi.mocked(suscribirse);
+const cancelarSuscripcionMock = vi.mocked(cancelarSuscripcion);
 
 vi.mock('./api/libros.api', () => ({ obtenerLibro: vi.fn(), listarEjemplares: vi.fn() }));
 const obtenerMock = vi.mocked(obtenerLibro);
@@ -86,6 +89,16 @@ describe('DetalleLibroPage (HU-24)', () => {
   beforeEach(() => {
     obtenerMock.mockReset();
     ejemplaresMock.mockReset();
+    // restoreMocks: true (vite.config.ts) llama vi.restoreAllMocks() tras cada test,
+    // lo que equivale a mockReset() en vi.fn() sin implementación original.
+    // Re-configurar las implementaciones por defecto antes de cada test.
+    suscribirseMock.mockResolvedValue({
+      id: 'sub-1',
+      usuarioId: 'u-1',
+      libroId: 'l-1',
+      creadoEn: new Date().toISOString(),
+    });
+    cancelarSuscripcionMock.mockResolvedValue(undefined);
   });
 
   it('muestra la ficha técnica y los temas', async () => {

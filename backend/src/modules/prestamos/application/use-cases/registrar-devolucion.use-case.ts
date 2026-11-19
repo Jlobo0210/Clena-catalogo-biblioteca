@@ -39,9 +39,7 @@ export class RegistrarDevolucionUseCase {
         obtenerUsuario: (usuarioId) =>
           this.prestamos
             .buscarUsuario({ id: usuarioId })
-            .then((u) =>
-              u ? { nombre: u.nombre, email: u.email } : null,
-            ),
+            .then((u) => (u ? { nombre: u.nombre, email: u.email } : null)),
       })
       .catch(() => {
         // La devolución ya fue registrada; un fallo en las notificaciones no la deshace

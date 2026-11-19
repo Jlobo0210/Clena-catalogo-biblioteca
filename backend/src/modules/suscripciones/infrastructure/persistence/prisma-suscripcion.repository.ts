@@ -22,9 +22,7 @@ function toDomain(row: {
 }
 
 @Injectable()
-export class PrismaSuscripcionRepository
-  implements SuscripcionDisponibilidadRepository
-{
+export class PrismaSuscripcionRepository implements SuscripcionDisponibilidadRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async buscarActiva(

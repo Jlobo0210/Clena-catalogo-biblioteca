@@ -93,13 +93,16 @@ export class SuscripcionesEnMemoria implements SuscripcionDisponibilidadReposito
 
   async buscarActiva(usuarioId: string, libroId: string) {
     for (const s of this.store.values()) {
-      if (s.usuarioId === usuarioId && s.libroId === libroId && s.activa) return s;
+      if (s.usuarioId === usuarioId && s.libroId === libroId && s.activa)
+        return s;
     }
     return null;
   }
 
   async buscarActivasPorLibro(libroId: string) {
-    return [...this.store.values()].filter((s) => s.libroId === libroId && s.activa);
+    return [...this.store.values()].filter(
+      (s) => s.libroId === libroId && s.activa,
+    );
   }
 
   async buscarPorId(id: string) {

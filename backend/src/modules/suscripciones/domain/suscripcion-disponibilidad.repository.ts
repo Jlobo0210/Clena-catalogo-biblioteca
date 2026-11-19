@@ -10,9 +10,7 @@ export interface SuscripcionDisponibilidadRepository {
     libroId: string,
   ): Promise<SuscripcionDisponibilidad | null>;
 
-  buscarActivasPorLibro(
-    libroId: string,
-  ): Promise<SuscripcionDisponibilidad[]>;
+  buscarActivasPorLibro(libroId: string): Promise<SuscripcionDisponibilidad[]>;
 
   buscarPorId(id: string): Promise<SuscripcionDisponibilidad | null>;
 

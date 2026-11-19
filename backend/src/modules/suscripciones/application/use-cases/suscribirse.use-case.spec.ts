@@ -12,13 +12,16 @@ class SuscripcionesEnMemoria implements SuscripcionDisponibilidadRepository {
 
   async buscarActiva(usuarioId: string, libroId: string) {
     for (const s of this.store.values()) {
-      if (s.usuarioId === usuarioId && s.libroId === libroId && s.activa) return s;
+      if (s.usuarioId === usuarioId && s.libroId === libroId && s.activa)
+        return s;
     }
     return null;
   }
 
   async buscarActivasPorLibro(libroId: string) {
-    return [...this.store.values()].filter((s) => s.libroId === libroId && s.activa);
+    return [...this.store.values()].filter(
+      (s) => s.libroId === libroId && s.activa,
+    );
   }
 
   async buscarPorId(id: string) {
@@ -44,7 +47,10 @@ describe('SuscribirseUseCase', () => {
   });
 
   it('crea una suscripción activa', async () => {
-    const output = await uc.execute({ usuarioId: USUARIO_ID, libroId: LIBRO_ID });
+    const output = await uc.execute({
+      usuarioId: USUARIO_ID,
+      libroId: LIBRO_ID,
+    });
     expect(output.usuarioId).toBe(USUARIO_ID);
     expect(output.libroId).toBe(LIBRO_ID);
     expect(output.id).toBeTruthy();

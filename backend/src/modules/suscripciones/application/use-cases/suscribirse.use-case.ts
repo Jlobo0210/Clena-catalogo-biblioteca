@@ -1,4 +1,4 @@
-import { ConflictError, NotFoundError } from '../../../../shared/domain/domain-error';
+import { ConflictError } from '../../../../shared/domain/domain-error';
 import { SuscripcionDisponibilidad } from '../../domain/suscripcion-disponibilidad.entity';
 import { SuscripcionDisponibilidadRepository } from '../../domain/suscripcion-disponibilidad.repository';
 
@@ -25,7 +25,9 @@ export class SuscribirseUseCase {
 
     const existente = await this.suscripciones.buscarActiva(usuarioId, libroId);
     if (existente) {
-      throw new ConflictError('Ya tienes una suscripción activa para este libro');
+      throw new ConflictError(
+        'Ya tienes una suscripción activa para este libro',
+      );
     }
 
     const ahora = this.reloj();
