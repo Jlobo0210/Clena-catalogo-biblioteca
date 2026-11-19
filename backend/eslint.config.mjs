@@ -107,4 +107,11 @@ export default tseslint.config(
       ],
     },
   },
+  // Tests y fakes: los métodos implementan interfaces async sin necesitar await real
+  {
+    files: ['**/*.spec.ts', 'test/**/*.ts'],
+    rules: {
+      '@typescript-eslint/require-await': 'off',
+    },
+  },
 );

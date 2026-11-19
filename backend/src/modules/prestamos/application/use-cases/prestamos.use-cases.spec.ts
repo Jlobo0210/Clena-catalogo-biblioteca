@@ -8,6 +8,7 @@ import { PrestamosEnMemoria } from '../../../../../test/fakes/prestamos.fakes';
 import { ListarMisPrestamosUseCase } from './listar-mis-prestamos.use-case';
 import { ListarPrestamosUseCase } from './listar-prestamos.use-case';
 import { ObtenerPrestamoUseCase } from './obtener-prestamo.use-case';
+import { NotificarSuscriptoresUseCase } from '../../../suscripciones/application/use-cases/notificar-suscriptores.use-case';
 import { RegistrarDevolucionUseCase } from './registrar-devolucion.use-case';
 import { RegistrarPrestamoUseCase } from './registrar-prestamo.use-case';
 import { ResumenPrestamosUseCase } from './resumen-prestamos.use-case';
@@ -33,7 +34,11 @@ function montar(ahora = PRESTADO_EL) {
       { diasPrestamo: 15, maxSinDevolverPorUsuario: 2 },
       ahoraFn,
     ),
-    devolver: new RegistrarDevolucionUseCase(prestamos, ahoraFn),
+    devolver: new RegistrarDevolucionUseCase(
+      prestamos,
+      { execute: async () => {} } as unknown as NotificarSuscriptoresUseCase,
+      ahoraFn,
+    ),
     listar: new ListarPrestamosUseCase(prestamos, ahoraFn),
     obtener: new ObtenerPrestamoUseCase(prestamos, ahoraFn),
     resumen: new ResumenPrestamosUseCase(prestamos, ahoraFn),
