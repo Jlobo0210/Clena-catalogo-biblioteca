@@ -83,3 +83,34 @@ export class CorreoFalso implements ServicioCorreo {
     return this.enviados.filter((m) => m.para === email);
   }
 }
+
+/** HU-30: suscripciones de disponibilidad en memoria. */
+import { SuscripcionDisponibilidad } from '../../src/modules/suscripciones/domain/suscripcion-disponibilidad.entity';
+import { SuscripcionDisponibilidadRepository } from '../../src/modules/suscripciones/domain/suscripcion-disponibilidad.repository';
+
+export class SuscripcionesEnMemoria implements SuscripcionDisponibilidadRepository {
+  readonly store = new Map<string, SuscripcionDisponibilidad>();
+
+  async buscarActiva(usuarioId: string, libroId: string) {
+    for (const s of this.store.values()) {
+      if (s.usuarioId === usuarioId && s.libroId === libroId && s.activa) return s;
+    }
+    return null;
+  }
+
+  async buscarActivasPorLibro(libroId: string) {
+    return [...this.store.values()].filter((s) => s.libroId === libroId && s.activa);
+  }
+
+  async buscarPorId(id: string) {
+    return this.store.get(id) ?? null;
+  }
+
+  async guardar(s: SuscripcionDisponibilidad) {
+    this.store.set(s.id, s);
+  }
+
+  async actualizar(s: SuscripcionDisponibilidad) {
+    this.store.set(s.id, s);
+  }
+}

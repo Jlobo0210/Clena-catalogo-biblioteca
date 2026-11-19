@@ -14,7 +14,8 @@ import { ALERTA_PRESTAMO_REPOSITORY } from '../src/modules/prestamos/domain/repo
 import { PRESTAMO_REPOSITORY } from '../src/modules/prestamos/domain/repositories/prestamo.repository';
 import { SERVICIO_CORREO } from '../src/shared/domain/correo';
 import { PrismaService } from '../src/shared/infrastructure/prisma/prisma.service';
-import { AlertasEnMemoria, CorreoFalso } from './fakes/alertas.fakes';
+import { AlertasEnMemoria, CorreoFalso, SuscripcionesEnMemoria } from './fakes/alertas.fakes';
+import { SUSCRIPCION_DISPONIBILIDAD_REPOSITORY } from '../src/modules/suscripciones/domain/suscripcion-disponibilidad.repository';
 import { TokensFalsos } from './fakes/auth.fakes';
 import { PrestamosEnMemoria } from './fakes/prestamos.fakes';
 
@@ -48,6 +49,7 @@ describe('Préstamos (e2e)', () => {
     .conUsuario(PERSONAL_ID, 'Personal Demo', 'personal@clena.example');
   const alertas = new AlertasEnMemoria(prestamos);
   const correo = new CorreoFalso();
+  const suscripciones = new SuscripcionesEnMemoria();
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
@@ -57,6 +59,8 @@ describe('Préstamos (e2e)', () => {
       .useValue(prestamos)
       .overrideProvider(ALERTA_PRESTAMO_REPOSITORY)
       .useValue(alertas)
+      .overrideProvider(SUSCRIPCION_DISPONIBILIDAD_REPOSITORY)
+      .useValue(suscripciones)
       .overrideProvider(SERVICIO_CORREO)
       .useValue(correo)
       .overrideProvider(TOKEN_SERVICE)

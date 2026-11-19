@@ -6,6 +6,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { listarEjemplares, obtenerLibro } from './api/libros.api';
 import type { EjemplarDto, LibroDto, ListaEjemplaresDto } from './types';
 import { DetalleLibroPage } from './DetalleLibroPage';
+import { ConSesion, sesionFalsa, usuarioDePrueba } from '../../test/sesionFalsa';
+
+vi.mock('./api/suscripciones.api', () => ({
+  suscribirse: vi.fn().mockResolvedValue({ id: 'sub-1', usuarioId: 'u-1', libroId: 'l-1', creadoEn: new Date().toISOString() }),
+  cancelarSuscripcion: vi.fn().mockResolvedValue(undefined),
+}));
 
 vi.mock('./api/libros.api', () => ({ obtenerLibro: vi.fn(), listarEjemplares: vi.fn() }));
 const obtenerMock = vi.mocked(obtenerLibro);
@@ -51,14 +57,16 @@ function lista(items: EjemplarDto[], proximaDevolucion: string | null = null): L
   };
 }
 
-function montar(estado?: unknown) {
+function montar(estado?: unknown, usuario = null as ReturnType<typeof usuarioDePrueba> | null) {
   render(
-    <MemoryRouter initialEntries={[{ pathname: '/libros/l-1', state: estado }]}>
-      <Routes>
-        <Route path="/libros/:id" element={<DetalleLibroPage />} />
-        <Route path="/buscar" element={<p>Búsqueda</p>} />
-      </Routes>
-    </MemoryRouter>,
+    <ConSesion valor={sesionFalsa({ usuario })}>
+      <MemoryRouter initialEntries={[{ pathname: '/libros/l-1', state: estado }]}>
+        <Routes>
+          <Route path="/libros/:id" element={<DetalleLibroPage />} />
+          <Route path="/buscar" element={<p>Búsqueda</p>} />
+        </Routes>
+      </MemoryRouter>
+    </ConSesion>,
   );
 }
 
@@ -224,5 +232,42 @@ describe('DetalleLibroPage (HU-24)', () => {
     expect(await screen.findByRole('heading', { name: 'No pudimos cargar esta obra' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Intentar de nuevo' }));
     expect(await cargado()).toBeInTheDocument();
+  });
+
+  it('HU-30: muestra botón de suscripción cuando no hay ejemplares disponibles y el usuario está autenticado', async () => {
+    obtenerMock.mockResolvedValue(LIBRO);
+    ejemplaresMock.mockResolvedValue(lista([ejemplar(1, 'PRESTADO')]));
+    montar(undefined, usuarioDePrueba('PUBLICO'));
+
+    await cargado();
+    expect(screen.getByRole('button', { name: /Avisarme cuando esté disponible/ })).toBeInTheDocument();
+  });
+
+  it('HU-30: no muestra botón de suscripción si el usuario no está autenticado', async () => {
+    obtenerMock.mockResolvedValue(LIBRO);
+    ejemplaresMock.mockResolvedValue(lista([ejemplar(1, 'PRESTADO')]));
+    montar(undefined, null);
+
+    await cargado();
+    expect(screen.queryByRole('button', { name: /Avisarme cuando esté disponible/ })).not.toBeInTheDocument();
+  });
+
+  it('HU-30: no muestra botón de suscripción si hay ejemplares disponibles', async () => {
+    obtenerMock.mockResolvedValue(LIBRO);
+    ejemplaresMock.mockResolvedValue(lista([ejemplar(1, 'DISPONIBLE')]));
+    montar(undefined, usuarioDePrueba('PUBLICO'));
+
+    await cargado();
+    expect(screen.queryByRole('button', { name: /Avisarme cuando esté disponible/ })).not.toBeInTheDocument();
+  });
+
+  it('HU-30: al suscribirse cambia el botón a Cancelar aviso', async () => {
+    obtenerMock.mockResolvedValue(LIBRO);
+    ejemplaresMock.mockResolvedValue(lista([ejemplar(1, 'PRESTADO')]));
+    montar(undefined, usuarioDePrueba('PUBLICO'));
+
+    await cargado();
+    await userEvent.click(screen.getByRole('button', { name: /Avisarme cuando esté disponible/ }));
+    expect(await screen.findByRole('button', { name: /Cancelar aviso/ })).toBeInTheDocument();
   });
 });

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import {
   ArrowLeft,
+  Bell,
+  BellOff,
   CalendarDays,
   Clipboard,
   ExternalLink,
@@ -13,6 +15,8 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { RUTAS, rutaTema } from '../../config/rutas';
 import { useConsulta } from '../../shared/hooks/useConsulta';
 import { listarEjemplares, obtenerLibro } from './api/libros.api';
+import { cancelarSuscripcion, suscribirse, type SuscripcionOutput } from './api/suscripciones.api';
+import { useSesion } from '../auth/sesion/contextoSesion';
 import {
   NOMBRE_ESTADO_EJEMPLAR,
   NOMBRE_FORMATO,
@@ -39,6 +43,10 @@ export function DetalleLibroPage() {
   const location = useLocation();
   const desde = (location.state as { desde?: string } | null)?.desde;
 
+  const { usuario } = useSesion();
+  const [suscripcion, setSuscripcion] = useState<SuscripcionOutput | null>(null);
+  const [suscribiendose, setSuscribiendose] = useState(false);
+
   const consulta = useConsulta<Detalle>(id, async (signal) => {
     const [libro, ejemplares] = await Promise.all([
       obtenerLibro(id, signal),
@@ -46,6 +54,27 @@ export function DetalleLibroPage() {
     ]);
     return { libro, ejemplares };
   });
+
+  const handleSuscribirse = async () => {
+    setSuscribiendose(true);
+    try {
+      const nueva = await suscribirse(id);
+      setSuscripcion(nueva);
+    } finally {
+      setSuscribiendose(false);
+    }
+  };
+
+  const handleCancelar = async () => {
+    if (!suscripcion) return;
+    setSuscribiendose(true);
+    try {
+      await cancelarSuscripcion(id, suscripcion.id);
+      setSuscripcion(null);
+    } finally {
+      setSuscribiendose(false);
+    }
+  };
 
   if (consulta.estado === 'cargando') {
     return (
@@ -136,6 +165,29 @@ export function DetalleLibroPage() {
               <ExternalLink aria-hidden="true" size={19} /> Leer la versión digital
               <span className="visualmente-oculto"> (se abre en otra pestaña)</span>
             </a>
+          ) : null}
+          {!soloDigital && disponibles === 0 && totalEjemplares > 0 && usuario ? (
+            suscripcion ? (
+              <button
+                className={styles.secondaryAction}
+                disabled={suscribiendose}
+                onClick={() => void handleCancelar()}
+                type="button"
+              >
+                <BellOff aria-hidden="true" size={19} />
+                {suscribiendose ? 'Cancelando…' : 'Cancelar aviso'}
+              </button>
+            ) : (
+              <button
+                className={styles.secondaryAction}
+                disabled={suscribiendose}
+                onClick={() => void handleSuscribirse()}
+                type="button"
+              >
+                <Bell aria-hidden="true" size={19} />
+                {suscribiendose ? 'Suscribiendo…' : 'Avisarme cuando esté disponible'}
+              </button>
+            )
           ) : null}
         </aside>
 

@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { SuscripcionesModule } from '../suscripciones/suscripciones.module';
+import { NotificarSuscriptoresUseCase } from '../suscripciones/application/use-cases/notificar-suscriptores.use-case';
+
 import { ConfigService } from '@nestjs/config';
 import { SERVICIO_CORREO, ServicioCorreo } from '../../shared/domain/correo';
 import { ID_GENERATOR, IdGenerator } from '../../shared/domain/id-generator';
@@ -39,6 +42,7 @@ import { PrestamosController } from './presentation/controllers/prestamos.contro
  * con su implementación; los casos de uso se construyen con useFactory.
  */
 @Module({
+  imports: [SuscripcionesModule],
   controllers: [PrestamosController],
   providers: [
     { provide: PRESTAMO_REPOSITORY, useClass: PrismaPrestamoRepository },
@@ -64,9 +68,11 @@ import { PrestamosController } from './presentation/controllers/prestamos.contro
     },
     {
       provide: RegistrarDevolucionUseCase,
-      useFactory: (prestamos: PrestamoRepository) =>
-        new RegistrarDevolucionUseCase(prestamos),
-      inject: [PRESTAMO_REPOSITORY],
+      useFactory: (
+        prestamos: PrestamoRepository,
+        notificar: NotificarSuscriptoresUseCase,
+      ) => new RegistrarDevolucionUseCase(prestamos, notificar),
+      inject: [PRESTAMO_REPOSITORY, NotificarSuscriptoresUseCase],
     },
     {
       provide: ListarPrestamosUseCase,
