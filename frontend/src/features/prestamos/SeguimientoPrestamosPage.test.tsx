@@ -60,7 +60,7 @@ describe('SeguimientoPrestamosPage (HU-36)', () => {
     expect(screen.getByText('Préstamos vencidos: 1.')).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: /2\s*vencidos/ })).toHaveAttribute('aria-current', 'true');
     expect(screen.getByRole('link', { name: /1\s*vencen en 3 días o menos/ })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /5\s*sin devolver en total/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /5\s*sin devolver/ })).toBeInTheDocument();
     expect(listarMock).toHaveBeenCalledWith(
       expect.objectContaining({ estado: 'VENCIDO', ordenarPor: 'fechaLimite', direccion: 'asc', pagina: 1 }),
       expect.any(AbortSignal),

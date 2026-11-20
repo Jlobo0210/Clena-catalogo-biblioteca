@@ -30,7 +30,7 @@ const ESTADOS: { valor: EstadoSeguimiento; etiqueta: string; titulo: string; vac
   },
   {
     valor: 'SIN_DEVOLVER',
-    etiqueta: 'Todos los sin devolver',
+    etiqueta: 'Sin devolver',
     titulo: 'Préstamos sin devolver',
     vacio: 'No hay préstamos sin devolver.',
   },
@@ -177,7 +177,7 @@ export function SeguimientoPrestamosPage() {
             <li>
               <Link aria-current={estado.valor === 'SIN_DEVOLVER' ? 'true' : undefined} to={urlDeEstado('SIN_DEVOLVER')}>
                 <strong>{resumen.estado === 'listo' ? resumen.datos.sinDevolver : '…'}</strong>
-                sin devolver en total
+                sin devolver
               </Link>
             </li>
           </ul>
