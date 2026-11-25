@@ -59,6 +59,15 @@ Lo confirmó la auditoría:
 - Los íconos tienen tamaño en píxeles, así que no crecen con la letra. Son decorativos (`aria-hidden`) y el texto sí crece. Se podría pasar a `1.25em` más adelante.
 - Falta una prueba con lector de pantalla real (NVDA o TalkBack) con usuarios del CLENA. Se propone hacerla en la Sprint Review del Sprint 3 con G8.
 
+### Actualización de tipografía y reflujo — 2026-11-24
+
+- Se sustituyeron los tamaños globales por las escalas fluidas `clamp()` con componente en `rem`: cuerpo de 16–17 px, etiquetas de 15 px y texto pequeño de 14 px con la configuración predeterminada. Los controles conservan mínimos de 3rem y 3.5rem.
+- **La Biblioteca y Ayuda:** títulos, párrafos, botones y chips usan los tokens; se retiró el bloque «Lectura cómoda en terminales» y se emplearon interlineados proporcionales. `--ayuda-gris` y `.cantidad` usan `--color-texto-tenue` para mantener contraste AA.
+- Se corrigió el reflujo de las acciones de Biblioteca, la terminal de Ayuda y las columnas del pie compartido. No se modificaron `Encabezado.module.css`, el mínimo de 320 px de `base.css`, la estructura JSX ni los textos de las páginas.
+- **Comprobación en Chromium:** ambas páginas a 360, 768, 1024 y 1440 px, con fuente predeterminada de 16 px y de 32 px (200 %): 16 combinaciones sin scroll horizontal ni desbordamiento del texto. Los controles medidos tienen al menos 48 px. Se usaron horarios y contacto simulados para revisar el contenido cargado, incluido un correo largo.
+- Axe en el navegador no detectó violaciones A/AA en esas 16 combinaciones, con la regla de contraste activa. Ambas pantallas también se añadieron a `frontend/src/test/accesibilidad.test.tsx` con el helper `violacionesAxe`.
+- **Alcance indirecto de los tokens y el pie:** Inicio; búsqueda y búsqueda avanzada; explorar temas y categoría; detalle de libro; ingresar y registro; mi cuenta y mis préstamos; formulario de participación; panel, autores, temas, libros, alta/edición de libro e importación; préstamos del personal y seguimiento; usuarios y roles; QR y página no encontrada. La comprobación visual de esta actualización se centró en La Biblioteca y Ayuda.
+
 ## 6. Cómo volver a revisarlo
 
 - **Automático, en cada PR:** `frontend/src/test/accesibilidad.test.tsx` corre axe sobre estas pantallas:

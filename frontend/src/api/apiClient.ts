@@ -7,12 +7,18 @@ export const API_BASE_URL =
 /** /health está fuera de /api/v1 en el backend, así que se arma desde el origen de la API. */
 export const HEALTH_URL = new URL('/health', API_BASE_URL).toString();
 
+const timeoutConfigurado = Number(import.meta.env.VITE_API_TIMEOUT_MS);
+const TIMEOUT_API =
+  Number.isFinite(timeoutConfigurado) && timeoutConfigurado > 0
+    ? timeoutConfigurado
+    : 5000;
+
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 5000,
+  timeout: TIMEOUT_API,
 });
 
 /**

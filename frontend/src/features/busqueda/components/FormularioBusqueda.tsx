@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent } from 'react';
-import { ChevronDown, CircleAlert, Layers, Search, X } from 'lucide-react';
+import { CircleAlert, Layers, Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AMBITOS, esAmbitoId, type AmbitoId } from '../ambitos';
 import { construirUrlBusqueda } from '../parametrosBusqueda';
@@ -66,7 +66,6 @@ export function FormularioBusqueda({
               </option>
             ))}
           </select>
-          <ChevronDown aria-hidden="true" className={styles.flecha} size={20} />
         </div>
 
         <div className={styles.campoContenedor}>
