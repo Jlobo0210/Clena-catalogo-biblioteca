@@ -1,0 +1,124 @@
+@supports (appearance: base-select) {
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+
+  select {
+    /* El control y su lista usan superficies claras, incluso dentro de la portada oscura. */
+    --color-foco: var(--color-azul-profundo);
+    display: flex;
+    min-height: var(--alto-control);
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    border: var(--borde-fino) solid var(--color-borde);
+    border-radius: var(--radio-md);
+    color: var(--color-texto);
+    background: var(--color-superficie);
+    cursor: pointer;
+    text-overflow: ellipsis;
+  }
+
+  select:focus-visible {
+    outline: 0.1875rem solid var(--color-foco);
+    outline-offset: 0.1875rem;
+  }
+
+  select:disabled {
+    color: var(--color-texto-tenue);
+    cursor: not-allowed;
+  }
+
+  select[aria-invalid='true'] {
+    border-color: var(--color-error);
+  }
+
+  select::picker-icon {
+    flex-shrink: 0;
+    color: var(--color-texto-secundario);
+    transition: rotate 120ms ease-out;
+  }
+
+  select:open::picker-icon {
+    rotate: 180deg;
+  }
+
+  ::picker(select) {
+    min-width: anchor-size(width);
+    max-width: calc(100vw - 2rem);
+    margin-block: 0.375rem;
+    padding: 0.375rem;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-md);
+    color: var(--color-texto);
+    background: var(--color-superficie);
+    box-shadow: var(--sombra-lg);
+    opacity: 0;
+    transition: opacity 120ms ease-out, display 120ms allow-discrete,
+      overlay 120ms allow-discrete;
+  }
+
+  select:open::picker(select) {
+    opacity: 1;
+  }
+
+  @starting-style {
+    select:open::picker(select) {
+      opacity: 0;
+    }
+  }
+
+  option {
+    display: flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--radio-sm);
+    color: var(--color-texto);
+    overflow-wrap: anywhere;
+    cursor: pointer;
+  }
+
+  option:hover,
+  option:focus,
+  option:checked {
+    background: var(--color-superficie-baja);
+  }
+
+  option:focus-visible {
+    outline: 0.1875rem solid var(--color-foco);
+    outline-offset: -0.1875rem;
+  }
+
+  option:checked {
+    font-weight: 600;
+  }
+
+  option::checkmark {
+    content: '';
+    display: block;
+    visibility: visible;
+    box-sizing: border-box;
+    flex: 0 0 1.25rem;
+    order: 1;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-inline-start: auto;
+    border: var(--borde-fino) solid var(--color-borde);
+    border-radius: 50%;
+  }
+
+  option:checked::checkmark {
+    border: 0.3rem solid var(--color-azul-aduana);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    select::picker-icon,
+    ::picker(select) {
+      transition: none;
+    }
+  }
+}

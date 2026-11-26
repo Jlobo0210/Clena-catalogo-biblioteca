@@ -27,18 +27,6 @@
 
 .selector {
   width: 100%;
-  padding: var(--espacio-2) var(--espacio-3);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
-  background: var(--color-superficie);
-  color: var(--color-texto);
-  font-size: var(--texto-cuerpo);
-  cursor: pointer;
-}
-
-.selector:focus {
-  outline: 2px solid var(--color-azul-profundo);
-  outline-offset: 1px;
 }
 
 .rangoAnio {

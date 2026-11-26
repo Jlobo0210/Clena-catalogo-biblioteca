@@ -224,11 +224,6 @@
 
 .materialControl select {
   max-width: 10rem;
-  border: 0;
-  color: inherit;
-  background: transparent;
-  cursor: pointer;
-  font: inherit;
 }
 
 .clearFilters {

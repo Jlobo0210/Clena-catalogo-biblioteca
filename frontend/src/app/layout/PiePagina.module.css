@@ -5,14 +5,19 @@
   color: var(--color-superficie);
   background: var(--color-azul-aduana);
   border-top: var(--espacio-1) solid var(--color-ambar);
+  overflow-wrap: anywhere;
 }
 
 .columnas {
   display: grid;
-  grid-template-columns: 1.4fr repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   gap: var(--espacio-8);
   width: min(calc(100% - var(--espacio-8)), var(--ancho-contenido));
   margin: 0 auto;
+}
+
+.columnas > * {
+  min-width: 0;
 }
 
 .identidad {
@@ -88,20 +93,10 @@
   font-size: var(--texto-pequeno);
 }
 
-@media (max-width: 1023px) {
-  .columnas {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 639px) {
+@media (max-width: 39.9375rem) {
   .columnas,
   .inferior {
     width: min(calc(100% - var(--espacio-4)), var(--ancho-contenido));
-  }
-
-  .columnas {
-    grid-template-columns: 1fr;
   }
 
   .inferior {

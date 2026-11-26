@@ -17,6 +17,24 @@ El buscador actual de la Biblioteca del CLENA es antiguo y poco intuitivo: quien
 
 **URL desplegada:** pendiente (Sprint 3, #38).
 
+## Despliegue
+
+Despliegue con Vercel (dos proyectos: `Root Directory` `frontend/` y `backend/`) y PostgreSQL en Neon. Procedimiento y variables en [docs/despliegue.md](docs/despliegue.md).
+
+| Recurso | URL |
+|---|---|
+| Frontend | `<PEGAR-URL>` |
+| API (`/api/v1`) | `<PEGAR-URL>` |
+| Estado (`/health`) | `<PEGAR-URL>` |
+| Documentación (`/docs`) | `<PEGAR-URL>` |
+| Base de datos (Neon) | Sin URL pública |
+
+### Criterios de aceptación (HU-38)
+
+- [ ] Backend, frontend y base de datos desplegados; la URL está en el README.
+- [ ] Las variables de entorno se configuran en el proveedor, no en el código.
+- [ ] Cada fusión a `main` despliega (o el proceso de despliegue está documentado).
+
 ## Cómo levantar el proyecto con Docker
 
 Requisitos: [Docker Desktop](https://www.docker.com/products/docker-desktop/) (o Docker Engine con Compose v2).

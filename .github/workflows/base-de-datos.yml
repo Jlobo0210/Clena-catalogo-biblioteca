@@ -1,0 +1,69 @@
+name: Base de datos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/prisma/schema.prisma'
+      - 'backend/prisma/migrations/**'
+  workflow_dispatch:
+    inputs:
+      cargar_datos_demo:
+        description: 'Cargar también los datos de demostración (usuarios y libros ficticios)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: base-de-datos-produccion
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  migrar:
+    name: Migraciones y datos demo
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Comprobar que existe el secreto de la base de datos
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Falta el secreto DATABASE_URL_DIRECT. Ver docs/despliegue.md (paso 2)."
+            exit 1
+          fi
+
+      - name: Instalar dependencias (genera el cliente de Prisma)
+        run: npm ci
+
+      - name: Aplicar migraciones
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
+        run: npx prisma migrate deploy
+
+      - name: Cargar datos de demostración
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.cargar_datos_demo }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_DIRECT }}
+          SEED_PASSWORD: ${{ secrets.SEED_PASSWORD }}
+        run: |
+          if [ -z "$SEED_PASSWORD" ]; then
+            echo "::error::Falta el secreto SEED_PASSWORD. Ver docs/despliegue.md (paso 2)."
+            exit 1
+          fi
+          npm run prisma:seed

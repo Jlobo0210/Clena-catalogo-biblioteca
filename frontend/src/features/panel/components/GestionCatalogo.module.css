@@ -115,8 +115,7 @@
   gap: var(--espacio-2);
 }
 
-.filtro input,
-.orden select {
+.filtro input {
   min-height: var(--alto-control);
   padding: 0 var(--espacio-3);
   color: var(--color-texto);
