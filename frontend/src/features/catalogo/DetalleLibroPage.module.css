@@ -52,8 +52,11 @@
 }
 
 .card {
-  display: grid;
-  grid-template-columns: minmax(14rem, 26rem) minmax(0, 1fr);
+  /* HU-33: flex con salto de línea en vez de dos columnas fijas. Con la letra al 200 %
+     la portada pasa arriba y la ficha debajo, sin salirse de la pantalla (WCAG 1.4.4). */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: var(--espacio-10);
   padding: var(--espacio-10);
   border: var(--borde-fino) solid var(--color-borde);
@@ -63,6 +66,8 @@
 }
 
 .coverColumn {
+  flex: 0 1 26rem;
+  min-width: min(14rem, 100%);
   display: flex;
   flex-direction: column;
   gap: var(--espacio-3);
@@ -138,6 +143,7 @@
 }
 
 .content {
+  flex: 1 1 20rem;
   min-width: 0;
 }
 
@@ -246,7 +252,8 @@
 
 .technical dl {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* Tres columnas en escritorio; menos si la letra crece o la pantalla se angosta. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: var(--espacio-5);
   margin: 0;
 }
@@ -279,11 +286,22 @@
   gap: var(--espacio-2);
 }
 
-.tags span {
+.tags a {
   padding: var(--espacio-2) var(--espacio-4);
   border-radius: var(--radio-pildora);
   color: var(--color-azul-profundo);
   background: var(--color-superficie-alta);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.tags a:hover {
+  background: var(--color-ambar-claro);
+}
+
+.tags a:focus-visible {
+  outline: 0.1875rem solid var(--color-foco);
+  outline-offset: 0.1875rem;
 }
 
 .tags p {
@@ -319,8 +337,11 @@
 
 @media (max-width: 800px) {
   .card {
-    grid-template-columns: 1fr;
     padding: var(--espacio-5);
+  }
+
+  .coverColumn {
+    flex-basis: 100%;
   }
 
   .cover {

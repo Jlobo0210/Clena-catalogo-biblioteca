@@ -116,26 +116,26 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
               <small>Búsqueda por tema</small>
             </span>
           </NavLink>
-          <Link
-            className={styles.enlaceNav}
-            to={{ pathname: RUTAS.inicio, hash: '#contacto' }}
+          <NavLink
+            className={({ isActive }) => `${styles.enlaceNav} ${isActive ? styles.activo : ''}`}
+            to={RUTAS.biblioteca}
           >
             <LibraryBig aria-hidden="true" size={24} />
             <span>
               <strong>La Biblioteca</strong>
               <small>Servicios y horarios</small>
             </span>
-          </Link>
-          <Link
-            className={styles.enlaceNav}
-            to={{ pathname: RUTAS.inicio, hash: '#ayuda-titulo' }}
+          </NavLink>
+          <NavLink
+            className={({ isActive }) => `${styles.enlaceNav} ${isActive ? styles.activo : ''}`}
+            to={RUTAS.ayuda}
           >
             <CircleHelp aria-hidden="true" size={24} />
             <span>
               <strong>Ayuda</strong>
               <small>Contacto y asistencia</small>
             </span>
-          </Link>
+          </NavLink>
           {usuario ? (
             <NavLink
               className={({ isActive }) =>

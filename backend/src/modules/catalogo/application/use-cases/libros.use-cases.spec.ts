@@ -176,6 +176,27 @@ describe('ListarLibrosUseCase', () => {
     ).toEqual(['Atlas de historia', 'Cien años de soledad']);
   });
 
+  it('HU-35: los libros de una categoría, solo con ejemplares disponibles', async () => {
+    const s = await conVariosLibros();
+    const deLiteratura = await s.listar.execute({ temaId: 't-1' });
+    const conDisponible = deLiteratura.items.find(
+      (l) => l.titulo === 'Cien años de soledad',
+    )!;
+    s.libros.conDisponibles.add(conDisponible.id);
+
+    const pagina = await s.listar.execute({
+      temaId: 't-1',
+      soloDisponibles: true,
+    });
+    expect(deLiteratura.total).toBeGreaterThan(1);
+    expect(pagina.items.map((l) => l.titulo)).toEqual(['Cien años de soledad']);
+    expect(pagina.total).toBe(1);
+    // false no filtra.
+    expect(
+      (await s.listar.execute({ temaId: 't-1', soloDisponibles: false })).total,
+    ).toBe(deLiteratura.total);
+  });
+
   it('rechaza un rango de años invertido', async () => {
     const s = montar();
     await expect(

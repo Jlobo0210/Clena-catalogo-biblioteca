@@ -22,7 +22,7 @@ npm run start:dev
 
 ### Pruebas de integración (HU-28)
 
-`test/integracion/` prueba la API completa, sin fakes, contra una base PostgreSQL con migraciones y semillas: login, búsqueda con errores de escritura, gestión de libros, préstamo y devolución, e importación CSV. El CI las corre en el job **Integración** con un PostgreSQL desechable.
+`test/integracion/` prueba la API completa, sin fakes, contra una base PostgreSQL con migraciones y semillas: login, búsqueda con errores de escritura, gestión de libros, préstamo y devolución, importación CSV y alertas de devolución (en estas, solo el servidor de correo es falso). El CI las corre en el job **Integración** con un PostgreSQL desechable.
 
 En local usan `DATABASE_URL` y `SEED_PASSWORD` de `backend/.env`:
 
@@ -34,6 +34,32 @@ npm run test:integracion
 ```
 
 Crean datos con nombres únicos y borran lo que pueden, así que se pueden repetir; aun así, usa una base de desarrollo o de prueba, nunca una con datos reales.
+
+### Alertas de devolución por correo (HU-29)
+
+Una tarea programada (`@nestjs/schedule`) corre todos los días a las 8:00, hora de Colombia, y envía:
+
+- un **recordatorio** a quien tiene un préstamo que vence en los próximos `ALERTA_DIAS_ANTES` días (por defecto 2), y
+- un **aviso de vencimiento** cuando la fecha límite ya pasó.
+
+Cada alerta se envía **una sola vez por préstamo** (regla R14, tabla `alerta_prestamo`): si la tarea corre de nuevo no repite correos, y si un día no corrió, al siguiente envía lo pendiente. Si un envío falla, no se anota y se reintenta en la próxima ejecución. No se envían alertas de préstamos devueltos ni a cuentas anonimizadas.
+
+El envío está detrás del puerto `ServicioCorreo` (`src/shared/domain/correo.ts`), con dos adaptadores en `src/shared/infrastructure/correo/`:
+
+| Configuración | Adaptador | Qué pasa |
+|---|---|---|
+| Sin `SMTP_HOST` (desarrollo, pruebas) | `CorreoEnRegistro` | No envía nada: anota en el log el asunto y el destinatario enmascarado (`pu***@clena.example`) |
+| Con `SMTP_HOST` y `CORREO_REMITENTE` | `SmtpCorreo` (nodemailer) | Envía por SMTP |
+
+La administración puede lanzar el envío sin esperar a la tarea con `POST /api/v1/prestamos/alertas/envios`; repetirlo no duplica correos.
+
+Para ver los correos en local sin enviarlos a nadie, usa [Mailpit](https://mailpit.axllent.org/), un servidor SMTP de prueba:
+
+```bash
+docker run -d --rm --name mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit:v1.27
+```
+
+Y en `backend/.env`: `SMTP_HOST=localhost`, `SMTP_PORT=1025` y `CORREO_REMITENTE=Biblioteca CLENA <biblioteca@clena.example>`. Los correos aparecen en http://localhost:8025. Con `ALERTAS_HORARIO=* * * * *` la tarea corre cada minuto, útil para probar.
 
 ## Capas
 

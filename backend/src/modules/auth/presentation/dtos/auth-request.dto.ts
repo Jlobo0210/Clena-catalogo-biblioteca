@@ -103,3 +103,12 @@ export class CambiarRolDto {
   @IsIn(ROLES, { message: 'El rol debe ser ADMINISTRADOR, PERSONAL o PUBLICO' })
   rol!: Rol;
 }
+
+/** HU-34: confirmación para eliminar la cuenta. */
+export class EliminarCuentaDto {
+  @ApiProperty({ example: 'tu-contraseña' })
+  @IsString()
+  @IsNotEmpty({ message: 'Escribe tu contraseña para confirmar' })
+  @MaxLength(72)
+  password!: string;
+}

@@ -12,6 +12,7 @@ import { listarPrestamos, registrarDevolucion, registrarPrestamo } from './api/p
 import type { Prestamo } from './types';
 import { formatearDia, textoPlazo, urgenciaDe } from './urgencia';
 import styles from './PrestamosPersonalPage.module.css';
+import { TablaDesplazable } from '../../shared/ui/TablaDesplazable';
 
 type Vista = 'SIN_DEVOLVER' | 'VENCIDO';
 
@@ -170,7 +171,7 @@ export function PrestamosPersonalPage() {
           </p>
         ) : null}
         {prestamos && prestamos.length > 0 ? (
-          <div className={styles.tablaContenedor}>
+          <TablaDesplazable className={styles.tablaContenedor} etiqueta="Préstamos sin devolver">
             <table className={styles.tabla}>
               <caption className="visualmente-oculto">
                 {vista === 'VENCIDO' ? 'Préstamos vencidos' : 'Préstamos sin devolver'}, ordenados por fecha límite
@@ -213,7 +214,7 @@ export function PrestamosPersonalPage() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TablaDesplazable>
         ) : null}
       </section>
     </section>

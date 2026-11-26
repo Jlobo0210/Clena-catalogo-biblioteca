@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import {
   ArrowLeft,
+  Bell,
+  BellOff,
   CalendarDays,
   Clipboard,
   ExternalLink,
@@ -10,9 +12,11 @@ import {
   Tag,
 } from 'lucide-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { RUTAS } from '../../config/rutas';
+import { RUTAS, rutaTema } from '../../config/rutas';
 import { useConsulta } from '../../shared/hooks/useConsulta';
 import { listarEjemplares, obtenerLibro } from './api/libros.api';
+import { cancelarSuscripcion, suscribirse, type SuscripcionOutput } from './api/suscripciones.api';
+import { useSesion } from '../auth/sesion/contextoSesion';
 import {
   NOMBRE_ESTADO_EJEMPLAR,
   NOMBRE_FORMATO,
@@ -39,6 +43,10 @@ export function DetalleLibroPage() {
   const location = useLocation();
   const desde = (location.state as { desde?: string } | null)?.desde;
 
+  const { usuario } = useSesion();
+  const [suscripcion, setSuscripcion] = useState<SuscripcionOutput | null>(null);
+  const [suscribiendose, setSuscribiendose] = useState(false);
+
   const consulta = useConsulta<Detalle>(id, async (signal) => {
     const [libro, ejemplares] = await Promise.all([
       obtenerLibro(id, signal),
@@ -46,6 +54,27 @@ export function DetalleLibroPage() {
     ]);
     return { libro, ejemplares };
   });
+
+  const handleSuscribirse = async () => {
+    setSuscribiendose(true);
+    try {
+      const nueva = await suscribirse(id);
+      setSuscripcion(nueva);
+    } finally {
+      setSuscribiendose(false);
+    }
+  };
+
+  const handleCancelar = async () => {
+    if (!suscripcion) return;
+    setSuscribiendose(true);
+    try {
+      await cancelarSuscripcion(id, suscripcion.id);
+      setSuscripcion(null);
+    } finally {
+      setSuscribiendose(false);
+    }
+  };
 
   if (consulta.estado === 'cargando') {
     return (
@@ -137,6 +166,29 @@ export function DetalleLibroPage() {
               <span className="visualmente-oculto"> (se abre en otra pestaña)</span>
             </a>
           ) : null}
+          {!soloDigital && disponibles === 0 && totalEjemplares > 0 && usuario ? (
+            suscripcion ? (
+              <button
+                className={styles.secondaryAction}
+                disabled={suscribiendose}
+                onClick={() => void handleCancelar()}
+                type="button"
+              >
+                <BellOff aria-hidden="true" size={19} />
+                {suscribiendose ? 'Cancelando…' : 'Cancelar aviso'}
+              </button>
+            ) : (
+              <button
+                className={styles.secondaryAction}
+                disabled={suscribiendose}
+                onClick={() => void handleSuscribirse()}
+                type="button"
+              >
+                <Bell aria-hidden="true" size={19} />
+                {suscribiendose ? 'Suscribiendo…' : 'Avisarme cuando esté disponible'}
+              </button>
+            )
+          ) : null}
         </aside>
 
         <article aria-labelledby="detalle-titulo" className={styles.content}>
@@ -187,7 +239,15 @@ export function DetalleLibroPage() {
             </h2>
             <div>
               {temas.length ? (
-                temas.map((tema) => <span key={tema}>{tema}</span>)
+                libro.temas.map((tema) => (
+                  <Link
+                    aria-label={`Ver más libros de ${tema.nombre}`}
+                    key={tema.id}
+                    to={rutaTema(tema.id)}
+                  >
+                    {tema.nombre}
+                  </Link>
+                ))
               ) : (
                 <p>No hay temas asociados.</p>
               )}
@@ -237,6 +297,8 @@ function Ubicacion({ ejemplares, libro }: Detalle) {
                       day: 'numeric',
                       month: 'long',
                       year: 'numeric',
+                      // Es una fecha de calendario (DATE a medianoche UTC): en Colombia mostraría el día anterior.
+                      timeZone: 'UTC',
                     })}
                   </strong>
                   .

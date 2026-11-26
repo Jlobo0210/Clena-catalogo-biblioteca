@@ -10,6 +10,7 @@ import { NOMBRE_FORMATO, NOMBRE_TIPO_MATERIAL, listaNombres } from '../catalogo/
 import type { FormatoMaterial, LibroDto, TipoMaterial } from '../catalogo/types';
 import { eliminarLibro, listarLibrosPanel, type Direccion, type OrdenLibros } from './api/catalogo-admin.api';
 import styles from './components/GestionCatalogo.module.css';
+import { TablaDesplazable } from '../../shared/ui/TablaDesplazable';
 
 export const LIBROS_POR_PAGINA = 20;
 
@@ -200,7 +201,7 @@ export function LibrosPanelPage() {
         </div>
       ) : (
         <>
-          <div className={styles.tablaContenedor}>
+          <TablaDesplazable className={styles.tablaContenedor} etiqueta="Libros del catálogo">
             <table className={styles.tabla}>
               <caption>
                 {consulta.datos.total === 0
@@ -280,7 +281,7 @@ export function LibrosPanelPage() {
                 )}
               </tbody>
             </table>
-          </div>
+          </TablaDesplazable>
           <Paginacion
             pagina={consulta.datos.pagina}
             totalPaginas={Math.ceil(consulta.datos.total / consulta.datos.tamano)}

@@ -60,6 +60,22 @@ export class ResumenPrestamosResponse {
   @ApiProperty({ example: 1 }) porVencer!: number;
 }
 
+/** HU-29: resultado de un envío de alertas. */
+export class ResultadoAlertasResponse {
+  @ApiProperty({ example: '2026-11-12', description: 'Hoy en Colombia' })
+  hoy!: string;
+  @ApiProperty({ example: 3, description: 'Recordatorios enviados' })
+  recordatorios!: number;
+  @ApiProperty({ example: 1, description: 'Avisos de vencimiento enviados' })
+  vencimientos!: number;
+  @ApiProperty({
+    example: 0,
+    description:
+      'Envíos que fallaron; se reintentan en la próxima ejecución (el detalle queda en el log)',
+  })
+  fallidos!: number;
+}
+
 export class PaginaPrestamosResponse {
   @ApiProperty({ type: [PrestamoResponse] }) items!: PrestamoResponse[];
   @ApiProperty({ example: 4 }) total!: number;

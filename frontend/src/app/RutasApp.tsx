@@ -20,8 +20,12 @@ import { LibrosPanelPage } from '../features/panel/LibrosPanelPage';
 import { LibroPanelPage } from '../features/panel/LibroPanelPage';
 import { UsuariosPage } from '../features/administracion/UsuariosPage';
 import { ExplorarPage } from '../features/temas/ExplorarPage';
+import { CategoriaPage } from '../features/temas/CategoriaPage';
 import { DetalleLibroPage } from '../features/catalogo/DetalleLibroPage';
 import { QrAccesoPage } from '../features/qr/QrAccesoPage';
+import { BibliotecaPage } from '../features/biblioteca/BibliotecaPage';
+import { AyudaPage } from '../features/biblioteca/AyudaPage';
+import { FormularioParticipacionPage } from '../features/participacion/FormularioParticipacionPage';
 
 export function RutasApp() {
   return (
@@ -35,6 +39,10 @@ export function RutasApp() {
           element={<PaginaPendiente titulo="Búsqueda avanzada" />}
         />
         <Route path={RUTAS.temas} element={<ExplorarPage />} />
+        <Route path={RUTAS.biblioteca} element={<BibliotecaPage />} />
+        <Route path={RUTAS.ayuda} element={<AyudaPage />} />
+        <Route path={RUTAS.formularioAyuda} element={<FormularioParticipacionPage />} />
+        <Route path={RUTAS.tema} element={<CategoriaPage />} />
         <Route path={RUTAS.ingresar} element={<IngresarPage />} />
         <Route path={RUTAS.registro} element={<RegistroPage />} />
 

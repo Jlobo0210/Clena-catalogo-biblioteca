@@ -150,6 +150,27 @@ describe('BusquedaPage (HU-24)', () => {
     expect(await screen.findByText(/Pronto podrá buscar solo en «Hemeroteca y prensa»/)).toBeInTheDocument();
   });
 
+  it('«Título (A–Z)» ordena de la A a la Z y «Año» del más reciente al más antiguo', async () => {
+    buscarMock.mockResolvedValue(pagina([libro(1)]));
+    montar('/buscar?q=soledad');
+    await screen.findByRole('heading', { name: '1 resultado para «soledad»' });
+
+    await userEvent.selectOptions(screen.getByLabelText('Ordenar por'), 'titulo');
+    await vi.waitFor(() =>
+      expect(buscarMock).toHaveBeenLastCalledWith(
+        expect.objectContaining({ ordenarPor: 'titulo', direccion: 'asc' }),
+        expect.any(AbortSignal),
+      ),
+    );
+    await userEvent.selectOptions(screen.getByLabelText('Ordenar por'), 'anio');
+    await vi.waitFor(() =>
+      expect(buscarMock).toHaveBeenLastCalledWith(
+        expect.objectContaining({ ordenarPor: 'anio', direccion: 'desc' }),
+        expect.any(AbortSignal),
+      ),
+    );
+  });
+
   it('al abrir un resultado lleva al detalle', async () => {
     buscarMock.mockResolvedValue(pagina([libro(1)]));
     montar('/buscar?q=libro');

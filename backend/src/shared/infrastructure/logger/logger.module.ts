@@ -29,6 +29,9 @@ import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
             paths: [
               'req.headers.authorization',
               'req.headers.cookie',
+              'req.headers["x-forwarded-for"]',
+              'req.headers["x-real-ip"]',
+              'req.remoteAddress',
               'res.headers["set-cookie"]',
             ],
             censor: '[REDACTED]',

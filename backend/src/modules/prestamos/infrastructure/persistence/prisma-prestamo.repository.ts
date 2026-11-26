@@ -77,8 +77,9 @@ export class PrismaPrestamoRepository implements PrestamoRepository {
   buscarUsuario(
     ref: { id: string } | { email: string },
   ): Promise<UsuarioParaPrestamo | null> {
-    return this.prisma.usuario.findUnique({
-      where: ref,
+    // HU-34: a una cuenta eliminada (anonimizada) no se le presta.
+    return this.prisma.usuario.findFirst({
+      where: { ...ref, anonimizadoEn: null },
       select: { id: true, nombre: true, email: true },
     });
   }

@@ -6,7 +6,10 @@ import { aLibroOutput } from './libro-comun';
 export const TAMANO_PAGINA_POR_DEFECTO = 20;
 export const TAMANO_PAGINA_MAXIMO = 100;
 
-/** HU-16: listado público de libros, paginado, con filtros y ordenamiento. */
+/**
+ * HU-16: listado público de libros, paginado, con filtros y ordenamiento.
+ * HU-35: con temaId es la exploración por categoría, con los mismos filtros de la búsqueda.
+ */
 export class ListarLibrosUseCase {
   constructor(private readonly libros: LibroRepository) {}
 
@@ -37,6 +40,7 @@ export class ListarLibrosUseCase {
       temaId: input.temaId,
       anioDesde: input.anioDesde,
       anioHasta: input.anioHasta,
+      soloDisponibles: input.soloDisponibles || undefined,
       ordenarPor: input.ordenarPor ?? 'titulo',
       direccion: input.direccion ?? 'asc',
     });

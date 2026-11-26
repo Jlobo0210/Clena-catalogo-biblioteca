@@ -5,3 +5,17 @@
   overflow-x: hidden;
   padding: var(--espacio-8) 0 var(--espacio-12);
 }
+
+/* Aviso al llegar al inicio (HU-34: cuenta eliminada). */
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin: var(--espacio-6) 0 0;
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-verde);
+  background: var(--color-verde-claro);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-cuerpo);
+  font-weight: 600;
+}

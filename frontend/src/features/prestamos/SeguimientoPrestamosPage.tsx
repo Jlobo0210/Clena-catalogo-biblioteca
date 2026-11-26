@@ -16,6 +16,7 @@ import type { Prestamo } from './types';
 import { DIAS_AVISO, formatearDia, formatearInstante, textoPlazo, urgenciaDe } from './urgencia';
 import plazos from './PrestamosPersonalPage.module.css';
 import styles from './SeguimientoPrestamosPage.module.css';
+import { TablaDesplazable } from '../../shared/ui/TablaDesplazable';
 
 export const PRESTAMOS_POR_PAGINA = 20;
 
@@ -29,7 +30,7 @@ const ESTADOS: { valor: EstadoSeguimiento; etiqueta: string; titulo: string; vac
   },
   {
     valor: 'SIN_DEVOLVER',
-    etiqueta: 'Todos los sin devolver',
+    etiqueta: 'Sin devolver',
     titulo: 'Préstamos sin devolver',
     vacio: 'No hay préstamos sin devolver.',
   },
@@ -176,7 +177,7 @@ export function SeguimientoPrestamosPage() {
             <li>
               <Link aria-current={estado.valor === 'SIN_DEVOLVER' ? 'true' : undefined} to={urlDeEstado('SIN_DEVOLVER')}>
                 <strong>{resumen.estado === 'listo' ? resumen.datos.sinDevolver : '…'}</strong>
-                sin devolver en total
+                sin devolver
               </Link>
             </li>
           </ul>
@@ -282,7 +283,7 @@ export function SeguimientoPrestamosPage() {
               : `${estado.titulo}: ${consulta.datos.total}${hayFechas ? ' con esas fechas' : ''}.`}
           </p>
           {consulta.datos.total > 0 ? (
-            <div className={gestion.tablaContenedor}>
+            <TablaDesplazable className={gestion.tablaContenedor} etiqueta="Seguimiento de préstamos">
               <table className={gestion.tabla}>
                 <caption className="visualmente-oculto">
                   {estado.titulo}, ordenados por {orden.etiqueta.toLowerCase()}
@@ -340,7 +341,7 @@ export function SeguimientoPrestamosPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </TablaDesplazable>
           ) : null}
           <Paginacion
             pagina={consulta.datos.pagina}

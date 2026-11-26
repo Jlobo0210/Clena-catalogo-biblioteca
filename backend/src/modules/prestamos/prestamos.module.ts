@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
+import { SuscripcionesModule } from '../suscripciones/suscripciones.module';
+import { NotificarSuscriptoresUseCase } from '../suscripciones/application/use-cases/notificar-suscriptores.use-case';
+
 import { ConfigService } from '@nestjs/config';
+import { SERVICIO_CORREO, ServicioCorreo } from '../../shared/domain/correo';
 import { ID_GENERATOR, IdGenerator } from '../../shared/domain/id-generator';
 import { UuidIdGenerator } from '../../shared/infrastructure/uuid-id-generator';
 import {
@@ -7,6 +11,12 @@ import {
   PoliticaPrestamos,
   politicaDesdeEntorno,
 } from './application/politica-prestamos';
+import {
+  POLITICA_ALERTAS,
+  PoliticaAlertas,
+  politicaAlertasDesdeEntorno,
+} from './application/politica-alertas';
+import { EnviarAlertasPrestamoUseCase } from './application/use-cases/enviar-alertas-prestamo.use-case';
 import { ListarMisPrestamosUseCase } from './application/use-cases/listar-mis-prestamos.use-case';
 import { ListarPrestamosUseCase } from './application/use-cases/listar-prestamos.use-case';
 import { ObtenerPrestamoUseCase } from './application/use-cases/obtener-prestamo.use-case';
@@ -14,20 +24,32 @@ import { RegistrarDevolucionUseCase } from './application/use-cases/registrar-de
 import { RegistrarPrestamoUseCase } from './application/use-cases/registrar-prestamo.use-case';
 import { ResumenPrestamosUseCase } from './application/use-cases/resumen-prestamos.use-case';
 import {
+  ALERTA_PRESTAMO_REPOSITORY,
+  AlertaPrestamoRepository,
+} from './domain/repositories/alerta-prestamo.repository';
+import {
   PRESTAMO_REPOSITORY,
   PrestamoRepository,
 } from './domain/repositories/prestamo.repository';
+import { PrismaAlertaPrestamoRepository } from './infrastructure/persistence/prisma-alerta-prestamo.repository';
 import { PrismaPrestamoRepository } from './infrastructure/persistence/prisma-prestamo.repository';
+import { AlertasPrestamoTarea } from './infrastructure/tareas/alertas-prestamo.tarea';
 import { PrestamosController } from './presentation/controllers/prestamos.controller';
 
 /**
- * HU-26: préstamos y devoluciones. Composición del módulo: aquí se une cada puerto
+ * HU-26: préstamos y devoluciones. HU-29: alertas de devolución por correo (tarea programada).
+ * Composición del módulo: aquí se une cada puerto
  * con su implementación; los casos de uso se construyen con useFactory.
  */
 @Module({
+  imports: [SuscripcionesModule],
   controllers: [PrestamosController],
   providers: [
     { provide: PRESTAMO_REPOSITORY, useClass: PrismaPrestamoRepository },
+    {
+      provide: ALERTA_PRESTAMO_REPOSITORY,
+      useClass: PrismaAlertaPrestamoRepository,
+    },
     { provide: ID_GENERATOR, useClass: UuidIdGenerator },
     {
       provide: POLITICA_PRESTAMOS,
@@ -46,9 +68,11 @@ import { PrestamosController } from './presentation/controllers/prestamos.contro
     },
     {
       provide: RegistrarDevolucionUseCase,
-      useFactory: (prestamos: PrestamoRepository) =>
-        new RegistrarDevolucionUseCase(prestamos),
-      inject: [PRESTAMO_REPOSITORY],
+      useFactory: (
+        prestamos: PrestamoRepository,
+        notificar: NotificarSuscriptoresUseCase,
+      ) => new RegistrarDevolucionUseCase(prestamos, notificar),
+      inject: [PRESTAMO_REPOSITORY, NotificarSuscriptoresUseCase],
     },
     {
       provide: ListarPrestamosUseCase,
@@ -68,6 +92,22 @@ import { PrestamosController } from './presentation/controllers/prestamos.contro
         new ResumenPrestamosUseCase(prestamos),
       inject: [PRESTAMO_REPOSITORY],
     },
+    {
+      provide: POLITICA_ALERTAS,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) =>
+        politicaAlertasDesdeEntorno((clave) => config.get<string>(clave)),
+    },
+    {
+      provide: EnviarAlertasPrestamoUseCase,
+      useFactory: (
+        alertas: AlertaPrestamoRepository,
+        correo: ServicioCorreo,
+        politica: PoliticaAlertas,
+      ) => new EnviarAlertasPrestamoUseCase(alertas, correo, politica),
+      inject: [ALERTA_PRESTAMO_REPOSITORY, SERVICIO_CORREO, POLITICA_ALERTAS],
+    },
+    AlertasPrestamoTarea,
     {
       provide: ObtenerPrestamoUseCase,
       useFactory: (prestamos: PrestamoRepository) =>

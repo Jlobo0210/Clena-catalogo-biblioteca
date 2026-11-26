@@ -3,6 +3,10 @@ export const RUTAS = {
   buscar: '/buscar',
   busquedaAvanzada: '/busqueda-avanzada',
   temas: '/temas',
+  biblioteca: '/la-biblioteca',
+  ayuda: '/ayuda',
+  formularioAyuda: '/ayuda/formulario',
+  tema: '/temas/:id',
   libro: '/libros/:id',
   ingresar: '/ingresar',
   registro: '/registro',
@@ -24,6 +28,11 @@ export const RUTAS = {
 /** Ruta del detalle de un libro (HU-24). */
 export function rutaLibro(id: string): string {
   return RUTAS.libro.replace(':id', encodeURIComponent(id));
+}
+
+/** Libros de una categoría temática (HU-35). */
+export function rutaTema(id: string): string {
+  return RUTAS.tema.replace(':id', encodeURIComponent(id));
 }
 
 /** Edición de un libro en el panel (HU-25). */

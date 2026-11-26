@@ -11,6 +11,8 @@
   width: min(calc(100% - var(--espacio-8)), var(--ancho-encabezado));
   min-height: 4rem;
   align-items: center;
+  /* HU-33: con letra al 200 % los bloques bajan de línea en vez de salirse de la pantalla. */
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--espacio-4);
   margin: 0 auto;
@@ -22,7 +24,7 @@
   grid-template-columns: 2.75rem 1fr;
   align-items: center;
   gap: var(--espacio-3);
-  min-width: max-content;
+  min-width: 0;
 }
 
 .marcaTexto {
@@ -68,6 +70,7 @@
 
 .navegacion {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   align-items: stretch;
   gap: 0.375rem;
@@ -82,13 +85,13 @@
 .enlaceNav {
   display: inline-flex;
   flex: 1;
-  min-height: 3.25rem;
+  min-height: 4rem;
   align-items: center;
   gap: 0.625rem;
   padding: 0.5rem 0.875rem;
   color: var(--color-azul-profundo);
   background: var(--color-superficie);
-  border: var(--borde-fino) solid transparent;
+  border: var(--borde-fino) solid var(--color-borde);
   border-radius: var(--radio-sm);
   font-size: 0.9375rem;
   text-decoration: none;
@@ -113,6 +116,7 @@
 
 .terminal {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--espacio-3);
 }
@@ -169,9 +173,12 @@
   font-size: 0.8125rem;
 }
 
-.activo small,
-.enlaceNav:hover small {
+.activo small {
   color: var(--color-superficie-alta);
+}
+
+.enlaceNav:not(.activo):hover small {
+  color: var(--color-texto-secundario);
 }
 
 @media (min-width: 1024px) {
@@ -189,6 +196,7 @@
   }
 
   .navegacion {
+    flex-wrap: nowrap;
     overflow-x: auto;
     padding-right: var(--espacio-4);
     padding-left: var(--espacio-4);
@@ -220,10 +228,13 @@
 
   .navegacion {
     width: 100%;
+    flex-wrap: wrap;
+    overflow: visible;
   }
 
   .enlaceNav {
-    min-width: 10rem;
+    flex: 1 1 45%;
+    min-width: 0;
   }
 }
 

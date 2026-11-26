@@ -9,6 +9,7 @@ import { Paginacion } from '../../busqueda/components/Paginacion';
 import type { Direccion, FiltroListado, OrdenNombre, Pagina } from '../api/catalogo-admin.api';
 import { FormularioElemento, type DatosElemento } from './FormularioElemento';
 import styles from './GestionCatalogo.module.css';
+import { TablaDesplazable } from '../../../shared/ui/TablaDesplazable';
 
 export const ELEMENTOS_POR_PAGINA = 20;
 
@@ -240,7 +241,7 @@ export function GestionCatalogo<T extends ElementoBase>({
         </div>
       ) : (
         <>
-          <div className={styles.tablaContenedor}>
+          <TablaDesplazable className={styles.tablaContenedor} etiqueta={titulo}>
             <table className={styles.tabla}>
               <caption>
                 {consulta.datos.total === 0
@@ -323,7 +324,7 @@ export function GestionCatalogo<T extends ElementoBase>({
                 )}
               </tbody>
             </table>
-          </div>
+          </TablaDesplazable>
           <Paginacion
             pagina={consulta.datos.pagina}
             totalPaginas={Math.ceil(consulta.datos.total / consulta.datos.tamano)}

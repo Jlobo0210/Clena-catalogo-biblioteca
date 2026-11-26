@@ -1,0 +1,167 @@
+/* HU-35: página de una categoría. Misma estructura que la búsqueda: franja, filtros | resultados. */
+.pagina {
+  display: grid;
+  gap: var(--espacio-6);
+  padding: var(--espacio-8) 0 var(--espacio-12);
+}
+
+.migas a,
+.aviso a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  color: var(--color-azul-profundo);
+  font-weight: 700;
+}
+
+.migas a:focus-visible,
+.aviso a:focus-visible {
+  outline: 0.1875rem solid var(--color-foco);
+  outline-offset: 0.1875rem;
+}
+
+.franja {
+  display: grid;
+  gap: var(--espacio-2);
+  padding: var(--espacio-8);
+  color: var(--color-superficie);
+  background: var(--color-azul-aduana);
+  border-radius: var(--radio-lg);
+}
+
+.franja h1 {
+  margin: 0;
+  font-size: var(--texto-titular);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.antetitulo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin: 0;
+  font-size: var(--texto-etiqueta);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.descripcion {
+  max-width: 60ch;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.cuerpo {
+  display: grid;
+  grid-template-columns: minmax(14rem, 16rem) minmax(0, 1fr);
+  gap: var(--espacio-6);
+  align-items: start;
+}
+
+.columnaFiltros {
+  display: grid;
+  gap: var(--espacio-4);
+  padding: var(--espacio-5);
+  background: var(--color-superficie);
+  border-radius: var(--radio-md);
+}
+
+.filtrosEncabezado {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  color: var(--color-azul-profundo);
+  font-weight: 700;
+}
+
+.resultados {
+  display: grid;
+  gap: var(--espacio-4);
+}
+
+.resultados h2 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titulo);
+  overflow-wrap: anywhere;
+}
+
+.resultados > p,
+.vacio p {
+  margin: 0;
+}
+
+.titulo:focus {
+  outline: none;
+}
+
+.titulo:focus-visible {
+  outline: 0.1875rem solid var(--color-foco);
+  outline-offset: 0.1875rem;
+}
+
+.orden {
+  color: var(--color-texto-secundario);
+  font-size: var(--texto-pequeno);
+}
+
+.lista {
+  display: grid;
+  gap: var(--espacio-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vacio,
+.aviso,
+.error {
+  display: grid;
+  justify-items: start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-6);
+  background: var(--color-superficie);
+  border-radius: var(--radio-md);
+}
+
+.aviso h1 {
+  margin: 0;
+  color: var(--color-azul-profundo);
+  font-size: var(--texto-titular);
+}
+
+.aviso p {
+  margin: 0;
+}
+
+.error {
+  border-left: var(--espacio-1) solid var(--color-error);
+}
+
+.error h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  color: var(--color-error);
+}
+
+.error p {
+  margin: 0;
+}
+
+/* Con la letra al 200 % o en pantallas angostas, los filtros van encima de los resultados. */
+@media (max-width: 48rem) {
+  .pagina {
+    padding-top: var(--espacio-4);
+  }
+
+  .franja {
+    padding: var(--espacio-4);
+  }
+
+  .cuerpo {
+    grid-template-columns: 1fr;
+  }
+}
