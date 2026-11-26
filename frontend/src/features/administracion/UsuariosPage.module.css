@@ -53,13 +53,7 @@
 }
 
 .selector {
-  min-height: var(--alto-control);
-  padding: 0 var(--espacio-3);
-  color: var(--color-texto);
-  background: var(--color-superficie);
-  border: var(--borde-medio) solid var(--color-borde);
-  border-radius: var(--radio-sm);
-  font: inherit;
+  width: 100%;
 }
 
 .nota {

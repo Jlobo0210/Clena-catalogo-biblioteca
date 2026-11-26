@@ -2,6 +2,7 @@ import { ContactoBiblioteca } from './ContactoBiblioteca';
 import styles from './Ayuda.module.css';
 import { Link } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
+import { terminal } from '../../config/terminal';
 
 function Icono({ nombre, relleno = false }: { nombre: string; relleno?: boolean }) {
   return <span aria-hidden="true" className={`material-symbols-outlined ${relleno ? styles.relleno : ''}`}>{nombre}</span>;
@@ -15,19 +16,14 @@ export function AyudaPage() {
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
       {/* TODO(HU-37): confirmar con la biblioteca los datos de terminal y asistencia. */}
-      <section className={styles.banner}>
-        <div className={styles.bannerTexto}>
-          <div className={styles.bannerEtiqueta}><span className={styles.iconoCircular}><Icono nombre="help_center" relleno /></span><span>Centro de Asistencia al Usuario</span></div>
-          <h1>¿En qué podemos orientarle hoy?</h1>
-          <p>Usted cuenta con acompañamiento presencial y canales directos de participación en la Biblioteca Piloto del Caribe.</p>
-        </div>
-        <div className={styles.terminal}><span className={styles.terminalIcono}><Icono nombre="desktop_windows" /></span><div><span>Puesto de consulta:</span><strong>Terminal 04 • Sala General</strong></div></div>
-      </section>
+      <header className={styles.cabecera}>
+        <h1>¿En qué podemos orientarle hoy?</h1>
+        <p>Acompañamiento presencial y canales directos de participación.</p>
+      </header>
       <div className={styles.grid}>
         <section className={styles.asistencia}>
           <div className={styles.asistenciaInterior}>
             <div className={styles.asistenciaTexto}>
-              <div className={styles.chip}><Icono nombre="support_agent" relleno /> Atención Presencial Inmediata</div>
               <h2>Pedir ayuda a un bibliotecario</h2>
               <p>Si tiene dificultad para hallar un texto, requiere orientación bibliográfica o el equipo presenta una novedad, pulse el botón. Un funcionario se acercará de inmediato a su mesa.</p>
               <div className={styles.miniTarjetas}>
@@ -38,7 +34,7 @@ export function AyudaPage() {
             <div className={styles.accion}>
               {/* TODO(HU-37): la funcionalidad de asistencia corresponde a otro issue. */}
               <button type="button" disabled><Icono nombre="notifications_active" relleno /> Solicitar asistencia ahora</button>
-              <span>Se emitirá una señal luminosa en el módulo central</span>
+              <span>Se avisará al mostrador central desde {terminal.nombre} ({terminal.codigo}).</span>
             </div>
           </div>
         </section>

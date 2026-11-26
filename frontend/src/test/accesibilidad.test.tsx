@@ -2,6 +2,9 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
+import { apiClient } from '../api/apiClient';
+import { BibliotecaPage } from '../features/biblioteca/BibliotecaPage';
+import { AyudaPage } from '../features/biblioteca/AyudaPage';
 import { buscarLibros } from '../features/busqueda/api/busqueda.api';
 import { BusquedaPage } from '../features/busqueda/BusquedaPage';
 import { listarEjemplares, obtenerLibro } from '../features/catalogo/api/libros.api';
@@ -131,6 +134,22 @@ describe('Accesibilidad con axe (HU-33)', () => {
 
   it('inicio de sesión', async () => {
     const { container } = enRuta('/ingresar', '/ingresar', <IngresarPage />);
+    expect(await violacionesAxe(container)).toEqual([]);
+  });
+
+  it.each([
+    { nombre: 'La Biblioteca', ruta: '/la-biblioteca', pagina: <BibliotecaPage /> },
+    { nombre: 'Ayuda', ruta: '/ayuda', pagina: <AyudaPage /> },
+  ])('$nombre con horarios y datos de contacto', async ({ ruta, pagina }) => {
+    vi.spyOn(apiClient, 'get').mockResolvedValueOnce({
+      data: {
+        horarios: 'Lunes a viernes: 8:00 a. m. – 6:00 p. m.\nSábados: 9:00 a. m. – 1:00 p. m.',
+        telefono: '+57 (605) 555 1234',
+        correo: 'contacto@biblioteca.test',
+      },
+    });
+    const { container } = enRuta(ruta, ruta, pagina);
+    await screen.findByRole('link', { name: 'contacto@biblioteca.test' });
     expect(await violacionesAxe(container)).toEqual([]);
   });
 

@@ -17,6 +17,9 @@
 
 .control {
   width: 100%;
+}
+
+.control:not(select) {
   min-height: var(--alto-control-grande);
   padding: 0 var(--espacio-4);
   color: var(--color-texto);
@@ -27,7 +30,7 @@
   font-size: var(--texto-cuerpo);
 }
 
-.control[aria-invalid='true'] {
+.control:not(select)[aria-invalid='true'] {
   border-color: var(--color-error);
 }
 
