@@ -34,6 +34,7 @@ describe('Formulario de participación', () => {
     fireEvent.change(screen.getByRole('textbox', { name: 'Mensaje' }), { target: { value: 'Mensaje de prueba' } });
     fireEvent.click(screen.getByRole('button', { name: 'Enviar mensaje' }));
     expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Regresar al inicio' })).toHaveFocus());
     expect(post).toHaveBeenCalledWith('/solicitudes-participacion', expect.objectContaining({ tipo: 'QUEJA', mensaje: 'Mensaje de prueba' }));
     fireEvent.keyDown(document, { key: 'Escape' });
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
