@@ -17,7 +17,7 @@ export function AppLayout() {
       <a className="skip-link" href="#contenido">
         Ir al contenido principal
       </a>
-      <Encabezado onReiniciar={reiniciar} />
+      <Encabezado />
       <main
         className={styles.contenido}
         id="contenido"

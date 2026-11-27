@@ -21,7 +21,7 @@
 
 .marcaBloque {
   display: grid;
-  grid-template-columns: 2.75rem 1fr;
+  grid-template-columns: var(--tamano-marca) 1fr;
   align-items: center;
   gap: var(--espacio-3);
   min-width: 0;
@@ -142,16 +142,20 @@
   flex: 0 0 auto;
 }
 
-.reiniciar {
+.logoEnlace {
   display: inline-grid;
-  width: var(--alto-control);
-  height: var(--alto-control);
+  width: var(--tamano-marca);
+  height: var(--tamano-marca);
   place-items: center;
-  color: var(--color-ambar-claro);
-  background: transparent;
-  border: 0;
-  border-radius: 50%;
-  cursor: pointer;
+  border-radius: var(--radio-sm);
+}
+
+.logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: var(--radio-sm);
 }
 
 .usuarioEnlace {
