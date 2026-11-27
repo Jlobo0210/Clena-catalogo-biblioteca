@@ -95,7 +95,8 @@ describe('LibrosPanelPage (HU-25)', () => {
     listarMock.mockResolvedValue(pagina([]));
     montar('/panel/libros', { aviso: 'Libro «X» registrado.' });
     expect(await screen.findByText('Libro «X» registrado.')).toBeInTheDocument();
-    expect(screen.getByText('Todavía no hay libros.')).toBeInTheDocument();
+    // El aviso sale al instante, pero la lista llega después de la consulta: hay que esperarla.
+    expect(await screen.findByText('Todavía no hay libros.')).toBeInTheDocument();
   });
 
   it('no deja eliminar un libro con ejemplares y lo explica', async () => {

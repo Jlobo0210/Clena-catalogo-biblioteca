@@ -61,6 +61,9 @@
 }
 
 .columnaFiltros {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
   display: grid;
   gap: var(--espacio-4);
   padding: var(--espacio-5);
@@ -78,6 +81,7 @@
 
 .resultados {
   display: grid;
+  min-width: 0;
   gap: var(--espacio-4);
 }
 
@@ -109,6 +113,7 @@
 
 .lista {
   display: grid;
+  min-width: 0;
   gap: var(--espacio-4);
   margin: 0;
   padding: 0;

@@ -38,6 +38,7 @@
 
 .resultados {
   display: grid;
+  min-width: 0;
   gap: var(--espacio-4);
 }
 
@@ -131,7 +132,7 @@
 
 .cuerpo {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: minmax(14rem, 16.25rem) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
 }
@@ -145,6 +146,12 @@
 .columnaFiltros {
   position: sticky;
   top: 1rem;
+  z-index: 1;
+  min-width: 0;
+}
+
+.cuerpo > * {
+  min-width: 0;
 }
 
 .filtrosHeader {
