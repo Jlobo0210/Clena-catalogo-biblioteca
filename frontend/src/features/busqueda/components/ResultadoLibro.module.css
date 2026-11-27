@@ -1,4 +1,6 @@
 .resultado {
+  min-width: 0;
+  overflow-wrap: anywhere;
   padding: var(--espacio-6);
   background: var(--color-superficie);
   border: var(--borde-fino) solid var(--color-superficie-alta);

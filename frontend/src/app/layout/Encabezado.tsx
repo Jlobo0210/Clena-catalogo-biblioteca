@@ -8,21 +8,15 @@ import {
   LogIn,
   LogOut,
   Monitor,
-  RotateCcw,
   Shapes,
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { RUTAS } from '../../config/rutas';
 import { terminal } from '../../config/terminal';
 import { useSesion } from '../../features/auth/sesion/contextoSesion';
-import { MarcaBiblioteca } from '../../shared/ui/MarcaBiblioteca';
 import styles from './Encabezado.module.css';
 
-interface EncabezadoProps {
-  onReiniciar: () => void;
-}
-
-export function Encabezado({ onReiniciar }: EncabezadoProps) {
+export function Encabezado() {
   const { salir, tieneRol, usuario } = useSesion();
   const navigate = useNavigate();
 
@@ -36,7 +30,9 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
     <header className={styles.encabezado}>
       <div className={styles.interno}>
         <div className={styles.marcaBloque}>
-          <MarcaBiblioteca />
+          <Link aria-label="Biblioteca Piloto del Caribe: ir al inicio" className={styles.logoEnlace} to={RUTAS.inicio}>
+            <img alt="" className={styles.logo} height={48} src="/logo-biblioteca.png" width={48} />
+          </Link>
           <div className={styles.marcaTexto}>
             <p className={styles.meta}>
               <span>Barranquilla cultural</span>
@@ -78,15 +74,6 @@ export function Encabezado({ onReiniciar }: EncabezadoProps) {
               Inicio de sesión
             </Link>
           )}
-          <button
-            aria-label="Reiniciar la terminal"
-            className={styles.reiniciar}
-            onClick={onReiniciar}
-            title="Reiniciar la terminal"
-            type="button"
-          >
-            <RotateCcw aria-hidden="true" size={18} />
-          </button>
         </div>
       </div>
 

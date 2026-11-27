@@ -1,10 +1,5 @@
-import { Star } from 'lucide-react';
 import styles from './MarcaBiblioteca.module.css';
 
 export function MarcaBiblioteca() {
-  return (
-    <span className={styles.marca}>
-      <Star aria-hidden="true" fill="currentColor" size={24} />
-    </span>
-  );
+  return <img alt="" className={styles.marca} height={48} src="/logo-biblioteca.png" width={48} />;
 }
